@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TaleUtil
 {
-    public class CameraRotateAction : TaleUtil.Action
+    public class TransformRotateAction : TaleUtil.Action
     {
         private enum State
         {
@@ -12,9 +12,11 @@ namespace TaleUtil
             TRANSITION
         }
 
+        private TaleUtil.Props.Transformable transformable;
         private Vector3 rotation;
         private float transitionDuration;
         private TaleUtil.Delegates.InterpolationDelegate interpolation;
+        private bool relative;
 
         private float clock;
 
@@ -22,24 +24,28 @@ namespace TaleUtil
 
         private State state;
 
-        private CameraRotateAction() { }
+        private TransformRotateAction() { }
 
-        public CameraRotateAction(Vector3 rotation, float transitionDuration, TaleUtil.Delegates.InterpolationDelegate interpolation)
+        public TransformRotateAction(TaleUtil.Props.Transformable transformable, Vector3 rotation, float transitionDuration, TaleUtil.Delegates.InterpolationDelegate interpolation, bool relative)
         {
-            TaleUtil.Assert.NotNull(TaleUtil.Props.camera, "CameraRotateAction requires a main camera object (which could not be found)");
-
+            this.transformable = transformable;
             this.rotation = rotation;
             this.transitionDuration = transitionDuration;
             this.interpolation = interpolation == null ? TaleUtil.Math.Identity : interpolation;
+            this.relative = relative;
 
             clock = 0f;
 
             state = State.SETUP;
         }
 
+        public TransformRotateAction(Transform transform, Vector3 rotation, float transitionDuration, TaleUtil.Delegates.InterpolationDelegate interpolation, bool relative)
+            : this(new TaleUtil.Props.Transformable(transform), rotation, transitionDuration, interpolation, relative) { }
+
         public override TaleUtil.Action Clone()
         {
-            CameraRotateAction clone = new CameraRotateAction();
+            TransformRotateAction clone = new TransformRotateAction();
+            clone.transformable = transformable;
             clone.rotation = rotation;
             clone.transitionDuration = transitionDuration;
             clone.interpolation = interpolation;
@@ -55,9 +61,12 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    initialRotation = TaleUtil.Props.camera.transform.eulerAngles;
+                    initialRotation = transformable.transform.eulerAngles;
 
                     state = State.TRANSITION;
+
+                    if(relative)
+                        rotation = new Vector3(initialRotation.x + rotation.x, initialRotation.y + rotation.y, initialRotation.z + rotation.z);
 
                     break;
                 }
@@ -65,7 +74,7 @@ namespace TaleUtil
                 {
                     clock += Time.deltaTime;
 
-                    if(clock > transitionDuration)
+                    if (clock > transitionDuration)
                         clock = transitionDuration;
 
                     // TODO: Make a method called TickClock which returns the factor, and does what the 3 lines from above do. Here and everywhere else.
@@ -81,22 +90,22 @@ namespace TaleUtil
 
                     // TODO: Use user-defined interpolation
 
-                    if(rotation.x != float.MinValue)
+                    if (rotation.x != float.MinValue)
                         x = TaleUtil.Math.Interpolate(initialRotation.x, rotation.x, interpolationFactor);
-                    else x = TaleUtil.Props.camera.transform.eulerAngles.x;
+                    else x = transformable.transform.eulerAngles.x;
 
-                    if(rotation.y != float.MinValue)
+                    if (rotation.y != float.MinValue)
                         y = TaleUtil.Math.Interpolate(initialRotation.y, rotation.y, interpolationFactor);
-                    else y = TaleUtil.Props.camera.transform.eulerAngles.y;
+                    else y = transformable.transform.eulerAngles.y;
 
-                    if(rotation.z != float.MinValue)
+                    if (rotation.z != float.MinValue)
                         z = TaleUtil.Math.Interpolate(initialRotation.z, rotation.z, interpolationFactor);
-                    else z = TaleUtil.Props.camera.transform.eulerAngles.z;
+                    else z = transformable.transform.eulerAngles.z;
 
 
-                    TaleUtil.Props.camera.transform.eulerAngles = new Vector3(x, y, z);
+                    transformable.transform.eulerAngles = new Vector3(x, y, z);
 
-                    if(clock == transitionDuration)
+                    if (clock == transitionDuration)
                         return true;
 
                     break;

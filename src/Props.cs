@@ -69,20 +69,41 @@ namespace TaleUtil
 
         public static void ReinitCamera()
         {
-            camera = new Props.Camera(UnityEngine.Camera.main);
+            // It's important to keep the reference, because the camera actions which use Transformable need a reliable reference,
+            // which doesn't change with the scene.
+            if(camera == null)
+                camera = new Props.Camera(UnityEngine.Camera.main);
+            else camera.Reinit(UnityEngine.Camera.main);
+
             postProcessing = new Props.PostProcessing(camera.obj);
 
             if(camera == null)
                 Error("Could not retrieve main camera");
         }
 
-        public class Camera
+        // A constant reference to a changing Transform reference.
+        public class Transformable
+        {
+            public Transform transform;
+            
+            public Transformable() { }
+
+            public Transformable(Transform transform) =>
+                this.transform = transform;
+        }
+
+        public class Camera : Transformable
         {
             public UnityEngine.Camera obj;
             public float baseOrthographicSize;
-            public Transform transform;
+            //public Transform transform;
 
             public Camera(UnityEngine.Camera camera)
+            {
+                Reinit(camera);
+            }
+
+            public void Reinit(UnityEngine.Camera camera)
             {
                 obj = camera;
                 baseOrthographicSize = obj.orthographicSize;
