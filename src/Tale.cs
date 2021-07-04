@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class Tale
@@ -65,13 +66,38 @@ public static class Tale
     public static class Sound
     {
         public static TaleUtil.Action Play(string path, float volume = 1f, float pitch = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.SoundAction(0, TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND + path, volume, pitch));
+            TaleUtil.Queue.Enqueue(new TaleUtil.SoundAction(0, TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
 
         public static TaleUtil.Action Play(int channel, string path, float volume = 1f, float pitch = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.SoundAction(channel, TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND + path, volume, pitch));
+            TaleUtil.Queue.Enqueue(new TaleUtil.SoundAction(channel, TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
 
         public static TaleUtil.Action Stop(int channel = 0) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.SoundAction(channel, null, 1f, 1f));
+    }
+
+    public static class Music
+    {
+        // Preserve the same order as in CinematicBackgroundAction (the cast will silently fail otherwise).
+        public enum PlayMode
+        {
+            ONCE,
+            LOOP,
+            SHUFFLE,
+            SHUFFLE_LOOP
+        }
+
+        // TODO: Change the asset root to MUSIC.
+        public static TaleUtil.Action Play(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(new List<string>(1) { TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+
+        public static TaleUtil.Action Play(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND, new List<string>(paths)), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+
+        public static TaleUtil.Action Play(List<string> paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND, paths), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+
+        public static TaleUtil.Action Stop(float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(duration, interpolation));
     }
 
     public static class Cam
@@ -186,15 +212,15 @@ public static class Tale
             TaleUtil.Queue.Enqueue(new TaleUtil.CinematicSubtitleAction(content, ttl, showBackground));
 
         public static TaleUtil.Action Background(string path, BackgroundTransitionType type = BackgroundTransitionType.INSTANT, float speed = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicBackgroundAction(TaleUtil.Config.ASSET_ROOT_CINEMATIC_BACKGROUND + path, (TaleUtil.CinematicBackgroundAction.Type) (int) type, speed));
+            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicBackgroundAction(TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_CINEMATIC_BACKGROUND, path), (TaleUtil.CinematicBackgroundAction.Type) (int) type, speed));
 
         public static TaleUtil.Action Video(string path, float detatchValue = 0f, VideoDetatchType detatchType = VideoDetatchType.BEFORE, float speed = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicVideoAction(TaleUtil.Config.ASSET_ROOT_CINEMATIC_VIDEO + path, detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int)detatchType, speed));
+            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicVideoAction(TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_CINEMATIC_VIDEO, path), detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int) detatchType, speed));
 
         public static TaleUtil.Action VideoPause() =>
             TaleUtil.Queue.Enqueue(new TaleUtil.CinematicVideoPauseAction());
 
         public static TaleUtil.Action VideoResume(float detatchValue = 0f, VideoDetatchType detatchType = VideoDetatchType.BEFORE, float speed = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicVideoAction(null, detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int)detatchType, speed));
+            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicVideoAction(null, detatchValue, (TaleUtil.CinematicVideoAction.DetatchType) (int) detatchType, speed));
     }
 }

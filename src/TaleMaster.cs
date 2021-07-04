@@ -82,6 +82,7 @@ public class TaleMaster : MonoBehaviour
 
         TaleUtil.Queue.Init();
         TaleUtil.Parallel.Init();
+        TaleUtil.Triggers.Init();
 
         TaleUtil.Props.Init(dialogCanvas, dialogActor, dialogContent, dialogAnimator, dialogCtc, dialogActc,
                             audioGroup, audioSoundGroup, audioSound, audioMusic, audioVoice,
@@ -101,5 +102,10 @@ public class TaleMaster : MonoBehaviour
     {
         TaleUtil.Queue.Run();
         TaleUtil.Parallel.Run();
+    }
+
+    void LateUpdate()
+    {
+        TaleUtil.Triggers.Update();
     }
 }

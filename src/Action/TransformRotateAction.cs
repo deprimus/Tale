@@ -74,7 +74,7 @@ namespace TaleUtil
                 {
                     clock += Time.deltaTime;
 
-                    if (clock > transitionDuration)
+                    if(clock > transitionDuration)
                         clock = transitionDuration;
 
                     // TODO: Make a method called TickClock which returns the factor, and does what the 3 lines from above do. Here and everywhere else.
@@ -90,22 +90,22 @@ namespace TaleUtil
 
                     // TODO: Use user-defined interpolation
 
-                    if (rotation.x != float.MinValue)
+                    if(rotation.x != float.MinValue)
                         x = TaleUtil.Math.Interpolate(initialRotation.x, rotation.x, interpolationFactor);
                     else x = transformable.transform.eulerAngles.x;
 
-                    if (rotation.y != float.MinValue)
+                    if(rotation.y != float.MinValue)
                         y = TaleUtil.Math.Interpolate(initialRotation.y, rotation.y, interpolationFactor);
                     else y = transformable.transform.eulerAngles.y;
 
-                    if (rotation.z != float.MinValue)
+                    if(rotation.z != float.MinValue)
                         z = TaleUtil.Math.Interpolate(initialRotation.z, rotation.z, interpolationFactor);
                     else z = transformable.transform.eulerAngles.z;
 
 
                     transformable.transform.eulerAngles = new Vector3(x, y, z);
 
-                    if (clock == transitionDuration)
+                    if(clock == transitionDuration)
                         return true;
 
                     break;

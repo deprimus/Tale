@@ -94,6 +94,9 @@ namespace TaleUtil
 
             public void Stop()
             {
+                // Only remove the pointer after it has been set. If it hasn't been set yet, it means that
+                // the initialization will take place in a Tale action which is on the queue. Therefore,
+                // add an action that calls this method after the pointer is initialized.
                 if(start == 0 && size == 0)
                     TaleUtil.Queue.Enqueue(new TaleUtil.ParallelStopAction(this));
                 else Remove(start, size);
