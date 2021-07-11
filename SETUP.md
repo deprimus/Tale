@@ -6,7 +6,7 @@
 
 This document describes the setup process for [Tale](https://github.com/deprimus/Tale), a storytelling and prop manipulation utility for Unity.
 
-After the setup is finished, you may start using Tale. Reading the [documentation]() is highly recommended for beginner users.
+After following the setup process, you may start using Tale. Reading the [documentation]() is highly recommended for beginner users.
 
 This guide includes images meant to aid you. If they are too small, you can click on them to view them at their original resolution.
 
