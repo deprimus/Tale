@@ -11,7 +11,7 @@ After the setup is finished, you may start using Tale. Reading the [documentatio
 This guide includes images meant to aid you. If they are too small, you can click on them to view them at their original resolution.
 
 This setup assumes you have at least minimal knowledge about Unity, the entity component system (ECS), and the C# programming language.
-You need to know what components are and how to add components to objects. The optional setup may require additional knowledge.
+You need to know what components are and how to add them to objects. The optional setup may require additional knowledge.
 
 ## Prerequisites
 
@@ -33,14 +33,14 @@ This section contains all necessary steps required to get Tale up and running. T
 
 Open your Unity project and make sure you have the Tale source code handy. The setup steps are as follows:
 
-### Copy the Tale scripts
+### 1. Copy the Tale scripts
 
 In your project, if the `Assets/Scripts` directory doesn't exist, create it. Inside it, create another directory named `Tale`.
 
 Go to the Tale source code, navigate inside the `src` folder, and copy everything to the `Assets/Scripts/Tale` folder.
 This path is not imposed, but recommended.
 
-You know you did everything right if the `Tale` looks something like this:
+You know you did everything right if the `Tale` directory looks something like this:
 
 <p align="center">
   <img src="public/setup/tale_dir.png" alt="The Tale directory">
@@ -51,12 +51,12 @@ After copying the files, you no longer need to have the Tale source code handy.
 At this point, you may see an error: `The type or namespace name 'PostProcessing' does not exist...`. It will disappear
 once you follow the next step.
 
-### Install the required dependencies
+### 2. Install the required dependencies
 
 Tale relies on TextMesh Pro and PostProcessing. The former is usually already installed by Unity, and is only required for dialog
 and cinematics support. The latter has to be manually installed and is required in order for Tale to work.
 
-Go to `Window -> Package manager`. At the top-right of the package manager window, to the left of the `+` icon, click on the `Packages`
+Go to `Window -> Package Manager`. At the top-right of the package manager window, to the left of the `+` icon, click on the `Packages`
 dropdown box and select `Unity Registry`.
 
 Search for `Post Processing` at the top left of the window. Click on the package that appears (it should be named `Post Processing`),
@@ -69,7 +69,10 @@ then click on the `Install` button at the bottom left of the window.
 > Note: in the future, the PostProcessing package will only be required if camera effects are enabled. For now, you have to install it even if you don't
 > intend to use such effects.
 
-### Create the Tale Master object
+### 3. Create the Tale Master object
+
+The master object is the heart of Tale, and is responsible for single-handedly orchestrating all of the actions. If this object is disabled,
+Tale will cease to function.
 
 In your default scene, create a new empty game object. Call it `Tale Master` and add the `TaleMaster.cs` script to it. Make sure the object
 is at the top of the hierarchy.
@@ -82,12 +85,10 @@ is at the top of the hierarchy.
   <img src="public/setup/tale_master_component.png" alt="Tale Master object">
 </p>
 
-This object is the heart of Tale, and is responsible for single-handedly orchestrating all of the actions. If this object is disabled, Tale will cease to function.
-
 You know you did everything right if the master looks something like this:
 
 <p align="center">
   <img src="public/setup/tale_master_overview.png" alt="Tale Master overview">
 </p>
 
-Everything listed there is optional. Details about configuring each slot can be found in the [Optional Setup] section.
+You don't need to make any changes, as everything listed there is optional. Details about the configuration can be found in the [Optional Setup] section.
