@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="img/logo.png" alt="Tale">
+  <img src="public/logo.png" alt="Tale">
 </p>
 
 # About <a href="https://unity.com"><img align="right" src="https://img.shields.io/badge/Unity-2020.3.2f1-000000?logo=Unity" alt="Unity 20" /></a>
