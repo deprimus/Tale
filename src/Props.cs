@@ -185,7 +185,7 @@ namespace TaleUtil
                 this.music = music;
                 this.voice = voice;
 
-                if(soundGroup == null && sound != null)
+                if(soundGroup == null && sound != null && sound.Length > 0)
                     Warning("The audio sound channel list is not empty, but the audio sound group is null");
             }
         }
