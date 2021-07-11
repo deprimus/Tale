@@ -13,6 +13,9 @@ This guide includes images meant to aid you. If they are too small, you can clic
 This setup assumes you have at least minimal knowledge about Unity, the entity component system (ECS), and the C# programming language.
 You need to know what components are and how to add them to objects. The optional setup may require additional knowledge.
 
+The setup is split into 2 parts: required and optional. The former describes how to set up the Tale core, while the latter describes
+how to set up optional modules.
+
 ## Prerequisites
 
 You will need a new/existing Unity 2D project. For the purpose of this guide, a new project will be used.
@@ -53,8 +56,8 @@ once you follow the next step.
 
 ### 2. Install the required dependencies
 
-Tale relies on TextMesh Pro and PostProcessing. The former is usually already installed by Unity, and is only required for dialog
-and cinematics support. The latter has to be manually installed and is required in order for Tale to work.
+Tale relies on TextMesh Pro and PostProcessing. The former is usually already installed by Unity, and is only required for other
+optional modules. The latter has to be manually installed and is required in order for Tale to work.
 
 Go to `Window -> Package Manager`. At the top-right of the package manager window, to the left of the `+` icon, click on the `Packages`
 dropdown box and select `Unity Registry`.
