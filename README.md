@@ -13,14 +13,9 @@
 - Camera (including post-processing)
 - Cinematics (images, videos, subtitles)
 
-Some actions make use of interpolation functions, which can be:
+# Getting started
 
-- Built-in
-  - Linear
-  - Quadratic (in)
-  - Quadratic (out)
-  - Parametric Blend (in-out)
-- Custom (user-defined)
+In order to be able to use Tale, you need to follow the [setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md).
 
 # Releases
 
