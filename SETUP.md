@@ -96,9 +96,9 @@ You know you did everything right if the master looks something like this:
 
 Everything listed there is used by the optional modules. Details about them can be found in the [optional setup]() section.
 
-> Note: the Tale master object can only be created once. If any other objects with the TaleMaster component appear in the future,
-> they will be automatically deleted (even if the original master object was deleted at runtime). This prevents duplicate masters from being active
-> at the same time.
+> Note: the Tale master object can only be instantiated once. If any other objects with the TaleMaster component appear in the future,
+> they will be automatically deleted. If you delete the master object at runtime, you will not be able to instantiate a new one.
+> This prevents duplicate masters from being active at the same time.
 
 ### 4. Create the master prefab
 
