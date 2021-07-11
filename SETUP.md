@@ -94,4 +94,48 @@ You know you did everything right if the master looks something like this:
   <img src="public/setup/tale_master_overview.png" alt="Tale Master overview">
 </p>
 
-You don't need to make any changes, as everything listed there is optional. Details about the optional modules can be found in the [optional setup]() section.
+Everything listed there is used by the optional modules. Details about them can be found in the [optional setup]() section.
+
+> Note: the Tale master object can only be created once. If any other objects with the TaleMaster component appear in the future,
+> they will be automatically deleted (even if the original master object was deleted at runtime). This prevents duplicate masters from being active
+> at the same time.
+
+### 4. Create the master prefab
+
+In order for Tale to work properly, the master object must be present in every scene. Duplicate master objects will be automatically
+deleted at runtime. This way, Tale can function regardless of the scene from which you start the game.
+
+You may skip this step if you wish to add optional modules. However, don't forget to come back here after you finish setting everything up.
+
+In your project, navigate to the `Assets/Prefabs` directory (create if it doesn't exist). Drag the master object into the prefab folder.
+
+It should look like this:
+
+<p align="center">
+  <img src="public/setup/tale_master_prefab.png" alt="Tale Master prefab">
+</p>
+
+After doing so, drag the prefab into any existing/future scenes, and make sure that the master object always sits at the top of the hierarchy.
+
+If you want to modify the master object (e.g. to add optional modules), you should modify the prefab. This is the reason why it is recommended to
+finish setting up Tale before creating the prefab.
+
+### 5. Test
+
+If you want to see if Tale works properly, create a game object and attach the following script to it:
+
+```cs
+using UnityEngine;
+
+public class TaleTest : MonoBehaviour
+{
+    void Start()
+    {
+        Tale.Exec(() => Debug.Log("Tale works."));
+    }
+}
+
+```
+
+Make sure to name the script `TaleTest.cs`. Press `Play` and check if `Tale works.` is logged. If so, Tale was correctly set up. You may now add optional
+modules by following the optional setup.
