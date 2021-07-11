@@ -94,4 +94,4 @@ You know you did everything right if the master looks something like this:
   <img src="public/setup/tale_master_overview.png" alt="Tale Master overview">
 </p>
 
-You don't need to make any changes, as everything listed there is optional. Details about the configuration can be found in the [Optional Setup] section.
+You don't need to make any changes, as everything listed there is optional. Details about the optional modules can be found in the [optional setup]() section.
