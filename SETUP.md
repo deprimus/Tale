@@ -107,7 +107,7 @@ deleted at runtime. This way, Tale can function regardless of the scene from whi
 
 You may skip this step if you wish to add optional modules. However, don't forget to come back here after you finish setting everything up.
 
-In your project, navigate to the `Assets/Prefabs` directory (create if it doesn't exist). Drag the master object into the prefab folder.
+In your project, navigate to the `Assets/Prefabs` directory (create it if needed). Drag the master object into the prefab folder.
 
 It should look like this:
 
