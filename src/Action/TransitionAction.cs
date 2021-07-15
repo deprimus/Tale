@@ -6,6 +6,12 @@ namespace TaleUtil
 {
     public class TransitionAction : TaleUtil.Action
     {
+        public enum Type
+        {
+            IN,
+            OUT
+        }
+
         private enum State
         {
             SETUP,
@@ -15,7 +21,7 @@ namespace TaleUtil
         private TaleUtil.Props.TransitionData data;
         private float duration;
 
-        private bool isIn;
+        private Type type;
 
         private string animatorState;
         private string trigger;
@@ -24,7 +30,7 @@ namespace TaleUtil
 
         private TransitionAction() { }
 
-        public TransitionAction(string transition, bool isIn, float duration)
+        public TransitionAction(string transition, Type type, float duration)
         {
             transition = transition.ToLowerInvariant();
 
@@ -35,11 +41,11 @@ namespace TaleUtil
             TaleUtil.Assert.NotNull(data.canvas, string.Format("Transition '{0}' does not have a canvas associated with it; did you forget to register it in TaleMaster?", transition));
             TaleUtil.Assert.NotNull(data.animator, string.Format("Transition '{0}' does not have an animator associated with it; did you forget to register it in TaleMaster?", transition));
 
-            this.isIn = isIn;
+            this.type = type;
             this.duration = duration;
 
-            animatorState = string.Format(TaleUtil.Config.TRANSITION_ANIMATOR_STATE_FORMAT, isIn ? "In" : "Out");
-            trigger = string.Format(TaleUtil.Config.TRANSITION_ANIMATOR_TRIGGER_FORMAT, isIn ? "In" : "Out");
+            animatorState = string.Format(TaleUtil.Config.TRANSITION_ANIMATOR_STATE_FORMAT, type == Type.IN ? "In" : "Out");
+            trigger = string.Format(TaleUtil.Config.TRANSITION_ANIMATOR_TRIGGER_FORMAT, type == Type.IN ? "In" : "Out");
 
             state = State.SETUP;
         }
@@ -49,7 +55,7 @@ namespace TaleUtil
             TransitionAction clone = new TransitionAction();
             clone.data = data;
             clone.duration = duration;
-            clone.isIn = isIn;
+            clone.type = type;
             clone.animatorState = animatorState;
             clone.trigger = trigger;
             clone.state = state;
@@ -86,7 +92,7 @@ namespace TaleUtil
                     data.animator.speed = 1f;
                     data.animator.SetTrigger(TaleUtil.Config.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL);
 
-                    if(isIn)
+                    if(type ==  Type.IN)
                         data.canvas.SetActive(false);
 
                     return true;

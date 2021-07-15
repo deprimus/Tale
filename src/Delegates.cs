@@ -8,5 +8,6 @@ namespace TaleUtil
     {
         public delegate void  ShallowDelegate();
         public delegate float InterpolationDelegate(float t);
+        public delegate void  CallbackDelegate<T>(T data);
     }
 }

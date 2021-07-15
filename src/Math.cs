@@ -30,14 +30,14 @@ namespace TaleUtil
 
         public static float Interpolate(float start, float end, float t)
         {
-            t = Mathf.Clamp01(t); // Clamps t between 0 and 1
+            t = Mathf.Clamp01(t);
             return start - (start - end) * t;
         }
 
         public static Color Interpolate(Color start, Color end, float t)
         {
             t = Mathf.Clamp01(t);
-            return new Color(start.r - (start.r - end.r) * t, start.g - (start.g - end.g) * t, start.b - (start.b - end.b) * t);
+            return new Color(start.r - (start.r - end.r) * t, start.g - (start.g - end.g) * t, start.b - (start.b - end.b) * t, start.a - (start.a - end.a) * t);
         }
 
         public static Vector3 Interpolate(Vector3 start, Vector3 end, float t)

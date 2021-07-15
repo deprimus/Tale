@@ -6,6 +6,7 @@ public static class Tale
     // Whether or not the TaleMaster object is alive (initially false).
     public static bool alive = false;
 
+    // Preserve the same order as in CinematicBackgroundAction (the cast will silently fail otherwise).
     public enum TransitionType
     {
         IN,
@@ -13,6 +14,7 @@ public static class Tale
     }
 
     // TODO: replace float.MinValue with Tale.Default.FLOAT everywhere else.
+    // TODO: make use of UNITY_POST_PROCESSING_STACK_V2 to check if PostProcessing is installed.
 
     public static class Default
     {
@@ -50,9 +52,17 @@ public static class Tale
     public static TaleUtil.Action Dialog(string actor, string content, bool additive = false) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, additive));
 
-    // TODO: Replace the bool type with enum, and use a cast just like in Background().
     public static TaleUtil.Action Transition(string name, TransitionType type, float duration = 1f) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.TransitionAction(name, type == TransitionType.IN, duration));
+        TaleUtil.Queue.Enqueue(new TaleUtil.TransitionAction(name, (TaleUtil.TransitionAction.Type) (int) type, duration));
+
+    public static  TaleUtil.Action Interpolate(float value, float target, TaleUtil.Delegates.CallbackDelegate<float> callback, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.InterpolationAction<float>(value, target, callback, duration, interpolation));
+
+    public static TaleUtil.Action Interpolate(UnityEngine.Color value, UnityEngine.Color target, TaleUtil.Delegates.CallbackDelegate<UnityEngine.Color> callback, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.InterpolationAction<UnityEngine.Color>(value, target, callback, duration, interpolation));
+
+    public static TaleUtil.Action Interpolate(Vector3 value, Vector3 target, TaleUtil.Delegates.CallbackDelegate<Vector3> callback, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.InterpolationAction<Vector3>(value, target, callback, duration, interpolation));
 
     public static TaleUtil.Action Wait(float amount = 1f) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.WaitAction(amount));
