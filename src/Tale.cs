@@ -24,8 +24,8 @@ public static class Tale
     public static UnityEngine.Color Color(byte value) =>
         Color(value, value, value);
 
-    public static UnityEngine.Color Color(byte red, byte green) =>
-        Color(red, green, 0);
+    public static UnityEngine.Color Color(byte value, byte alpha) =>
+        Color(value, value, value, alpha);
 
     public static UnityEngine.Color Color(byte red, byte green, byte blue, byte alpha = 255) =>
         new Color32(red, green, blue, alpha);
