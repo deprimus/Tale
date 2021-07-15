@@ -6,7 +6,7 @@ public static class Tale
     // Whether or not the TaleMaster object is alive (initially false).
     public static bool alive = false;
 
-    // Preserve the same order as in CinematicBackgroundAction (the cast will silently fail otherwise).
+    // Preserve the same order as in TransitionAction (the cast will silently fail otherwise).
     public enum TransitionType
     {
         IN,
@@ -87,7 +87,7 @@ public static class Tale
 
     public static class Music
     {
-        // Preserve the same order as in CinematicBackgroundAction (the cast will silently fail otherwise).
+        // Preserve the same order as in MusicAction (the cast will silently fail otherwise).
         public enum PlayMode
         {
             ONCE,
