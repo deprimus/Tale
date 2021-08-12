@@ -196,8 +196,8 @@ Next, create the actor and content objects (`UI`->`Text - TextMeshPro`). If the 
   <img src="public/setup/tale_dialog_actor_content_obj.png" alt="Tale dialog actor and content">
 </p>
 
-You may place these objects anywhere on the canvas. However, in this example, the actor and content objects will be placed inside a Panel (`UI`->`Panel`) at the
-bottom of the screen like this:
+You may place these objects anywhere on the canvas and customize them however you like (width, height, font, style, size, etc). In this example,
+the actor and content objects will be placed inside a Panel (`UI`->`Panel`) at the bottom of the screen like this:
 
 <p align="center">
   <img src="public/setup/tale_dialog_actor_content.png" alt="Tale dialog actor and content">
@@ -210,4 +210,14 @@ If you don't want to use CTC objects, you can change the alignment with no compr
 
 <p align="center">
   <img src="public/setup/tale_dialog_actor_content_alignment.png" alt="Tale dialog actor and content alignment">
+</p>
+
+You may also want to customize the overflow. In this example, the actor object uses `Ellipsis` while the content object uses `Scroll Rect`.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_actor_overflow.png" alt="Tale dialog actor overflow">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_dialog_content_overflow.png" alt="Tale dialog content overflow">
 </p>
