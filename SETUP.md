@@ -8,13 +8,31 @@ This document describes the setup process for [Tale](https://github.com/deprimus
 
 After following the setup process, you may start using Tale. Reading the [documentation]() is highly recommended for beginner users.
 
-This guide includes images meant to aid you. If they are too small, you can click on them to view them at their original resolution.
-
 This setup assumes you have at least minimal knowledge about Unity, the entity component system (ECS), and the C# programming language.
 You need to know what components are and how to add them to objects. The optional setup may require additional knowledge.
 
 The setup is split into 2 parts: required and optional. The former describes how to set up the Tale core, while the latter describes
 how to set up optional modules.
+
+## Glossary
+
+Here are a collection of words that you will encounter in the context of Tale.
+
+- Prop: an object or component which can be manipulated by Tale. Usually refers to a GameObject, an Animator, an AudioSource, etc
+- Master: the Tale Master object which has a `TaleMaster` component
+- Queue: actions are placed on a queue. After the first action in the queue finishes, it is removed the next one starts. This goes on forever
+- Parallel: some actions can be added to the the parallel list. All of the actions in the parallel list execute at the same time, and also
+don't interfere with the queue. Once an action is finished, it is removed from the list
+- Parallel Pointer: points to one or more actions that are in the parallel list, usually used to manually remove actions
+- Multiplex: a multiplex action. Executes multiple actions at a time until they all finish. After that, the multiplex action is marked as finished
+- Group: a GameObject which has the purpose of grouping props of a certain category (dialog, audio, etc)
+- Actor: the person who speaks in a dialog
+- Override Dialog: normal dialog. When an actor speaks, the dialog text will be erased and replaced by the new reply
+- Additive Dialog: when an actor speaks using additive mode, the next reply will be added to the current dialog text
+- CTC: click-to-continue, in the context of dialog. This refers to the object that appears when the user is prompted to click or press a button in order to advance
+- ACTC: alternative CTC, which appears when there is additive dialog
+- Cinematic: the cinematic canvas, which can contain an image, a video, or subtitles. Usually used to show cutscenes or introduction text
+- Subtitles: text on the cinematic canvas, usually used as a way of storytelling or as actual subtitles for a video
 
 ## Prerequisites
 
@@ -43,7 +61,7 @@ In your project, if the `Assets/Scripts` directory doesn't exist, create it. Ins
 Go to the Tale source code, navigate inside the `src` folder, and copy everything to the `Assets/Scripts/Tale` folder.
 This path is not imposed, but recommended.
 
-You know you did everything right if the `Tale` directory looks something like this:
+The `Tale` directory should look something like this:
 
 <p align="center">
   <img src="public/setup/tale_dir.png" alt="The Tale directory">
@@ -88,7 +106,7 @@ is at the top of the hierarchy.
   <img src="public/setup/tale_master_component.png" alt="Tale Master object">
 </p>
 
-You know you did everything right if the master looks something like this:
+The master object should look something like this:
 
 <p align="center">
   <img src="public/setup/tale_master_overview.png" alt="Tale Master overview">
@@ -139,3 +157,57 @@ public class TaleTest : MonoBehaviour
 
 Make sure to name the script `TaleTest.cs`. Press `Play` and check if `Tale works.` is logged. If so, Tale was correctly set up. You may now add optional
 modules by following the optional setup.
+
+## Optional Setup
+
+This section contains all necessary steps required to set up any optional modules. The modules can be set up in no particular order. However, for the sake
+of this guide, the modules will be set up in the order that they appear in.
+
+Optional modules may require extra objects (props). These should be children of the master object.
+
+### Dialog
+
+The dialog module uses the following props:
+
+- a canvas
+- an object with an Animator component (this object can be the canvas itself)
+- two objects with TextMeshProUGUI components (one for the actor, one for the content)
+- two objects with Animator components (for CTC and ACTC; both are optional)
+
+First, create the dialog canvas and name it `Dialog Canvas`. If an EventSystem object is created, make sure that it is also a child of the master object.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas.png" alt="Tale dialog canvas">
+</p>
+
+Make sure to change the scale mode to `Scane With Screen Size`. You can customize the reference resolution and match mode. In this example, 1920x1080 will be used.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_scaler.png" alt="Tale dialog canvas scaler">
+</p>
+
+Next, create the actor and content objects (`UI`->`Text - TextMeshPro`). If the following window pops up, click on `Import TMP Essentials`.
+
+<p align="center">
+  <img src="public/setup/tale_tmp_import.png" alt="Tale TMP import">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_dialog_actor_content_obj.png" alt="Tale dialog actor and content">
+</p>
+
+You may place these objects anywhere on the canvas. However, in this example, the actor and content objects will be placed inside a Panel (`UI`->`Panel`) at the
+bottom of the screen like this:
+
+<p align="center">
+  <img src="public/setup/tale_dialog_actor_content.png" alt="Tale dialog actor and content">
+</p>
+
+Both objects should have their alignments set to top-left. You may change this, however please note that you won't be able to make use of CTC objects because
+the position can only be determined accurately with top-left alignment. Other alignments will make the CTC objects appear in unexpected places.
+
+If you don't want to use CTC objects, you can change the alignment with no compromises.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_actor_content_alignment.png" alt="Tale dialog actor and content alignment">
+</p>
