@@ -165,7 +165,13 @@ of this guide, the modules will be set up in the order that they appear in.
 
 Optional modules may require extra objects (props). These should be children of the master object.
 
+Some modules make use of the Tale config file, which is located in `Assets/Scripts/Tale` (the Tale source code). The file is named `Config.cs`, and allows
+you to adjust various parameters. Each module will describe each parameter that it makes use of.
+
 ### Dialog
+
+The dialog module can be used to show dialog on the screen. Animations can be added in order to gracefully transition to and from dialog. There are also
+CTC objects, which are there to prompt the player to click or press a button in order to advance the dialog.
 
 The dialog module uses the following props:
 
@@ -173,6 +179,18 @@ The dialog module uses the following props:
 - an object with an Animator component (this object can be the canvas itself)
 - two objects with TextMeshProUGUI components (one for the actor, one for the content)
 - two objects with Animator components (for CTC and ACTC; both are optional)
+
+Here is the general flow of a dialog action:
+
+- the dialog action starts running
+- if the dialog canvas is not activated, it is activated and the DialogIn animation will be played (if animations are present)
+- the dialog actor will be set, and the content will be typed character-by-character (if the dialog is in additive mode, the content
+will be added to the existing text. Otherwise, it will replace the existing text)
+- after the content was fully typed, the CTC object will be activated and placed after the text (or ACTC if the dialog is in additive mode)
+- after the user advances the dialog, the CTC object is deactivated and:
+  - if the next action is a dialog action, the canvas is left active
+  - otherwise, the DialogOut animation is played (if present) and the canvas is deactivated
+- the dialog action ends
 
 First, create the dialog canvas and name it `Dialog Canvas`. If an EventSystem object is created, make sure that it is also a child of the master object.
 
@@ -196,7 +214,7 @@ Next, create the actor and content objects (`UI`->`Text - TextMeshPro`). If the 
   <img src="public/setup/tale_dialog_actor_content_obj.png" alt="Tale dialog actor and content">
 </p>
 
-You may place these objects anywhere on the canvas and customize them however you like (width, height, font, style, size, etc). In this example,
+You may place these objects anywhere on the canvas and customize them however you like (width, height, font, style, etc). In this example,
 the actor and content objects will be placed inside a Panel (`UI`->`Panel`) at the bottom of the screen like this:
 
 <p align="center">
@@ -220,4 +238,117 @@ You may also want to customize the overflow. In this example, the actor object u
 
 <p align="center">
   <img src="public/setup/tale_dialog_content_overflow.png" alt="Tale dialog content overflow">
+</p>
+
+#### Animations
+
+Every time a dialog action starts or ends, an animation will played in order to make a transition between normal gameplay and dialog.
+You may skip adding animations, as they are entirely optional (in which case the dialog canvas will be the activated and deactivated with no transition).
+
+If you want to add animations, you will need an Animator component (it doesn't have to be attached to the dialog canvas; it can be attached to,
+for example, the panel that holds the actor and content objects). The animations can behave in any way: they can change the canvas opacity,
+they can just move an object (e.g. a panel), or they can do something entirely different.
+
+There are only 2 constraints:
+- the controller must have 2 animations: one for DialogIn and one for DialogOut
+- the controller must have 3 states: one for DialogIn, one for DialogOut, and one for Idle (Entry and Any State do not count).
+- the states need to be connected in a certain way (see below)
+
+In this example, the canvas opacity will be animated. In order to do this, a `Canvas Group` component will be added to the canvas.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_group.png" alt="Tale dialog canvas group">
+</p>
+
+Two animations will be added:
+
+- DialogIn: changes the canvas opacity from 0 to 1 in 0.5s
+- DialogOut: changes the canvas opacity from 1 to 0 in 0.5s
+
+It is recommended to save the animations in `Assets/Animations/Tale`.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animation_path.png" alt="Tale dialog canvas animation path">
+</p>
+
+Make sure the dialog canvas has an `Animator` component and that the controller is set correctly. Make sure that the animator component
+is enabled (it may be disabled by default).
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animator_component.png" alt="Tale dialog canvas animator component">
+</p>
+
+The animations must not have loop time. This is checked by default, so make sure to uncheck it.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animation_loop.png" alt="Tale dialog canvas animation loop">
+</p>
+
+The animation controller now needs to be set up in the `Animator` window. The states may look like this:
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animator_initial.png" alt="Tale dialog canvas animator initial">
+</p>
+
+Create a new state called `Idle`, and set it as the layer default state.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animator_idle.png" alt="Tale dialog canvas animator idle">
+</p>
+
+For both animations, make sure to uncheck `Write Defaults`. It may interfere with Tale if left enabled,
+because Tale changes some properties of the canvas object behind the scenes and these changes may be overwritten by the animation.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animator_write_defaults.png" alt="Tale dialog canvas animator write defaults">
+</p>
+
+Make sure the states corresponding to the animations are named exactly `DialogIn` and `DialogOut`. This is needed because Tale makes use of those names.
+
+If you don't like these names, you may change them in the config file. Simply navigate to `Assets/Scripts/Tale` (the tale source code), and open the `Config.cs`
+file. Next, change the following:
+
+- DIALOG_CANVAS_ANIMATOR_STATE_IN: this is the name of the state corresponding to the DialogIn animation
+- DIALOG_CANVAS_ANIMATOR_STATE_OUT: this is the name of the state corresponding to the DialogOut animation
+
+The state names must match these values. In this guide, the default names will be used.
+
+After you make the changes, you can use the names that you provided. It's important to not use the same name for both states, as this leads to undefined behavior.
+
+Create 3 triggers: one named `TransitionIn`, one named `TransitionOut` and one named `Neutral`. Like the animation states, the transitions must have these exact names,
+which can be changed from the config file:
+
+- DIALOG_CANVAS_ANIMATOR_TRIGGER_IN: this is for the `Idle`->`DialogIn` transition
+- DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT: this is for the `Idle`->`DialogOut` transition.
+- DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL: this is for the `DialogIn`->`Idle` and `DialogOut`->`Idle` transitions
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animator_triggers.png" alt="Tale dialog canvas animator triggers">
+</p>
+
+Create the `Idle`->`DialogIn` transition, uncheck `Has Exit Time` and set the condition to `TransitionIn` (the name of your `In` trigger).
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animator_transition1.png" alt="Tale dialog canvas animator transition 1">
+</p>
+
+Create the `Idle`->`DialogOut` transition in the same way (uncheck `HasExitTime`, set the condition to `TransitionOut`). You should end up with something like this:
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animator_transition2.png" alt="Tale dialog canvas animator transition 2">
+</p>
+
+Next, create the `DialogIn`->`Idle` transition. Uncheck `Has Exit Time`, set the condition to `Neutral` (the neutral trigger), open the settings menu and set
+the transition duration to 0 (because the transition should happen immediately after the animation finishes).
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animator_transition3.png" alt="Tale dialog canvas animator transition 3">
+</p>
+
+Create the `DialogOut`->`Idle` transition in the same way (no exit time, neutral trigger, transition time set to 0).
+
+The final controller should look like this.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_canvas_animator_transition4.png" alt="Tale dialog canvas animator transition 4">
 </p>
