@@ -316,7 +316,7 @@ The state names must match these values. In this guide, the default names will b
 
 After you make the changes, you can use the names that you provided. It's important to not use the same name for both states, as this leads to undefined behavior.
 
-Create 3 triggers: one named `TransitionIn`, one named `TransitionOut` and one named `Neutral`. Like the animation states, the transitions must have these exact names,
+Create 3 triggers: one named `TransitionIn`, one named `TransitionOut` and one named `Neutral`. Like the animation states, the triggers must have these exact names,
 which can be changed from the config file:
 
 - DIALOG_CANVAS_ANIMATOR_TRIGGER_IN: this is for the `Idle`->`DialogIn` transition
