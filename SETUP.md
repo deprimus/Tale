@@ -204,7 +204,8 @@ Make sure to change the scale mode to `Scale With Screen Size`. You can customiz
   <img src="public/setup/tale_dialog_canvas_scaler.png" alt="Tale dialog canvas scaler">
 </p>
 
-Next, create the actor and content objects (`UI`->`Text - TextMeshPro`). If the following window pops up, click on `Import TMP Essentials`.
+Next, create the actor and content objects (`UI`->`Text - TextMeshPro`). In this example, they will be placed inside a Panel (`UI`->`Panel`).
+If the following window pops up, click on `Import TMP Essentials`.
 
 <p align="center">
   <img src="public/setup/tale_tmp_import.png" alt="Tale TMP import">
@@ -215,7 +216,7 @@ Next, create the actor and content objects (`UI`->`Text - TextMeshPro`). If the 
 </p>
 
 You may place these objects anywhere on the canvas and customize them however you like (width, height, font, style, etc). In this example,
-the actor and content objects will be placed inside a Panel (`UI`->`Panel`) at the bottom of the screen like this:
+the actor and content objects will be placed at the bottom of the screen inside a panel like this:
 
 <p align="center">
   <img src="public/setup/tale_dialog_actor_content.png" alt="Tale dialog actor and content">
