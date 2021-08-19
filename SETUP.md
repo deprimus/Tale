@@ -198,7 +198,7 @@ First, create the dialog canvas and name it `Dialog Canvas`. If an EventSystem o
   <img src="public/setup/tale_dialog_canvas.png" alt="Tale dialog canvas">
 </p>
 
-Make sure to change the scale mode to `Scane With Screen Size`. You can customize the reference resolution and match mode. In this example, 1920x1080 will be used.
+Make sure to change the scale mode to `Scale With Screen Size`. You can customize the reference resolution and match mode. In this example, 1920x1080 will be used.
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_scaler.png" alt="Tale dialog canvas scaler">
