@@ -383,7 +383,7 @@ You can use sorting layers for this.
 You may also add animations to these objects (looping animations that go on forever). Tale will only reposition, hide, and show the objects as needed,
 and will not tamper with anything else.
 
-If the CTC position feels off, you can make changes in the config file:
+If the CTC position feels off, you can change the following options in the config file:
 
 - DIALOG_CTC_OVERRIDE_OFFSET_X: the X offset for the normal dialog CTC object
 - DIALOG_CTC_OVERRIDE_OFFSET_Y: the Y offset for the normal dialog CTC object
