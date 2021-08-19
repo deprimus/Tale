@@ -339,14 +339,14 @@ Create the `Idle`->`DialogOut` transition in the same way (uncheck `HasExitTime`
   <img src="public/setup/tale_dialog_canvas_animator_transition2.png" alt="Tale dialog canvas animator transition 2">
 </p>
 
-Next, create the `DialogIn`->`Idle` transition. Uncheck `Has Exit Time`, set the condition to `Neutral` (the neutral trigger), open the settings menu and set
-the transition duration to 0 (because the transition should happen immediately after the animation finishes).
+Next, create the `DialogIn`->`Idle` transition. Uncheck `Has Exit Time`, set the condition to `Neutral` (the neutral trigger), open the settings menu, set
+the transition duration to 0 (because the transition should happen immediately after the animation finishes), and set the condition to `Neutral`.
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_animator_transition3.png" alt="Tale dialog canvas animator transition 3">
 </p>
 
-Create the `DialogOut`->`Idle` transition in the same way (no exit time, neutral trigger, transition time set to 0).
+Create the `DialogOut`->`Idle` transition in the same way (no exit time, transition time set to 0, neutral trigger).
 
 The final controller should look like this.
 
