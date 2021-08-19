@@ -389,8 +389,8 @@ If the CTC position feels off, you can change the following options in the confi
 - DIALOG_CTC_OVERRIDE_OFFSET_Y: the Y offset for the normal dialog CTC object
 - DIALOG_CTC_ADDITIVE_OFFSET_X: the X offset for the additive dialog ACTC object
 - DIALOG_CTC_ADDITIVE_OFFSET_Y: the Y offset for the additive dialog ACTC object
-- DIALOG_CTC_OVERRIDE_ALIGNMENT: the origin from which to calculate the offsets. Can be either the middle of the text line or the text baseline (the difference
-is that the baseline is lower)
+- DIALOG_CTC_OVERRIDE_ALIGNMENT: the origin from which to calculate the offsets. Can be either the middle or the baseline of the last text line
+(the difference is that the baseline is lower)
 - DIALOG_CTC_ADDITIVE_ALIGNMENT: same as above but for ACTC
 
 #### Config
