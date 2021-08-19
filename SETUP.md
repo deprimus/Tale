@@ -380,7 +380,8 @@ The objects can be placed anywhere on the canvas, as they will be positioned by 
 In some cases, you may want to make sure that the CTC objects render in front of the text and other dialog canvas elements (e.g. panel).
 You can use sorting layers for this.
 
-You may also add animations to these objects (looping animations that go on forever). Tale will automatically hide and show the objects as needed.
+You may also add animations to these objects (looping animations that go on forever). Tale will only reposition, hide, and show the objects as needed,
+and will not tamper with anything else.
 
 If the CTC position feels off, you can make changes in the config file:
 
