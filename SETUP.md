@@ -30,7 +30,7 @@ don't interfere with the queue. Once an action is finished, it is removed from t
 - Override Dialog: normal dialog. When an actor speaks, the dialog text will be erased and replaced by the new reply
 - Additive Dialog: when an actor speaks using additive mode, the next reply will be added to the current dialog text
 - CTC: click-to-continue, in the context of dialog. This refers to the object that appears when the user is prompted to click or press a button in order to advance
-- ACTC: alternative CTC, which appears when there is additive dialog
+- ACTC: additive CTC, which appears when there is additive dialog
 - Cinematic: the cinematic canvas, which can contain an image, a video, or subtitles. Usually used to show cutscenes or introduction text
 - Subtitles: text on the cinematic canvas, usually used as a way of storytelling or as actual subtitles for a video
 
@@ -171,14 +171,14 @@ you to adjust various parameters. Each module will describe each parameter that 
 ### Dialog
 
 The dialog module can be used to show dialog on the screen. Animations can be added in order to gracefully transition to and from dialog. There are also
-CTC objects, which are there to prompt the player to click or press a button in order to advance the dialog.
+CTC (click-to-continue) objects, which are objects that appear on the screen to prompt the player to click or press a button in order to advance the dialog.
 
 The dialog module uses the following props:
 
 - a canvas
-- an object with an Animator component (this object can be the canvas itself)
+- an Animator component (may be attached to the canvas itself)
 - two objects with TextMeshProUGUI components (one for the actor, one for the content)
-- two objects with Animator components (for CTC and ACTC; both are optional)
+- two objects, CTC and ACTC (both are optional)
 
 Here is the general flow of a dialog action:
 
@@ -353,3 +353,51 @@ The final controller should look like this.
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_animator_transition4.png" alt="Tale dialog canvas animator transition 4">
 </p>
+
+#### CTC Objects
+
+After the dialog content is written, the user has to click or press a button in order to advance the dialog. To indicate to the user to do so,
+Tale can show an object on the screen at the end of the dialog content. This object is called CTC (click-to-continue) and can be anything
+(e.g. an animated arrow).
+
+There are 2 CTC objects: one for normal dialog and one for additive dialog (this object is also called ACTC, which stands for additive CTC).
+Both objects are optional and are created in the same way.
+
+To add support for CTC, simply create an object on the dialog canvas (e.g. an image). In this example, 2 objects were created:
+one to serve as the CTC and the other to serve as the ACTC. The objects are placed inside a panel, along with the other dialog props.
+Both objects are simple images, the CTC object having the color green.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_ctc_objects.png" alt="Tale dialog CTC objects">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_dialog_ctc_object_properties.png" alt="Tale dialog CTC object properties">
+</p>
+
+The objects can be placed anywhere on the canvas, as they will be positioned by Tale.
+
+In some cases, you may want to make sure that the CTC objects render in front of the text and other dialog canvas elements (e.g. panel).
+You can use sorting layers for this.
+
+You may also add animations to these objects (looping animations that go on forever). Tale will automatically hide and show the objects as needed.
+
+If the CTC position feels off, you can make changes in the config file:
+
+- DIALOG_CTC_OVERRIDE_OFFSET_X: the X offset for the normal dialog CTC object
+- DIALOG_CTC_OVERRIDE_OFFSET_Y: the Y offset for the normal dialog CTC object
+- DIALOG_CTC_ADDITIVE_OFFSET_X: the X offset for the additive dialog ACTC object
+- DIALOG_CTC_ADDITIVE_OFFSET_Y: the Y offset for the additive dialog ACTC object
+- DIALOG_CTC_OVERRIDE_ALIGNMENT: the origin from which to calculate the offsets. Can be either the middle of the text line or the text baseline (the difference
+is that the baseline is lower)
+- DIALOG_CTC_ADDITIVE_ALIGNMENT: same as above but for ACTC
+
+#### Config
+
+Other config options for the dialog are:
+
+- DIALOG_CPS: characters-per-second, how fast to type the dialog content
+- DIALOG_KEY_NEXT: an array of keys which, when pressed, advance the dialog
+- DIALOG_KEY_SKIP: the key which, when held down, instantly skips over the dialog
+- DIALOG_ADDITIVE_SEPARATOR: when an additive dialog action is executed, this will be appended to the old content. If this is `" "`, writing `Test.` after `Hello.`
+in additive mode will yield `Hello. Test.`.
