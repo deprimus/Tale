@@ -306,7 +306,7 @@ because Tale changes some properties of the canvas object behind the scenes and 
 
 Make sure the states corresponding to the animations are named exactly `DialogIn` and `DialogOut`. This is needed because Tale makes use of those names.
 
-If you don't like these names, you may change them in the config file. Simply navigate to `Assets/Scripts/Tale` (the tale source code), and open the `Config.cs`
+If you don't like these names, you may change them in the config file. Simply navigate to `Assets/Scripts/Tale` (the Tale source code), and open the `Config.cs`
 file. Next, change the following:
 
 - DIALOG_CANVAS_ANIMATOR_STATE_IN: this is the name of the state corresponding to the DialogIn animation
