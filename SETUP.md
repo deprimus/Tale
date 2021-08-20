@@ -152,7 +152,6 @@ public class TaleTest : MonoBehaviour
         Tale.Exec(() => Debug.Log("Tale works."));
     }
 }
-
 ```
 
 Make sure to name the script `TaleTest.cs`. Press `Play` and check if `Tale works.` is logged. If so, Tale was correctly set up. You may now add optional
@@ -272,8 +271,8 @@ It is recommended to save the animations in `Assets/Animations/Tale`.
   <img src="public/setup/tale_dialog_canvas_animation_path.png" alt="Tale dialog canvas animation path">
 </p>
 
-Make sure the dialog canvas has an `Animator` component and that the controller is set correctly. Make sure that the animator component
-is enabled (it may be disabled by default).
+Make sure the dialog canvas has an **active** `Animator` component and that the controller is set correctly.
+Set the update mode to `Unscaled Time`.
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_animator_component.png" alt="Tale dialog canvas animator component">
@@ -297,8 +296,8 @@ Create a new state called `Idle`, and set it as the layer default state.
   <img src="public/setup/tale_dialog_canvas_animator_idle.png" alt="Tale dialog canvas animator idle">
 </p>
 
-For both animations, make sure to uncheck `Write Defaults`. It may interfere with Tale if left enabled,
-because Tale changes some properties of the canvas object behind the scenes and these changes may be overwritten by the animation.
+For all states, make sure to uncheck `Write Defaults`. It may interfere with Tale if left checked,
+because Tale changes some properties of the canvas object behind the scenes and these changes may be overwritten by the states.
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_animator_write_defaults.png" alt="Tale dialog canvas animator write defaults">
@@ -402,3 +401,50 @@ Other config options for the dialog are:
 - DIALOG_KEY_SKIP: the key which, when held down, instantly skips over the dialog
 - DIALOG_ADDITIVE_SEPARATOR: when an additive dialog action is executed, this will be appended to the old content. If this is `" "`, writing `Test.` after `Hello.`
 in additive mode will yield `Hello. Test.`.
+
+#### Finishing up
+
+After setting up the dialog module, make sure that:
+
+- the dialog canvas is **not active**, and has its properties set to the same values as the starting values for the DialogIn animation (e.g. if your animation
+changes the canvas opacity from 0 to 1, make sure the canvas opacity is 0; only do this if animations are present)
+- The event system object is **active**
+- the actor and content objects are **active** and have **no text**
+- the CTC and ACTC are **not active** (if present)
+
+Tale will automatically activate and deactivate the props when needed, and expects these initial values.
+
+In order for Tale to make use of the dialog module props, you need to register these props in the Tale master object.
+Simply click on the master object and drag the objects where they belong.
+
+<p align="center">
+  <img src="public/setup/tale_dialog_props.png" alt="Tale dialog props">
+</p>
+
+#### Test
+
+You can test the dialog module by creating a dialog action. In this example, the previously mentioned test script is used:
+
+```
+using UnityEngine;
+
+public class TaleTest : MonoBehaviour
+{
+    void Start()
+    {
+        Tale.Exec(() => Debug.Log("Tale works."));
+        Tale.Exec(() => Debug.Log("Testing Dialog..."));
+
+        Tale.Dialog("Test Actor", "Test Content");
+    }
+}
+```
+
+> Note: When you click Play in the editor, the deltaTime may be unstable in the first few frames. Because of this, if you
+> create a dialog action right at the start, the DialogIn animation may have most of its frames skipped, making it look like
+> the animation doesn't play. In this example, it should work fine because there are two exec actions before the dialog action,
+> so it takes multiple frames to reach the dialog action (at which point the deltaTime is not as unstable). This may only be an
+> issue if you create a dialog action that executes immediately after the Play button is pressed. This issue should not appear
+> in builds.
+>
+> A fix for this issue is to use Tale.Wait(0.001f) at the beginning.
