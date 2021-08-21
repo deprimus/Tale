@@ -394,7 +394,7 @@ If the CTC position feels off, you can change the following options in the confi
 
 #### Config
 
-Other config options for the dialog are:
+Other config options for the dialog module are:
 
 - DIALOG_CPS: characters-per-second, how fast to type the dialog content
 - DIALOG_KEY_NEXT: an array of keys which, when pressed, advance the dialog
@@ -514,7 +514,7 @@ Follow the steps listed in the `Music` section, but name the object `Voice` inst
 
 #### Config
 
-The config options for the audio are:
+The config options for the audio module are:
 
 - ASSET_ROOT_AUDIO_SOUND: the resources root directory for all sounds. This will be prepended to all sound paths. Must end with `/`.
 If this is `Audio/Sound/`, and a sound action is created with the path `test`, the `Assets/Resources/Audio/Sound/test` file will be loaded.
