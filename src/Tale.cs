@@ -104,13 +104,13 @@ public static class Tale
 
         // TODO: Change the asset root to MUSIC.
         public static TaleUtil.Action Play(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(new List<string>(1) { TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(new List<string>(1) { TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Play(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND, new List<string>(paths)), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Play(List<string> paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_SOUND, paths), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_MUSIC, paths), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Stop(float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.MusicAction(duration, interpolation));

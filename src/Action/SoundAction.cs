@@ -27,7 +27,7 @@ namespace TaleUtil
             TaleUtil.Assert.NotNull(TaleUtil.Props.audio.soundGroup, "SoundAction requires a sound group object; did you forget to register it in TaleMaster?");
             TaleUtil.Assert.NotNull(TaleUtil.Props.audio.group, "SoundAction requires an audio group object; did you forget to register it in TaleMaster?");
             TaleUtil.Assert.Condition(channel >= 0 && channel < TaleUtil.Props.audio.sound.Length, string.Format("Invalid sound channel '{0}'. Expected channel between '{1}' and '{2}' (inclusive)", channel, 0, TaleUtil.Props.audio.sound.Length - 1));
-            TaleUtil.Assert.NotNull(TaleUtil.Props.audio.sound[channel], string.Format("Channel '{0}' does not have an audio source associated with it; did you forget to register it in TaleMaster?"));
+            TaleUtil.Assert.NotNull(TaleUtil.Props.audio.sound[channel], string.Format("Channel '{0}' does not have an audio source associated with it; did you forget to register it in TaleMaster?", channel));
 
             this.channel = channel;
             this.path = path;

@@ -175,7 +175,7 @@ CTC (click-to-continue) objects, which are objects that appear on the screen to 
 The dialog module uses the following props:
 
 - a canvas
-- an Animator component (may be attached to the canvas itself)
+- an Animator component (can be attached to the canvas itself)
 - two objects with TextMeshProUGUI components (one for the actor, one for the content)
 - two objects, CTC and ACTC (both are optional)
 
@@ -185,7 +185,7 @@ Here is the general flow of a dialog action:
 - if the dialog canvas is not activated, it is activated and the DialogIn animation will be played (if animations are present)
 - the dialog actor will be set, and the content will be typed character-by-character (if the dialog is in additive mode, the content
 will be added to the existing text. Otherwise, it will replace the existing text)
-- after the content was fully typed, the CTC object will be activated and placed after the text (or ACTC if the dialog is in additive mode)
+- after the content is fully typed, the CTC object will be activated and placed after the text (or ACTC if the dialog is in additive mode)
 - after the user advances the dialog, the CTC object is deactivated and:
   - if the next action is a dialog action, the canvas is left active
   - otherwise, the DialogOut animation is played (if present) and the canvas is deactivated
@@ -425,7 +425,7 @@ Simply click on the master object and drag the objects where they belong.
 
 You can test the dialog module by creating a dialog action. In this example, the previously mentioned test script is used:
 
-```
+```cs
 using UnityEngine;
 
 public class TaleTest : MonoBehaviour
@@ -448,3 +448,126 @@ public class TaleTest : MonoBehaviour
 > in builds.
 >
 > A fix for this issue is to use Tale.Wait(0.001f) at the beginning.
+
+### Audio
+
+The audio module can be used to play sounds and music. It is also used for dialog voices (this will be added in the future).
+Tale supports multi-channel sound. A channel is simply an AudioSource. The more channels you have, the more sounds you will
+be able to play at the same time. You can control each channel individually.
+
+This module uses the following props:
+
+- an object with an AudioSource component for the music
+- multiple objects with AudioSource components for sounds (one for each channel)
+- an object with an AudioSource component for the voice
+
+Create an empty object called `Audio`. Make sure it is a child of the master object.
+
+<p align="center">
+  <img src="public/setup/tale_audio_object.png" alt="Tale audio object">
+</p>
+
+#### Music
+To add music support, create an object called `Music` and add an AudioSource component to it.
+
+<p align="center">
+  <img src="public/setup/tale_audio_music_object.png" alt="Tale audio music object">
+</p>
+
+Next, make the following changes to the AudioSource:
+
+1. uncheck `Play On Awake`
+2. set the `Priority` to high (in this case, it corresponds to the value 0)
+3. open the `3D Sound Settings` and set the `Doppler Level` to 0
+4. set the `Volume Rolloff` to `Linear Rolloff`
+5. set the `Max Distance` to a  high number, like 10100
+6. set the `Min Distance` to a value close to the max distance, like 10000
+
+<p align="center">
+  <img src="public/setup/tale_audio_music_properties.png" alt="Tale audio music properties">
+</p>
+
+#### Sound
+To add sound support, create an empty object called `Sound`. This will group all sound channels.
+
+<p align="center">
+  <img src="public/setup/tale_audio_sound_object.png" alt="Tale audio sound object">
+</p>
+
+Next, add as many channels as you want. These are objects that have AudioSource components (like the music object).
+Make sure they are children of the sound object. Name them `ChannelN` where N is `0`->`number of channels - 1`.
+In this example, 4 channels are created.
+
+<p align="center">
+  <img src="public/setup/tale_audio_sound_channels_objects.png" alt="Tale audio sound channels objects">
+</p>
+
+Each channel should have an AudioSource component. Make the same changes that were listed above in the `Music` channel
+(uncheck `Play On Awake` etc). Each channel should look exactly like the music object.
+
+#### Voice
+Follow the steps listed in the `Music` section, but name the object `Voice` instead.
+
+<p align="center">
+  <img src="public/setup/tale_audio_voice_object.png" alt="Tale audio voice object">
+</p>
+
+#### Config
+
+The config options for the audio are:
+
+- ASSET_ROOT_AUDIO_SOUND: the resources root directory for all sounds. This will be prepended to all sound paths. Must end with `/`.
+If this is `Audio/Sound/`, and a sound action is created with the path `test`, the `Assets/Resources/Audio/Sound/test` file will be loaded.
+- ASSET_ROOT_AUDIO_MUSIC: same as above, but for music
+
+#### Finishing up
+
+After setting up the audio module, make sure that:
+
+- the audio object is **not active**
+- the music object is **not active**
+- every channel object, as well as the sound object, are all **not active**
+- the voice object is **not active**
+
+Tale will automatically activate and deactivate the props when needed, and expects these initial values.
+
+In order for Tale to make use of the audio module props, you need to register these props in the Tale master object.
+Simply click on the master object and drag the objects where they belong.
+
+Remarks:
+- the audio object goes to the `Group`
+- the sound object goes to the `Sound Group`
+- for every channel, add an element for `Audio Sound` (make sure that the channels are listed in order)
+
+<p align="center">
+  <img src="public/setup/tale_audio_props.png" alt="Tale audio props">
+</p>
+
+#### Test
+
+You can test the audio module by creating sound and music actions. Make sure to have test audio files prepared in the path
+specified in the config (by default, `Resources/Audio/Sound` and `Resources/Audio/Music`). Note that you don't need to specify the
+file extension when creating an audio action. In this example, the previously mentioned test script is used:
+
+```cs
+using UnityEngine;
+
+public class TaleTest : MonoBehaviour
+{
+    void Start()
+    {
+        Tale.Exec(() => Debug.Log("Tale works."));
+        Tale.Exec(() => Debug.Log("Testing Audio..."));
+
+        // Note that sound and music actions are blocking, meaning that they will play sequentially and not at the same time.
+        // You can use Tale.Parallel to make full use of music and multiple sound channels, but that is out of the scope of this guide.
+
+        Tale.Sound.Play("test_sound");    // Plays on channel 0. You should test all of your channels.
+        Tale.Sound.Play(1, "test_sound"); // Plays on channel 1
+        Tale.Sound.Play(2, "test_sound"); // Plays on channel 2
+        Tale.Sound.Play(3, "test_sound"); // Plays on channel 3
+
+        Tale.Music.Play("test_music");
+    }
+}
+```
