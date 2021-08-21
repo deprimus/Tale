@@ -546,7 +546,7 @@ Remarks:
 #### Test
 
 You can test the audio module by creating sound and music actions. Make sure that you have test audio files prepared in the path
-specified in the config (by default, `Resources/Audio/Sound` and `Resources/Audio/Music`). Note that you don't need to specify the
+specified in the config (by default, `Resources/Audio/Sound/` and `Resources/Audio/Music/`). Note that you don't need to specify the
 file extension when creating an audio action. In this example, the previously mentioned test script is used:
 
 ```cs
