@@ -502,7 +502,7 @@ In this example, 4 channels are created.
   <img src="public/setup/tale_audio_sound_channels_objects.png" alt="Tale audio sound channels objects">
 </p>
 
-Each channel should have an AudioSource component. Make the same changes that were listed above in the `Music` channel
+Each channel should have an AudioSource component. Make the same changes that were listed above in the `Music` section
 (uncheck `Play On Awake` etc). Each channel should look exactly like the music object.
 
 #### Voice
