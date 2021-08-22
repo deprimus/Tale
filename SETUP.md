@@ -633,12 +633,12 @@ It is recommended to save the animations in `Assets/Animations/Tale`. For the An
 </p>
 
 > You may notice that the dialog animations are:
-> In - the dialog canvas is shown
-> Out - the dialog vanvas is hidden
+> - In - the dialog canvas is shown
+> - Out - the dialog vanvas is hidden
 >
 > ...while the transition animations are the opposite:
-> In - the transition canvas is hidden
-> Out - the transition canvas is shown
+> - In - the transition canvas is hidden
+> - Out - the transition canvas is shown
 >
 > While it makes sense to say "FadeIn - fades in the fade transition canvas", it's unnatural to say "fade in" when you want to
 > fade out of the scene, and "fade out" when you want to fade into the scene. This is why transitions have the animation names reversed.
