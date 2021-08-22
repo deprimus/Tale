@@ -535,14 +535,14 @@ Tale will automatically activate and deactivate the props when needed, and expec
 In order for Tale to make use of the audio module props, you need to register these props in the Tale master object.
 Simply click on the master object and drag the objects where they belong.
 
+<p align="center">
+  <img src="public/setup/tale_audio_props.png" alt="Tale audio props">
+</p>
+
 Remarks:
 - the audio object goes to the `Group`
 - the sound object goes to the `Sound Group`
 - for every channel, add an element for `Audio Sound` (make sure that the channels are listed in order)
-
-<p align="center">
-  <img src="public/setup/tale_audio_props.png" alt="Tale audio props">
-</p>
 
 #### Test
 
@@ -734,6 +734,10 @@ Tale will automatically activate and deactivate the props when needed, and expec
 In order for Tale to make use of the transition props, you need to register these props in the Tale master object.
 Simply click on the master object and drag the objects where they belong.
 
+<p align="center">
+  <img src="public/setup/tale_transition_props.png" alt="Tale transition props">
+</p>
+
 Remarks:
 - you may add as many transitions as you want; simply repeat all of the above steps for each transition
 - transition names are **case-insensitive**, meaning that, for example, you can name a transition `Fade` and reference it as `fade`
@@ -743,10 +747,6 @@ the last one will be kept
 everything else. Otherwise, you may end up, for example, having the dialog box in front of the fade transition. If, however, that is your intention,
 you may even make the transition canvas have a lower order than the dialog canvas. Tale does not impose any order, it's up to you.
 You can change this order via the `Sort Order` canvas parameter.
-
-<p align="center">
-  <img src="public/setup/tale_transition_props.png" alt="Tale transition props">
-</p>
 
 #### Test
 
