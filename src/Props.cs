@@ -37,7 +37,6 @@ namespace TaleUtil
 
             transitions = new Dictionary<string, TransitionData>();
 
-            // TODO: Find a way to accept case-insensitive transition (AnimatorStateInfo.IsName is case-sensitive).
             for(int i = 0; i < transitionArray.Length; ++i)
             {
                 if(transitionArray[i].data.canvas == null || transitionArray[i].data.animator == null)
