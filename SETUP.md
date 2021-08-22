@@ -634,7 +634,7 @@ It is recommended to save the animations in `Assets/Animations/Tale`. For the An
 
 > You may notice that the dialog animations are:
 > - In - the dialog canvas is shown
-> - Out - the dialog vanvas is hidden
+> - Out - the dialog canvas is hidden
 >
 > ...while the transition animations are the opposite:
 > - In - the transition canvas is hidden
