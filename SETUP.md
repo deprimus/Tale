@@ -576,7 +576,7 @@ public class TaleTest : MonoBehaviour
 
 ### Transitions
 
-Transitions can be used to gracefully change scenes or to transition between gameplay points. Behind the scenes, Tale only
+Transitions can be used to gracefully change scenes or to transition between gameplay sections. Behind the scenes, Tale only
 activates/deactivates the transition canvas and plays the animations of the transition, meaning that you can use transitions
 for anything and not just for switching scenes.
 
