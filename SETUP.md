@@ -198,6 +198,7 @@ First, create the dialog canvas and name it `Dialog Canvas`. If an EventSystem o
 </p>
 
 Make sure to change the scale mode to `Scale With Screen Size`. You can customize the reference resolution and match mode. In this example, 1920x1080 will be used.
+The canvas `Render Mode` should be set to `Screen Space - Overlay`.
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_scaler.png" alt="Tale dialog canvas scaler">
@@ -254,7 +255,7 @@ There are only 2 constraints:
 - the controller must have 3 states: one for DialogIn, one for DialogOut, and one for Idle (Entry and Any State do not count).
 - the states need to be connected in a certain way (see below)
 
-In this example, the canvas opacity will be animated. In order to do this, a `Canvas Group` component will be added to the canvas.
+In this example, the canvas opacity will be animated. In order to do this, a Canvas Group component will be added to the canvas.
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_group.png" alt="Tale dialog canvas group">
@@ -296,8 +297,7 @@ Create a new state called `Idle`, and set it as the layer default state.
   <img src="public/setup/tale_dialog_canvas_animator_idle.png" alt="Tale dialog canvas animator idle">
 </p>
 
-For all states, make sure to uncheck `Write Defaults`. It may interfere with Tale if left checked,
-because Tale changes some properties of the canvas object behind the scenes and these changes may be overwritten by the states.
+For all states (including `Idle`), make sure to uncheck `Write Defaults`. It may interfere with Tale if left checked.
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_animator_write_defaults.png" alt="Tale dialog canvas animator write defaults">
@@ -319,7 +319,7 @@ Create 3 triggers: one named `TransitionIn`, one named `TransitionOut` and one n
 which can be changed from the config file:
 
 - DIALOG_CANVAS_ANIMATOR_TRIGGER_IN: this is for the `Idle`->`DialogIn` transition
-- DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT: this is for the `Idle`->`DialogOut` transition.
+- DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT: this is for the `Idle`->`DialogOut` transition
 - DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL: this is for the `DialogIn`->`Idle` and `DialogOut`->`Idle` transitions
 
 <p align="center">
@@ -338,8 +338,8 @@ Create the `Idle`->`DialogOut` transition in the same way (uncheck `HasExitTime`
   <img src="public/setup/tale_dialog_canvas_animator_transition2.png" alt="Tale dialog canvas animator transition 2">
 </p>
 
-Next, create the `DialogIn`->`Idle` transition. Uncheck `Has Exit Time`, set the condition to `Neutral` (the neutral trigger), open the settings menu, set
-the transition duration to 0 (because the transition should happen immediately after the animation finishes), and set the condition to `Neutral`.
+Next, create the `DialogIn`->`Idle` transition. Uncheck `Has Exit Time`, open the settings menu, set the transition duration
+to 0 (because the transition should happen immediately after the animation finishes), and set the condition to `Neutral` (the neutral trigger).
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_animator_transition3.png" alt="Tale dialog canvas animator transition 3">
@@ -480,7 +480,7 @@ Next, make the following changes to the AudioSource:
 2. set the `Priority` to high (in this case, it corresponds to the value 0)
 3. open the `3D Sound Settings` and set the `Doppler Level` to 0
 4. set the `Volume Rolloff` to `Linear Rolloff`
-5. set the `Max Distance` to a  high number, like 10100
+5. set the `Max Distance` to a high number, like 10100
 6. set the `Min Distance` to a value close to the max distance, like 10000
 
 <p align="center">
@@ -560,7 +560,8 @@ public class TaleTest : MonoBehaviour
         Tale.Exec(() => Debug.Log("Testing Audio..."));
 
         // Note that sound and music actions are blocking, meaning that they will play sequentially and not at the same time.
-        // You can use Tale.Parallel to make full use of music and multiple sound channels, but that is out of the scope of this guide.
+        // You can use Tale.Parallel to make full use of music and multiple sound channels,
+        // but that is out of the scope of this guide.
 
         Tale.Sound.Play("test_sound");    // Plays on channel 0. You should test all of your channels.
         Tale.Sound.Play(1, "test_sound"); // Plays on channel 1
@@ -568,6 +569,192 @@ public class TaleTest : MonoBehaviour
         Tale.Sound.Play(3, "test_sound"); // Plays on channel 3
 
         Tale.Music.Play("test_music");
+    }
+}
+```
+
+### Transitions
+
+Transitions can be used to gracefully change scenes or to transition between gameplay points. Behind the scenes, Tale only
+activates/deactivates the transition canvas and plays the animations of the transition, meaning that you can use transitions
+for anything and not just for switching scenes.
+
+You can add as many transitions as you want (within the limits of a standard list: `2 147 483 647`)
+
+Each transition uses the following props:
+
+- a canvas
+- an Animator component (can be attached to the canvas itself)
+
+Most of the times, the animator should animate other objects for the transition, such as images. For example, a fade transition
+will make use of a black image. Therefore, while Tale only uses the above 2 props, the transition canvas will usually include at least one other object.
+
+In this example, only one transition will be added. You can add as many as you want in the same way.
+
+Create a canvas for your transition. It is recommended to prefix the canvas names with `Transition`. In this example, the canvas
+will be named `Transition Fade Canvas`, because a fade transition will be added. Make sure to change the scale mode to `Scale With Screen Size`.
+You can customize the reference resolution and match mode. In this example, 1920x1080 will be used. The canvas `Render Mode` should be set to `Screen Space - Overlay`.
+
+If an EventSystem object is added, make sure it is a child of the master object.
+
+<p align="center">
+  <img src="public/setup/tale_transition_object.png" alt="Tale transition object">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_transition_properties.png" alt="Tale transition properties">
+</p>
+
+Next, add the transition elements. You can animate anything. In this example, the fade transition will simply make the screen black.
+In order to do this, a black image will be added to the canvas (with the same width and height as the screen). The image will be named
+`Fade Darkness`.
+
+<p align="center">
+  <img src="public/setup/tale_transition_darkness_object.png" alt="Tale transition darkness object">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_transition_darkness_properties.png" alt="Tale transition darkness properties">
+</p>
+
+Finally, add the transition animations. In this example, the canvas will have an Animator and a CanvasGroup component, and
+the animations will simply change the canvas opacity (which, along with the black image, will create a fade effect).
+
+Two animations will be added:
+
+- TransitionFadeIn: changes the canvas opacity from 1 to 0 in 1s
+- TransitionFadeOut: changes the canvas opacity from 0 to 1 in 1s
+
+It is recommended to save the animations in `Assets/Animations/Tale`. For the Animator component, set the update mode to `Unscaled Time`.
+
+<p align="center">
+  <img src="public/setup/tale_transition_components.png" alt="Tale transition components">
+</p>
+
+> You may notice that the dialog animations are:
+> In - the dialog canvas is shown
+> Out - the dialog vanvas is hidden
+>
+> ...while the transition animations are the opposite:
+> In - the transition canvas is hidden
+> Out - the transition canvas is shown
+>
+> While it makes sense to say "FadeIn - fades in the fade transition canvas", it's unnatural to say "fade in" when you want to
+> fade out of the scene, and "fade out" when you want to fade into the scene. This is why transitions have the animation names reversed.
+
+The animations must not have loop time. This is checked by default, so make sure to uncheck it.
+
+<p align="center">
+  <img src="public/setup/tale_transition_animation_loop.png" alt="Tale transition animation loop">
+</p>
+
+The animation controller now needs to be set up in the `Animator` window. The states may look like this:
+
+<p align="center">
+  <img src="public/setup/tale_transition_animator_initial.png" alt="Tale transition animator initial">
+</p>
+
+Create a new state called `Idle`, and set it as the layer default state.
+
+<p align="center">
+  <img src="public/setup/tale_transition_animator_idle.png" alt="Tale transition animator idle">
+</p>
+
+For all states (including `Idle`), make sure to uncheck `Write Defaults`. It may interfere with Tale if left checked.
+
+<p align="center">
+  <img src="public/setup/tale_transition_animator_write_defaults.png" alt="Tale transition animator write defaults">
+</p>
+
+Make sure the states corresponding to the animations are named exactly `TransitionIn` and `TransitionOut`. This is needed because Tale makes use of those names.
+
+If you don't like these names, you may change them in the config file. Simply navigate to `Assets/Scripts/Tale` (the Tale source code), and open the `Config.cs`
+file. Next, change the following option:
+
+- TRANSITION_ANIMATOR_STATE_FORMAT: this is the format of the names, where `{0}` is `In` for the In transition and `Out` is for the Out transition. If the format is
+`Transition{0}`, you will need to name the states `TransitionIn` and `TransitionOut`
+
+It's important to use `{0}` at least once in the format. Not doing so will lead to undefined behavior.
+
+In this guide, the default format will be used.
+
+Create 3 triggers: one named `TransitionIn`, one named `TransitionOut` and one named `Neutral`. Like the animation states, the triggers must have these exact names,
+which can be changed from the config file:
+
+- TRANSITION_ANIMATOR_TRIGGER_FORMAT: same as TRANSITION_ANIMATOR_STATE_FORMAT, but for triggers
+- TRANSITION_ANIMATOR_TRIGGER_NEUTRAL: this is for the `TransitionIn`->`Idle` and `TransitionOut`->`Idle` transitions
+
+<p align="center">
+  <img src="public/setup/tale_transition_animator_triggers.png" alt="Tale transition animator triggers">
+</p>
+
+Create the `Idle`->`TransitionOut` transition, uncheck `Has Exit Time` and set the condition to `TransitionOut` (the name of your `Out` trigger).
+
+<p align="center">
+  <img src="public/setup/tale_transition_animator_transition1.png" alt="Tale transition animator transition 1">
+</p>
+
+Create the `Idle`->`TransitionIn` transition in the same way (uncheck `HasExitTime`, set the condition to `TransitionIn`). You should end up with something like this:
+
+<p align="center">
+  <img src="public/setup/tale_transition_animator_transition2.png" alt="Tale transition animator transition 2">
+</p>
+
+Next, create the `TransitionOut`->`Idle` transition. Uncheck `Has Exit Time`, open the settings menu, set the transition duration
+to 0 (because the transition should happen immediately after the animation finishes), and set the condition to `Neutral` (the neutral trigger).
+
+<p align="center">
+  <img src="public/setup/tale_transition_animator_transition3.png" alt="Tale transition animator transition 3">
+</p>
+
+Create the `TransitionIn`->`Idle` transition in the same way (no exit time, transition time set to 0, neutral trigger).
+
+The final controller should look like this.
+
+<p align="center">
+  <img src="public/setup/tale_transition_animator_transition4.png" alt="Tale transition animator transition 4">
+</p>
+
+#### Finishing up
+
+After setting up the transition, make sure that:
+
+- the transition canvas is **not active**, and has its properties set to the same values as the starting values for the TransitionOut animation (e.g. if your animation
+changes the canvas opacity from 0 to 1, make sure the canvas opacity is 0)
+- the transition elements (e.g. `FadeDarkness` in this case) are **active**
+
+Tale will automatically activate and deactivate the props when needed, and expects these initial values.
+
+In order for Tale to make use of the transition props, you need to register these props in the Tale master object.
+Simply click on the master object and drag the objects where they belong.
+
+Remarks:
+- you may add as many transitions as you want; simply repeat the steps for each transition
+- transition names are **case-insensitive**, meaning that, for example, you can name a transition `Fade` and reference it as `fade`
+- two transitions with the same name (again, case-insensitive) should not exist. If they do exist, out of all transitions with the same name,
+the one will be kept
+
+<p align="center">
+  <img src="public/setup/tale_transition_props.png" alt="Tale transition props">
+</p>
+
+#### Test
+
+You can test the transition by creating a transition action. In this example, the previously mentioned test script is used:
+
+```cs
+using UnityEngine;
+
+public class TaleTest : MonoBehaviour
+{
+    void Start()
+    {
+        Tale.Exec(() => Debug.Log("Tale works."));
+        Tale.Exec(() => Debug.Log("Testing Transition..."));
+
+        Tale.Transition("Fade", Tale.TransitionType.OUT); // Fade out.
+        Tale.Wait(0.5f);                                  // Wait for 0.5s
+        Tale.Transition("fade", Tale.TransitionType.IN);  // Fade in. Notice how the name is case-insensitive.
     }
 }
 ```
