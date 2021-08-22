@@ -587,7 +587,7 @@ Each transition uses the following props:
 - a canvas
 - an Animator component (can be attached to the canvas itself)
 
-Most of the times, the animator should animate other objects for the transition, such as images. For example, a fade transition
+Most of the times, the animator animates other objects for the transition, such as images. For example, a fade transition
 will make use of a black image. Therefore, while Tale only uses the above 2 props, the transition canvas will usually include at least one other object.
 
 In this example, only one transition will be added. You can add as many as you want in the same way.
