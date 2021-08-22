@@ -401,6 +401,7 @@ Other config options for the dialog module are:
 - DIALOG_KEY_SKIP: the key which, when held down, instantly skips over the dialog
 - DIALOG_ADDITIVE_SEPARATOR: when an additive dialog action is executed, this will be appended to the old content. If this is `" "`, writing `Test.` after `Hello.`
 in additive mode will yield `Hello. Test.`.
+- TRANSITION_SKIP_SPEED: how fast to play the animations when the user advances the dialog while the animations are still playing (bigger = faster)
 
 #### Finishing up
 
@@ -715,6 +716,11 @@ The final controller should look like this.
   <img src="public/setup/tale_transition_animator_transition4.png" alt="Tale transition animator transition 4">
 </p>
 
+#### Config
+
+Other config options for transitions are:
+
+- TRANSITION_INSTANT_SPEED: when the transition duration is 0, how fast to play the transition (bigger = faster)
 #### Finishing up
 
 After setting up the transition, make sure that:
