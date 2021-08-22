@@ -739,6 +739,10 @@ Remarks:
 - transition names are **case-insensitive**, meaning that, for example, you can name a transition `Fade` and reference it as `fade`
 - two transitions with the same name (again, case-insensitive) should not exist. If they do exist, out of all transitions with the same name,
 the one will be kept
+- you should make sure that transition canvases have a higher order than all other prop canvases (e.g. dialog), such that they are drawn over
+everything else. Otherwise, you may end up, for example, having the dialog box in front of the fade transition. If, however, that is your intention,
+you may even make the transition canvas have a lower order than the dialog canvas. Tale does not impose any order, it's up to you.
+You can change this order via the `Sort Order` canvas parameter.
 
 <p align="center">
   <img src="public/setup/tale_transition_props.png" alt="Tale transition props">
