@@ -735,10 +735,10 @@ In order for Tale to make use of the transition props, you need to register thes
 Simply click on the master object and drag the objects where they belong.
 
 Remarks:
-- you may add as many transitions as you want; simply repeat the steps for each transition
+- you may add as many transitions as you want; simply repeat all of the above steps for each transition
 - transition names are **case-insensitive**, meaning that, for example, you can name a transition `Fade` and reference it as `fade`
 - two transitions with the same name (again, case-insensitive) should not exist. If they do exist, out of all transitions with the same name,
-the one will be kept
+the last one will be kept
 - you should make sure that transition canvases have a higher order than all other prop canvases (e.g. dialog), such that they are drawn over
 everything else. Otherwise, you may end up, for example, having the dialog box in front of the fade transition. If, however, that is your intention,
 you may even make the transition canvas have a lower order than the dialog canvas. Tale does not impose any order, it's up to you.
