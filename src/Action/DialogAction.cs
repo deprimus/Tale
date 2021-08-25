@@ -38,6 +38,7 @@ namespace TaleUtil
 
         private float timePerChar;
         private float clock;
+        private float screenToWorldUnit;
 
         private DialogAction() { }
 
@@ -84,7 +85,7 @@ namespace TaleUtil
             Vector3 bottomRight = contentTransform.TransformPoint(lastCharInfo.bottomRight);
             float baseline = contentTransform.TransformPoint(new Vector3(0, lastCharInfo.baseLine, 0)).y;
 
-            float x = bottomRight.x + xOffset;
+            float x = bottomRight.x + xOffset * screenToWorldUnit;
             float y = yOffset;
 
             if (alignment == TaleUtil.Config.CTCAlignment.MIDDLE)
@@ -148,6 +149,8 @@ namespace TaleUtil
                     {
                         state = State.BEGIN_WRITE;
                     }
+
+                    screenToWorldUnit = Screen.width / 1920f;
 
                     break;
                 }
