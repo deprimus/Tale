@@ -771,8 +771,7 @@ public class TaleTest : MonoBehaviour
 
 ### Cinematic
 
-The cinematic module can be used to show images, videos, and subtitles on the screen. This module can make use of animations and Tale transitions in order
-to provide a good experience for the player.
+The cinematic module can be used to show images, videos, and subtitles on the screen.
 
 Subtitles aren't only for videos. They are basically just text that can be placed on top of images or scenes in order to, for example, tell a story or explain
 something.
@@ -936,3 +935,201 @@ The final controller should look like this.
 <p align="center">
   <img src="public/setup/tale_cinematic_background_group_animator_final.png" alt="Tale cinematic background group animator final">
 </p>
+
+#### Video
+The cinematic module supports playing video files. This is done by using:
+
+- a video player (which renders videos on the render texture)
+- a render texture (which is displayed by the raw image)
+- a raw image (which displays the render texture on the canvas)
+- an audio source (which plays the audio coming from the videos)
+
+Create an empty object and name it `Video Group`. Make sure it is as big as the cinematic canvas.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_video_group.png" alt="Tale cinematic video group">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_video_group_properties.png" alt="Tale cinematic video group properties">
+</p>
+
+Create a `Render Texture`, place it in a path like `Assets/Textures/Tale`, and name it `Video Render Texture`.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_video_render_texture_path.png" alt="Tale cinematic video render texture path">
+</p>
+
+Make sure to change the size of the texture to match your target resolution. In this example, the size will be set to 1920x1080.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_video_render_texture_properties.png" alt="Tale cinematic video render texture properties">
+</p>
+
+Create a `Video Player` object and name it `Video Player`. Uncheck `Play On Awake`, set the `Render Mode` to `Render Texture`,
+set the target texture to the previously created render texture, and set the `Audio Output Mode` to `Audio Source`.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_video_player.png" alt="Tale cinematic video player">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_video_player_properties.png" alt="Tale cinematic video player properties">
+</p>
+
+Create a `Raw Image`, name it `Raw Image`, set the `Texture` to the previously created render texture, and make sure it is as big as the canvas.
+This will be used to display the video on the canvas through the render texture.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_video_raw_image.png" alt="Tale cinematic video raw image">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_video_raw_image_properties.png" alt="Tale cinematic video raw image properties">
+</p>
+
+Create an `Audio Source` object and name it `Audio Source`. This will be used to play the audio of the videos. Make the following changes to the audio source:
+
+1. uncheck `Play On Awake`
+2. set the `Priority` to high (in this case, it corresponds to the value 0)
+3. open the `3D Sound Settings` and set the `Doppler Level` to 0
+4. set the `Volume Rolloff` to `Linear Rolloff`
+5. set the `Max Distance` to a high number, like 10100
+6. set the `Min Distance` to a value close to the max distance, like 10000
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_audio_source.png" alt="Tale cinematic video audio source">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_audio_source_properties.png" alt="Tale cinematic video audio source properties">
+</p>
+
+#### Subtitles
+Cinematic subtitles represent text rendered on the screen. Usually, the text is rendered over images and videos.
+Of course, subtitles can be used for much more than just videos.
+
+Note that while they are called subtitles, they are not related to the subtitles present in video files. The name will be changed in the future to avoid confusion.
+
+Create an empty object and name it `Subtitle Group`. Make sure it is as big as the cinematic canvas.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_subtitle_group.png" alt="Tale cinematic subtitle group source">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_subtitle_group_properties.png" alt="Tale cinematic subtitle group properties">
+</p>
+
+Create a `TextMeshPro` (UI) object, name it `Subtitle Text`, and place it wherever you want on the canvas. You can customize the object however you want (size, font, color, etc).
+In this example, the object will be placed at `(0, -300)`, its size will be `(512, 60)`, and the font size will be set to `19`.
+
+Make sure the text input is empty, and that the alignment is set to `Center` and `Middle`.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_subtitle_text.png" alt="Tale cinematic subtitle text source">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_subtitle_text_properties.png" alt="Tale cinematic subtitle text properties">
+</p>
+
+Tale can place the subtitles over a background, which makes the text easier to read. While optional, it is recommended to add a background for your subtiles.
+Note that you can enable and disable the background for each subtitle action. Therefore, if you add a background, Tale will not force that background on
+all subtitles. Instead, it allows you to use the background whenever you want.
+
+Create an `Image` object, name it `Subtitle Background`, set the `Width` and `Height` to `0`, and make sure that the position is the same as the poistion of the
+`Subtitle Text` object (in this example `(0, -300`). Also, change the color to black (or whatever color you want the background to be).
+
+Make sure the background object comes BEFORE the text object in the hierarchy.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_subtitle_background.png" alt="Tale cinematic subtitle background source">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_subtitle_background_properties.png" alt="Tale cinematic subtitle background properties">
+</p>
+
+Tale automatically resizes the background such that it matches the subtitles.
+
+#### Config
+
+Other config options for the cinematic module are:
+
+- ASSET_ROOT_CINEMATIC_BACKGROUND: the resources root directory for all backgrounds. This will be prepended to all background paths. Must end with `/`.
+If this is `Cinematic/`, and a background action is created with the path `test`, the `Assets/Resources/Cinematic/test` file will be loaded.
+- ASSET_ROOT_CINEMATIC_VIDEO: same as above, but for videos. Note that by default both options are set to the same value, but they can be set to
+individual values
+
+#### Finishing up
+
+After setting up the cinematic module, make sure that:
+
+- the cinematic canvas is **not active**
+- the `Darkness` object is **active** (if present)
+- the background object is **active** (if present)
+  - the `Background 1` object is **active** while the `Background 2` object is **not active** (if present)
+- the video group object is **not active** (if present)
+  - the video player, raw texture, and audio source objects are **active**
+- the subtitle group object is **not active**
+  - the subtitle background and text objects are **active**
+- the transition elements (e.g. `FadeDarkness` in this case) are **active**
+
+Tale will automatically activate and deactivate the props when needed, and expects these initial values.
+
+In order for Tale to make use of the cinematic props, you need to register these props in the Tale master object.
+Simply click on the master object and drag the objects where they belong.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_props.png" alt="Tale cinematic props">
+</p>
+
+Remarks:
+- you may add as many transitions as you want; simply repeat all of the above steps for each transition
+- transition names are **case-insensitive**, meaning that, for example, you can name a transition `Fade` and reference it as `fade`
+- two transitions with the same name (again, case-insensitive) should not exist. If they do exist, out of all transitions with the same name,
+the last one will be kept
+- you should make sure that transition canvases have a higher order than all other prop canvases (e.g. dialog), such that they are drawn over
+everything else. Otherwise, you may end up, for example, having the dialog box in front of the fade transition. If, however, that is your intention,
+you may even make the transition canvas have a lower order than the dialog canvas. Tale does not impose any order, it's up to you.
+You can change this order via the `Sort Order` canvas parameter.
+
+#### Test
+
+You can test the transition by creating a transition action. In this example, the previously mentioned test script is used:
+
+```cs
+using UnityEngine;
+
+public class TaleTest : MonoBehaviour
+{
+    void Start()
+    {
+        Tale.Exec(() => Debug.Log("Tale works."));
+        Tale.Exec(() => Debug.Log("Testing Cinematic..."));
+
+        // Continuously change the background by using both crossfade and the custom animation.
+        // If you didn't set these up, feel free to exclude them from the test.
+
+        Tale.Cinematic(); // Show the cinematic canvas.
+        Tale.Cinema.Background("red");
+        Tale.Wait(0.5f);
+        Tale.Cinema.Background("green", Tale.Cinema.BackgroundTransitionType.CUSTOM);
+        Tale.Wait(0.5f);
+        Tale.Cinema.Background("red", Tale.Cinema.BackgroundTransitionType.CUSTOM);
+        Tale.Wait(0.5f);
+        Tale.Cinema.Background("green", Tale.Cinema.BackgroundTransitionType.CROSSFADE);
+        Tale.Wait(0.5f);
+        Tale.Cinema.Background("red", Tale.Cinema.BackgroundTransitionType.CROSSFADE);
+        Tale.Wait(0.5f);
+
+        Tale.Cinema.Subtitles("Testing subtitles...", 2f); // Show subtitles for 2s.
+
+        Tale.Cinema.Video("v1"); // Show the video "v1" located in the cinematic video asset root.
+    }
+}
+```
+
+> Note: the transitions between the cinematic canvas, background, and video are instant. The cinematic
+> elements are meant to be used together with the transition module, but Tale doesn't force you to do that.
