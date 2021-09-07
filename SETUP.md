@@ -909,7 +909,7 @@ Create one trigger and name it `Transition`. The name of the trigger can be chan
 - CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER: the name of the trigger (default: `Transition`)
 
 <p align="center">
-  <img src="public/setup/tale_cinematic_background_group_animator_triggers.png" alt="Tale cinematic background group animator triggers">
+  <img src="public/setup/tale_cinematic_background_group_animator_trigger.png" alt="Tale cinematic background group animator trigger">
 </p>
 
 Create the `Idle`->`CinematicBackgroundOut` transition, uncheck `Has Exit Time` and set the condition to `Transition` (the name of the trigger).
