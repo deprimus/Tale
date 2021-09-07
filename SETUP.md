@@ -1096,7 +1096,9 @@ You can make sure this happens by changing the `Sort Order` canvas parameters.
 
 #### Test
 
-You can test the cinematic module by creating background, subtitle, and video actions. In this example, the previously mentioned test script is used:
+You can test the cinematic module by creating background, subtitle, and video actions. Make sure that you have test image and video files prepared in the path
+specified in the config (by default `Resources/Cinematic/`). Note that you don't need to specify the file extension.
+In this example, the previously mentioned test script is used:
 
 ```cs
 using UnityEngine;
