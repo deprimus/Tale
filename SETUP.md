@@ -1096,7 +1096,7 @@ You can make sure this happens by changing the `Sort Order` canvas parameters.
 
 #### Test
 
-You can test the transition by creating a transition action. In this example, the previously mentioned test script is used:
+You can test the cinematic module by creating background, subtitle, and video actions. In this example, the previously mentioned test script is used:
 
 ```cs
 using UnityEngine;
