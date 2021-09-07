@@ -810,7 +810,7 @@ scenes, without the whole screen turning black.
 </p>
 
 <p align="center">
-  <img src="public/setup/tale_cinematic_canvas_darkness.png" alt="Tale cinematic darkness">
+  <img src="public/setup/tale_cinematic_darkness.png" alt="Tale cinematic darkness">
 </p>
 
 #### Background
