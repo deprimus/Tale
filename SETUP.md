@@ -1112,20 +1112,20 @@ public class TaleTest : MonoBehaviour
         // If you didn't set these up, feel free to exclude them from the test.
 
         Tale.Cinematic(); // Show the cinematic canvas.
-        Tale.Cinema.Background("red");
+        Tale.Cinema.Background("img1");
         Tale.Wait(0.5f);
-        Tale.Cinema.Background("green", Tale.Cinema.BackgroundTransitionType.CUSTOM);
+        Tale.Cinema.Background("img2", Tale.Cinema.BackgroundTransitionType.CUSTOM);
         Tale.Wait(0.5f);
-        Tale.Cinema.Background("red", Tale.Cinema.BackgroundTransitionType.CUSTOM);
+        Tale.Cinema.Background("img1", Tale.Cinema.BackgroundTransitionType.CUSTOM);
         Tale.Wait(0.5f);
-        Tale.Cinema.Background("green", Tale.Cinema.BackgroundTransitionType.CROSSFADE);
+        Tale.Cinema.Background("img2", Tale.Cinema.BackgroundTransitionType.CROSSFADE);
         Tale.Wait(0.5f);
-        Tale.Cinema.Background("red", Tale.Cinema.BackgroundTransitionType.CROSSFADE);
+        Tale.Cinema.Background("img1", Tale.Cinema.BackgroundTransitionType.CROSSFADE);
         Tale.Wait(0.5f);
 
         Tale.Cinema.Subtitles("Testing subtitles...", 2f); // Show subtitles for 2s.
 
-        Tale.Cinema.Video("v1"); // Show the video "v1" located in the cinematic video asset root.
+        Tale.Cinema.Video("test_video"); // Show the video "test_video" located in the cinematic video asset root.
     }
 }
 ```
