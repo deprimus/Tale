@@ -1074,7 +1074,6 @@ After setting up the cinematic module, make sure that:
   - the video player, raw texture, and audio source objects are **active**
 - the subtitle group object is **not active**
   - the subtitle background and text objects are **active**
-- the transition elements (e.g. `FadeDarkness` in this case) are **active**
 
 Tale will automatically activate and deactivate the props when needed, and expects these initial values.
 
