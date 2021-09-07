@@ -332,7 +332,7 @@ Create the `Idle`->`DialogIn` transition, uncheck `Has Exit Time` and set the co
   <img src="public/setup/tale_dialog_canvas_animator_transition1.png" alt="Tale dialog canvas animator transition 1">
 </p>
 
-Create the `Idle`->`DialogOut` transition in the same way (uncheck `HasExitTime`, set the condition to `TransitionOut`). You should end up with something like this:
+Create the `Idle`->`DialogOut` transition in the same way (uncheck `HasExitTime`, set the condition to `TransitionOut`).
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_animator_transition2.png" alt="Tale dialog canvas animator transition 2">
@@ -768,3 +768,171 @@ public class TaleTest : MonoBehaviour
     }
 }
 ```
+
+### Cinematic
+
+The cinematic module can be used to show images, videos, and subtitles on the screen. This module can make use of animations and Tale transitions in order
+to provide a good experience for the player.
+
+Subtitles aren't only for videos. They are basically just text that can be placed on top of images or scenes in order to, for example, tell a story or explain
+something.
+
+The cinematic module uses the following props:
+
+- a canvas
+- three group objects (one for images, one for videos, and one for subtitles)
+- two image objects (one of which is optional)
+- an object with a TexteMeshProUGUI component (for subtitles)
+- another image object (for subtitles; optional)
+- an object with a VideoPlayer component
+- an object with a RawImage component
+- an object with an AudioSource component (for videos)
+
+First, create the dialog canvas and name it `Cinematic Canvas`. If an EventSystem object is created, make sure that it is also a child of the master object.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_canvas.png" alt="Tale cinematic canvas">
+</p>
+
+Make sure to change the scale mode to `Scale With Screen Size`. You can customize the reference resolution and match mode. In this example, 1920x1080 will be used.
+The canvas `Render Mode` should be set to `Screen Space - Overlay`.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_canvas_scaler.png" alt="Tale cinematic canvas scaler">
+</p>
+
+Add an image to the canvas, name it `Darkness`, make it as big as the canvas, and set the color to black. This image will conver the whole screen when the cinematic
+canvas is activated. If don't want this to happen, you may skip adding this object. A reason to not add it would be to have subtitles directly on top of
+scenes, without the whole screen turning black.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_darkness_object.png" alt="Tale cinematic darkness object">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_canvas_darkness.png" alt="Tale cinematic darkness">
+</p>
+
+#### Background
+
+Cinematic images are called backgrounds. They can be used along with subtitles to tell a story or to explain something. They can also be used as backgrounds for videos
+(hence the name), by making the video smaller than the canvas (in order to, for example, make it look like the video is inside a picture frame).
+
+Backgrounds are fully optional.
+
+Tale supports the following transitions for backgrounds:
+
+- Instant: the background changes instantly
+- Crossfade: the background changes gradually
+- Custom: the background changes according to a custom animation
+
+If you want to use crossfade, you have to create 2 background objects in order for it to be able to work.
+
+Create an empty object and name it `Background Group`.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group.png" alt="Tale cinematic background group">
+</p>
+
+Create an image and name it `Background 1`. If you intend to use the crossfade transition, you have to create a second image (name it `Background 2`).
+If you create 2 background images, make sure the second one comes BEFORE the first one in the hierarchy. Otherwise, the first crossfade transition may look
+like an instant transition (because the first background is not rendered over the second one when it should be. This is solved by using the aforementioned
+hierarchy order).
+
+In this example, 2 images will be created in order to support crossfade.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_image_objects.png" alt="Tale cinematic background image objects">
+</p>
+
+Make sure the image(s) are as big as the canvas and have the color set to black.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_image_properties.png" alt="Tale cinematic background image properties">
+</p>
+
+You may add support for a custom transition. This can be done by creating an animation. You have to animate the background group object.
+
+In this example, two animations will be added:
+
+- CinematicBackgroundIn: moves the background group object from `(1920, 0)` to `(0, 0)` in 1s
+- CinematicBackgroundOut: moves the background group object from `(0, 0)` to `(-1920, 0)` in 1s
+
+The animation will simply move the background out of the screen to the left, and then it will move it in from the right side (making
+it look like the background is sliding).
+
+Make sure the background group object has an **active** `Animator` component and that the controller is set correctly.
+Set the update mode to `Unscaled Time`.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animator_component.png" alt="Tale cinematic group animator component">
+</p>
+
+The animations must not have loop time. This is checked by default, so make sure to uncheck it.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animation_loop.png" alt="Tale cinematic background group animation loop">
+</p>
+
+The animation controller now needs to be set up in the `Animator` window. The states may look like this:
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animator_initial.png" alt="Tale cinematic background group animator initial">
+</p>
+
+Create a new state called `Idle`, and set it as the layer default state.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animator_idle.png" alt="Tale cinematic background group animator idle">
+</p>
+
+For all states (including `Idle`), make sure to uncheck `Write Defaults`. It may interfere with Tale if left checked.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animator_write_defaults.png" alt="Tale cinematic background group animator write defaults">
+</p>
+
+Make sure the states corresponding to the animations are named exactly `CinematicBackgroundIn` and `CinematicBackgroundOut`. This is needed because Tale makes use of those names.
+
+If you don't like these names, you may change them in the config file. Simply navigate to `Assets/Scripts/Tale` (the Tale source code), and open the `Config.cs`
+file. Next, change the following option:
+
+- CINEMATIC_BACKGROUND_ANIMATOR_STATE_FORMAT: this is the format of the names, where `{0}` is `In` for the In animation and `Out` is for the Out animation. If the format is
+`CinematicBackground{0}`, you will need to name the states `CinematicBackgroundIn` and `CinematicBackgroundOut`
+
+It's important to use `{0}` at least once in the format. Not doing so will lead to undefined behavior.
+
+In this guide, the default format will be used.
+
+Create one trigger and name it `Transition`. The name of the trigger can be changed in the config file:
+
+- CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER: the name of the trigger (default: `Transition`)
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animator_triggers.png" alt="Tale cinematic background group animator triggers">
+</p>
+
+Create the `Idle`->`CinematicBackgroundOut` transition, uncheck `Has Exit Time` and set the condition to `Transition` (the name of the trigger).
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animator_transition1.png" alt="Tale cinematic background group animator transition 1">
+</p>
+
+Create the `CinematicBackgroundOut`->`CinematicBackgroundIn` transition. Uncheck `Has Exit Time`, open the settings menu, set the transition duration
+to 0 (because the transition should happen immediately after the animation finishes), and set the condition to `Transition` (the name of the trigger).
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animator_transition2.png" alt="Tale cinematic background group animator transition 2">
+</p>
+
+Create the `CinematicBackgroundIn`->`CinematicBackgroundOut` transition in the same way (no exit time, transition time set to 0, transition trigger).
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animator_transition3.png" alt="Tale cinematic background group animator transition 3">
+</p>
+
+The final controller should look like this.
+
+<p align="center">
+  <img src="public/setup/tale_cinematic_background_group_animator_final.png" alt="Tale cinematic background group animator final">
+</p>
