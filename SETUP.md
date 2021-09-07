@@ -845,7 +845,7 @@ In this example, 2 images will be created in order to support crossfade.
   <img src="public/setup/tale_cinematic_background_image_objects.png" alt="Tale cinematic background image objects">
 </p>
 
-Make sure the image(s) are as big as the canvas and have the color set to black.
+Make sure the images are as big as the canvas and have the color set to black.
 
 <p align="center">
   <img src="public/setup/tale_cinematic_background_image_properties.png" alt="Tale cinematic background image properties">
@@ -871,7 +871,7 @@ Set the update mode to `Unscaled Time`.
 The animations must not have loop time. This is checked by default, so make sure to uncheck it.
 
 <p align="center">
-  <img src="public/setup/tale_cinematic_background_group_animation_loop.png" alt="Tale cinematic background group animation loop">
+  <img src="public/setup/tale_cinematic_background_group_animator_loop.png" alt="Tale cinematic background group animator loop">
 </p>
 
 The animation controller now needs to be set up in the `Animator` window. The states may look like this:
