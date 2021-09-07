@@ -1034,7 +1034,7 @@ Make sure the text input is empty, and that the alignment is set to `Center` and
   <img src="public/setup/tale_cinematic_subtitle_text_properties.png" alt="Tale cinematic subtitle text properties">
 </p>
 
-Tale can place the subtitles over a background, which makes the text easier to read. While optional, it is recommended to add a background for your subtiles.
+Tale can place the subtitles over a background, which makes the text easier to read. While optional, it is recommended to add a background for your subtitles.
 Note that you can enable and disable the background for each subtitle action. Therefore, if you add a background, Tale will not force that background on
 all subtitles. Instead, it allows you to use the background whenever you want.
 
