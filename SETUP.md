@@ -998,11 +998,11 @@ Create an `Audio Source` object and name it `Audio Source`. This will be used to
 6. set the `Min Distance` to a value close to the max distance, like 10000
 
 <p align="center">
-  <img src="public/setup/tale_cinematic_audio_source.png" alt="Tale cinematic video audio source">
+  <img src="public/setup/tale_cinematic_video_audio_source.png" alt="Tale cinematic video audio source">
 </p>
 
 <p align="center">
-  <img src="public/setup/tale_cinematic_audio_source_properties.png" alt="Tale cinematic video audio source properties">
+  <img src="public/setup/tale_cinematic_video_audio_source_properties.png" alt="Tale cinematic video audio source properties">
 </p>
 
 #### Subtitles
