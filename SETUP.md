@@ -1204,7 +1204,7 @@ Note that the camera effect names are **case-insensitive**.
 
 #### Test
 
-You can test the cinematic module by creating camera effect actions. In this example, the previously mentioned test script is used:
+You can test the post processing module by creating camera effect actions. In this example, the previously mentioned test script is used:
 
 ```cs
 using UnityEngine;
