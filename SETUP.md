@@ -1134,3 +1134,95 @@ public class TaleTest : MonoBehaviour
 
 > Note: the transitions between the cinematic canvas, background, and video are instant. The cinematic
 > elements are meant to be used together with the transition module, but Tale doesn't force you to do that.
+
+### Post Processing
+The post processing module can be used to apply post processing effects to the main camera.
+
+Create a `Post Process Profile` in a path like `Assets/PostProcessing/Tale`, and name it `Profile`.
+
+<p align="center">
+  <img src="public/setup/tale_post_processing_profile.png" alt="Tale post processing profile">
+</p>
+
+Add the following effects to the profile:
+
+- Vignette: enable it, enable `Mode` and set the mode to `Classic`
+- Color Grading: enable it, enable `Mode` and set the mode to `Low Definition Range` (because Tale makes use of LUTs)
+- Bloom: enable it
+
+<p align="center">
+  <img src="public/setup/tale_post_processing_vignette.png" alt="Tale post processing vignette">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_post_processing_color_grading.png" alt="Tale post processing color grading">
+</p>
+
+<p align="center">
+  <img src="public/setup/tale_post_processing_bloom.png" alt="Tale post processing bloom">
+</p>
+
+Create a new layer and name it `PostProcessing`.
+
+<p align="center">
+  <img src="public/setup/tale_post_processing_layer.png" alt="Tale post processing layer">
+</p>
+
+Set the main camera `Layer` to the previously created `PostProcessing` layer.
+
+<p align="center">
+  <img src="public/setup/tale_post_processing_camera_layer.png" alt="Tale post processing camera layer">
+</p>
+
+Add a `Post-Process Layer` component to your main camera, and set the `Layer` to the previously created `PostProcessing` layer.
+You may uncheck `Stop NaN Propagation` if you need to.
+
+<p align="center">
+  <img src="public/setup/tale_post_processing_layer_component.png" alt="Tale post processing layer component">
+</p>
+
+Add a `Post-Process Volume` component to your main camera, check `Is Global`, and set the `Profile` to the previously created profile.
+
+<p align="center">
+  <img src="public/setup/tale_post_processing_volume.png" alt="Tale post processing volume">
+</p>
+
+#### Camera effects
+You may add custom camera effects (e.g. grayscale). These effects can be triggered via Tale actions.
+You can create an effect by taking the [default LUT texture](), applying whatever effects you want (in any image editing software),
+and registering the resulting texture in the Tale master object.
+There is no maximum number of effects that you can register (within the limits of a standard list: `2 147 483 647`).
+
+In this example, support for a sepia effect will be added. A sepia effect will be applied to the default texture, and the new texture will
+be saved as `Assets/Resources/LUT/Sepia_LUT.png`. It will be registered in the master object as follows:
+
+<p align="center">
+  <img src="public/setup/tale_post_processing_camera_effect.png" alt="Tale post processing camera effect">
+</p>
+
+Note that the camera effect names are **case-insensitive**.
+
+#### Test
+
+You can test the cinematic module by creating camera effect actions. In this example, the previously mentioned test script is used:
+
+```cs
+using UnityEngine;
+
+public class TaleTest : MonoBehaviour
+{
+    void Start()
+    {
+        Tale.Exec(() => Debug.Log("Tale works."));
+        Tale.Exec(() => Debug.Log("Testing Post Processing..."));
+
+        // You may skip the Effect action if you didn't add camera effects.
+
+        Tale.Cam.Bloom(5f);
+        Tale.Wait(0.5f);
+        Tale.Cam.Vignette(1f);
+        Tale.Wait(0.5f);
+        Tale.Cam.Effect("sepia", 2f); // Sepia effect with a transition of 2s.
+    }
+}
+```

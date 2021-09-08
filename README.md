@@ -24,3 +24,6 @@ None.
 # License <a href="https://github.com/deprimus/Tale/blob/master/LICENSE"><img align="right" src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
 
 **Tale** was developed by the [Deprimus](https://wiki.deprimus.men) members. It is licensed under the [MIT license](https://github.com/deprimus/Tale/blob/master/LICENSE).
+
+Everything present in the [resources]() directory is UNLICENSED. The Tale developer do not own any files in that directory (except for the README). They are included
+for convenience.
