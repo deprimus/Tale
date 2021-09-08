@@ -1189,7 +1189,7 @@ Add a `Post-Process Volume` component to your main camera, check `Is Global`, an
 
 #### Camera effects
 You may add custom camera effects (e.g. grayscale). These effects can be triggered via Tale actions.
-You can create an effect by taking the [default LUT texture](), applying whatever effects you want (in any image editing software),
+You can create an effect by taking the [default LUT texture](https://github.com/deprimus/Tale/blob/master/resources/NeutralLdrLut.png), applying whatever effects you want (in any image editing software),
 and registering the resulting texture in the Tale master object.
 There is no maximum number of effects that you can register (within the limits of a standard list: `2 147 483 647`).
 
