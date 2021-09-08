@@ -1151,15 +1151,15 @@ Add the following effects to the profile:
 - Bloom: enable it
 
 <p align="center">
-  <img src="public/setup/tale_post_processing_vignette.png" alt="Tale post processing vignette">
+  <img src="public/setup/tale_post_processing_profile_vignette.png" alt="Tale post processing vignette">
 </p>
 
 <p align="center">
-  <img src="public/setup/tale_post_processing_color_grading.png" alt="Tale post processing color grading">
+  <img src="public/setup/tale_post_processing_profile_color_grading.png" alt="Tale post processing color grading">
 </p>
 
 <p align="center">
-  <img src="public/setup/tale_post_processing_bloom.png" alt="Tale post processing bloom">
+  <img src="public/setup/tale_post_processing_profile_bloom.png" alt="Tale post processing bloom">
 </p>
 
 Create a new layer and name it `PostProcessing`.
