@@ -1187,6 +1187,9 @@ Add a `Post-Process Volume` component to your main camera, check `Is Global`, an
   <img src="public/setup/tale_post_processing_volume.png" alt="Tale post processing volume">
 </p>
 
+In order to make use of effects in any scene, the main camera needs to always have these components attached. You can solve this problem
+by creating a prefab for the camera and using it in all scenes.
+
 #### Camera effects
 You may add custom camera effects (e.g. grayscale). These effects can be triggered via Tale actions.
 You can create an effect by taking the [default LUT texture](https://github.com/deprimus/Tale/blob/master/resources/NeutralLdrLut.png), applying whatever effects you want (in any image editing software),
