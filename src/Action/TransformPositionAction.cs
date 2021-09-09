@@ -97,17 +97,30 @@ namespace TaleUtil
                     // Don't use the initial position coord, use the current position coord (it may be changed in another script while this action is running).
                     // By doing this, other scripts can modify the coordinates that this action considers 'default' in parallel.
 
-                    if(pos.x != float.MinValue)
-                        x = TaleUtil.Math.Interpolate(initialPos.x, pos.x, interpolationFactor);
-                    else x = transformable.transform.position.x;
-
-                    if(pos.y != float.MinValue)
-                        y = TaleUtil.Math.Interpolate(initialPos.y, pos.y, interpolationFactor);
-                    else y = transformable.transform.position.y;
-
                     if(isRectTransform)
-                        ((RectTransform) transformable.transform).anchoredPosition = new Vector3(x, y, transformable.transform.position.z);
-                    else transformable.transform.position = new Vector3(x, y, transformable.transform.position.z);
+                    {
+                        if (pos.x != float.MinValue)
+                            x = TaleUtil.Math.Interpolate(initialPos.x, pos.x, interpolationFactor);
+                        else x = ((RectTransform)transformable.transform).anchoredPosition.x;
+
+                        if (pos.y != float.MinValue)
+                            y = TaleUtil.Math.Interpolate(initialPos.y, pos.y, interpolationFactor);
+                        else y = ((RectTransform)transformable.transform).anchoredPosition.y;
+
+                        ((RectTransform)transformable.transform).anchoredPosition = new Vector3(x, y, transformable.transform.position.z);
+                    }
+                    else
+                    {
+                        if (pos.x != float.MinValue)
+                            x = TaleUtil.Math.Interpolate(initialPos.x, pos.x, interpolationFactor);
+                        else x = transformable.transform.position.x;
+
+                        if (pos.y != float.MinValue)
+                            y = TaleUtil.Math.Interpolate(initialPos.y, pos.y, interpolationFactor);
+                        else y = transformable.transform.position.y;
+
+                        transformable.transform.position = new Vector3(x, y, transformable.transform.position.z);
+                    }
 
                     if(clock == transitionDuration)
                         return true;
