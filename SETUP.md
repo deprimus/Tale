@@ -14,6 +14,8 @@ You need to know what components are and how to add them to objects. The optiona
 The setup is split into 2 parts: required and optional. The former describes how to set up the Tale core, while the latter describes
 how to set up optional modules.
 
+If you encounter issues during the setup (e.g. a canvas doesn't show up), make sure to read the [Troubleshooting](#troubleshooting) section.
+
 ## Glossary
 
 Here are a collection of words that you will encounter in the context of Tale.
@@ -1229,3 +1231,11 @@ public class TaleTest : MonoBehaviour
     }
 }
 ```
+
+## Troubleshooting
+
+- Tale canvases don't show up
+    - if you have other canvases outside of Tale Master, the Tale canvases may be rendering behind them.
+      For each Tale canvas, try changing the `Sort Order` to a high number like `1000`.
+      Of course, you may adjust these values in order to change the order of the Tale canvases (e.g. transition canvas over dialog canvas).
+      However, all canvases should have a value that is higher than the value of any other canvas.
