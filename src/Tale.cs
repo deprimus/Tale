@@ -37,6 +37,9 @@ public static class Tale
         public static readonly TaleUtil.Delegates.InterpolationDelegate EASE_OUT    = TaleUtil.Math.QuadraticOut;
         public static readonly TaleUtil.Delegates.InterpolationDelegate EASE_IN_OUT = TaleUtil.Math.ParametricBlend;
     }
+    
+    public static TaleUtil.Action MagicFix() =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.WaitAction(0.001f));
 
     public static TaleUtil.Action Multiplex(params TaleUtil.Action[] actions) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.MultiplexAction(actions));
