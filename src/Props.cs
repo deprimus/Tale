@@ -309,7 +309,9 @@ namespace TaleUtil
                 this.player = player;
                 this.audio = audio;
 
-                this.player.loopPointReached += TaleUtil.Events.OnCinematicVideoEnd;
+                if(this.player != null) {
+                    this.player.loopPointReached += TaleUtil.Events.OnCinematicVideoEnd;
+                }
             }
         }
 
