@@ -119,7 +119,8 @@ namespace TaleUtil
             switch(state)
             {
                 case State.SETUP:
-                { 
+                {
+                    // Dialog canvas is active; previous action was a Dialog action
                     if(TaleUtil.Props.dialog.canvas.activeSelf)
                     {
                         if(type == Type.ADDITIVE)
@@ -129,25 +130,26 @@ namespace TaleUtil
                         }
 
                         state = State.BEGIN_WRITE;
-                        break;
-                    }
-
-                    Debug.Assert(type == Type.OVERRIDE, "[TALE] Additive dialog must be preceded by a dialog action");
-
-                    if(actor != null)
-                        TaleUtil.Props.dialog.actor.text = "";
-
-                    TaleUtil.Props.dialog.content.text = "";
-                    TaleUtil.Props.dialog.canvas.SetActive(true);
-
-                    if(TaleUtil.Props.dialog.animator != null)
-                    {
-                        TaleUtil.Props.dialog.animator.SetTrigger(TaleUtil.Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN);
-                        state = State.TRANSITION_IN;
                     }
                     else
                     {
-                        state = State.BEGIN_WRITE;
+                        Debug.Assert(type == Type.OVERRIDE, "[TALE] Additive dialog must be preceded by a dialog action");
+
+                        if(actor != null)
+                            TaleUtil.Props.dialog.actor.text = "";
+
+                        TaleUtil.Props.dialog.content.text = "";
+                        TaleUtil.Props.dialog.canvas.SetActive(true);
+
+                        if(TaleUtil.Props.dialog.animator != null)
+                        {
+                            TaleUtil.Props.dialog.animator.SetTrigger(TaleUtil.Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN);
+                            state = State.TRANSITION_IN;
+                        }
+                        else
+                        {
+                            state = State.BEGIN_WRITE;
+                        }
                     }
 
                     screenToWorldUnit = Screen.width / 1920f;
