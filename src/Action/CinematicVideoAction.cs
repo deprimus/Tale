@@ -77,7 +77,7 @@ namespace TaleUtil
         private VideoClip LoadVideo()
         {
             VideoClip clip = Resources.Load<VideoClip>(path);
-            TaleUtil.Assert.NotNull(clip, "The cinematic video '" + clip + "' is missing");
+            TaleUtil.Assert.NotNull(clip, "The cinematic video '" + path + "' is missing");
 
             return clip;
         }
