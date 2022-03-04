@@ -6,6 +6,25 @@ namespace TaleUtil
 {
     public static class Math
     {
+        // Normalize an angle from any number to 0->360
+        public static float NormalizeAngle(float angle)
+        {
+            if (angle != float.MinValue)
+            {
+                if (Mathf.Abs(angle) > 360f)
+                {
+                    angle %= 360;
+                }
+
+                if (angle < 0)
+                {
+                    angle += 360f;
+                }
+            }
+
+            return angle;
+        }
+        
         public static float Identity(float t)
         {
             return t;

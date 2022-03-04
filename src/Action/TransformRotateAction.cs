@@ -33,6 +33,15 @@ namespace TaleUtil
             this.transitionDuration = transitionDuration;
             this.interpolation = interpolation == null ? TaleUtil.Math.Identity : interpolation;
             this.relative = relative;
+            
+            // Normalize the angles from any number to 0->360
+            // If relative, normalize in SETUP
+            if (!relative)
+            {
+                this.rotation.x = TaleUtil.Math.NormalizeAngle(this.rotation.x);
+                this.rotation.y = TaleUtil.Math.NormalizeAngle(this.rotation.y);
+                this.rotation.z = TaleUtil.Math.NormalizeAngle(this.rotation.z);
+            }
 
             clock = 0f;
 
@@ -66,8 +75,13 @@ namespace TaleUtil
                     state = State.TRANSITION;
 
                     if(relative)
+                    {
                         rotation = new Vector3(initialRotation.x + rotation.x, initialRotation.y + rotation.y, initialRotation.z + rotation.z);
-
+                        
+                        rotation.x = TaleUtil.Math.NormalizeAngle(rotation.x);
+                        rotation.y = TaleUtil.Math.NormalizeAngle(rotation.y);
+                        rotation.z = TaleUtil.Math.NormalizeAngle(rotation.z);
+                    }
                     break;
                 }
                 case State.TRANSITION:
