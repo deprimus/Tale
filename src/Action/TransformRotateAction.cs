@@ -78,9 +78,9 @@ namespace TaleUtil
                     {
                         rotation = new Vector3(initialRotation.x + rotation.x, initialRotation.y + rotation.y, initialRotation.z + rotation.z);
                         
-                        rotation.x = TaleUtil.Math.NormalizeAngle(rotation.x);
-                        rotation.y = TaleUtil.Math.NormalizeAngle(rotation.y);
-                        rotation.z = TaleUtil.Math.NormalizeAngle(rotation.z);
+                        //rotation.x = TaleUtil.Math.NormalizeAngle(rotation.x);
+                        //rotation.y = TaleUtil.Math.NormalizeAngle(rotation.y);
+                        //rotation.z = TaleUtil.Math.NormalizeAngle(rotation.z);
                     }
                     break;
                 }
