@@ -5,6 +5,7 @@ using UnityEngine.Video;
 using UnityEngine.SceneManagement;
 using UnityEngine.Rendering.PostProcessing;
 
+[DefaultExecutionOrder(-1000)]
 public class TaleMaster : MonoBehaviour
 {
     // TODO: Add brackets to all switch cases in the project.
