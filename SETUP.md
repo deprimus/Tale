@@ -381,6 +381,23 @@ above for that component. The only changes are the names of the states and trans
 
 It's recommended to name the animations `DialogAvatarIn` and `DialogAvatarOut`.
 
+##### Animation order
+
+You can specify the animation order in the config file. For the `in` animations (i.e. when the dialog canvas should appear), change the value of `DIALOG_ANIMATION_IN_MODE` to one of the following:
+
+- CANVAS_THEN_AVATAR_THEN_TEXT: canvas -> avatar -> text (play the canvas animation, then the avatar animation, then start writing the text)
+- CANVAS_THEN_AVATAR_TEXT: canvas -> avatar + text (canvas, and then avatar + text at the same time)
+- AVATAR_THEN_CANVAS_THEN_TEXT: avatar -> canvas -> text
+- AVATAR_THEN_CANVAS_TEXT: avatar -> canvas + text
+- CANVAS_AVATAR_THEN_TEXT: canvas + avatar -> text
+- CANVAS_AVATAR_TEXT: canvas + avatar + text (all at the same time)
+
+For `out` animations (i.e. when the canvas should disappear), change the value of `DIALOG_ANIMATION_OUT_MODE` to one of the following:
+
+- CANVAS_THEN_AVATAR: canvas -> avatar
+- AVATAR_THEN_CANVAS: avatar -> canvas
+- CANVAS_AVATAR: canvas + avatar (both at the same time). 
+
 #### CTC Objects
 
 After the dialog content is written, the user has to click or press a button in order to advance the dialog. To indicate to the user to do so,
@@ -1274,3 +1291,8 @@ public class TaleTest : MonoBehaviour
 - Dialog, transitions and others are affected by timeScale
     - those actions use `Time.deltaTime`. If you don't want them to be affected by the time scale, see the source code of each action and change `deltaTime` to `fixedDeltaTime`.
       An option could be added in the future to make it easier to change this. For now, change it manually.
+- When using `AVATAR_THEN_CANVAS_THEN_TEXT`, `AVATAR_THEN_CANVAS_TEXT` or `AVATAR_THEN_CANVAS`, the avatar animation doesn't play and it just fades in
+    - in this case, your canvas animation changes the alpha value of the canvas. This means that the canvas starts with an alpha value of `0`.
+      Therefore, the avatar animation still plays, but the avatar is invisible during the animation. After that, the canvas starts fading in, giving the illusion that
+      the avatar animation doesn't play.
+      To fix this, simply change the canvas animation to something else. For example, if you have a panel, change the alpha value of that panel alone, and not the whole canvas.
