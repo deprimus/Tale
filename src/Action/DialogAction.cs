@@ -32,6 +32,9 @@ namespace TaleUtil
         string actor;
         string content;
         string avatar;
+        string voice;
+
+        bool loopVoice;
 
         public Type type;
         State state;
@@ -45,18 +48,22 @@ namespace TaleUtil
 
         DialogAction() { }
 
-        public DialogAction(string actor, string content, string avatar, bool additive)
+        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive)
         {
-            Assert.Condition(Props.dialog.content != null, "DialogAction requires a content object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
+            Assert.Condition(Props.dialog.content != null,
+                "DialogAction requires a content object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
 
             if (actor != null)
             {
-                Assert.Condition(Props.dialog.actor != null, "DialogAction requires an actor object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
+                Assert.Condition(Props.dialog.actor != null,
+                    "DialogAction requires an actor object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
             }
 
             this.actor = actor;
             this.content = content;
             this.avatar = avatar;
+            this.voice = voice;
+            this.loopVoice = loopVoice;
 
             type = additive ? Type.ADDITIVE : Type.OVERRIDE;
             state = State.SETUP;
@@ -178,6 +185,8 @@ namespace TaleUtil
             clone.actor = actor;
             clone.content = content;
             clone.avatar = avatar;
+            clone.voice = voice;
+            clone.loopVoice = loopVoice;
             clone.type = type;
             clone.state = state;
             clone.index = index;
@@ -193,8 +202,32 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
+                    if (voice != null)
+                    {
+                        Assert.Condition(Props.audio.group != null,
+                            "A voice clip was passed to the dialog action, but no audio group prop is available; did you forget to register it in TaleMaster?");
+                        Assert.Condition(Props.audio.voice != null,
+                            "A voice clip was passed to the dialog action, but no audio voice prop is available; did you forget to register it in TaleMaster?");
+
+                        if (!Props.audio.group.activeSelf)
+                        {
+                            Props.audio.group.SetActive(true);
+                        }
+
+                        if (!Props.audio.voice.gameObject.activeSelf)
+                        {
+                            Props.audio.voice.gameObject.SetActive(true);
+                        }
+
+                        Props.audio.voice.clip = Resources.Load<AudioClip>(voice);
+
+                        Assert.Condition(Props.audio.voice != null, "The voice audio clip '" + voice + "' is missing");
+
+                        Props.audio.voice.loop = loopVoice;
+                    }
+
                     // Dialog canvas is active; previous action was a Dialog action
-                    if(Props.dialog.canvas.activeSelf)
+                    if (Props.dialog.canvas.activeSelf)
                     {
                         if(type == Type.ADDITIVE)
                         {
@@ -306,8 +339,11 @@ namespace TaleUtil
 
                     if (avatar != null)
                     {
-                        Assert.Condition(Props.dialog.avatar != null, "An avatar was passed to the dialog action, but no avatar prop is available; did you forget to register it in TaleMaster?");
+                        Assert.Condition(Props.dialog.avatar != null,
+                            "An avatar was passed to the dialog action, but no avatar prop is available; did you forget to register it in TaleMaster?");
+
                         Props.dialog.avatar.sprite = (Sprite) Resources.Load<Sprite>(avatar);
+
                         Assert.Condition(Props.dialog.avatar.sprite != null, "The avatar '" + avatar + "' is missing");
                     }
 
@@ -412,6 +448,11 @@ namespace TaleUtil
 
                     Props.dialog.content.maxVisibleCharacters = index;
 
+                    if (voice != null)
+                    {
+                        Props.audio.voice.Play();
+                    }
+
                     state = State.WRITE;
 
                     break;
@@ -443,6 +484,11 @@ namespace TaleUtil
                     }
                     else
                     {
+                        if(loopVoice && Props.audio.voice != null)
+                        {
+                            Props.audio.voice.loop = false;
+                        }
+
                         if((Queue.FetchNext() is DialogAction) && ((DialogAction) Queue.FetchNext()).type == Type.ADDITIVE)
                         {
                             if (Props.dialog.actc != null)
@@ -516,7 +562,43 @@ namespace TaleUtil
                     break;
                 }
                 case State.END_WRITE:
-                { 
+                {
+                    // Disable the voice object and audio group
+                    if (voice != null && Props.audio.voice != null && Props.audio.group != null)
+                    {
+                        Props.audio.voice.Stop();
+                        Props.audio.voice.gameObject.SetActive(false);
+
+                        bool areSoundChannelsInactive = true;
+
+                        if (Props.audio.sound != null)
+                        {
+                            for (int i = 0; i < Props.audio.sound.Length; ++i)
+                            {
+                                if (Props.audio.sound[i] != null && Props.audio.sound[i].gameObject.activeSelf)
+                                {
+                                    areSoundChannelsInactive = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (areSoundChannelsInactive)
+                        {
+                            if (Props.audio.soundGroup != null)
+                            {
+                                // Deactivate the sound group.
+                                Props.audio.soundGroup.SetActive(false);
+                            }
+
+                            // Deactivate the audio group.
+                            if (Props.audio.music == null || !Props.audio.music.gameObject.activeSelf)
+                            {
+                                Props.audio.group.SetActive(false);
+                            }
+                        }
+                    }
+
                     Action next = Queue.FetchNext();
 
                     if(next is DialogAction)
