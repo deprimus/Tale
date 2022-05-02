@@ -379,7 +379,9 @@ above for that component. The only changes are the names of the states and trans
 - DIALOG_AVATAR_ANIMATOR_TRIGGER_OUT
 - DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL
 
-It's recommended to name the animations `DialogAvatarIn` and `DialogAvatarOut`.
+It's recommended to name the animations `DialogAvatarIn` and `DialogAvatarOut`. These are also the default names of the states.
+
+Note that you can have both canvas and avatar animations, only canvas animations, only avatar animations, or no animations at all. It's entirely up to you.
 
 ##### Animation order
 
