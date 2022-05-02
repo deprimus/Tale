@@ -8,7 +8,7 @@ using TMPro;
 
 namespace TaleUtil
 {
-    public class CinematicVideoAction : TaleUtil.Action
+    public class CinematicVideoAction : Action
     {
         public enum DetatchType
         {
@@ -46,8 +46,8 @@ namespace TaleUtil
 
         public CinematicVideoAction(string path, float detatchTime, DetatchType detatchType, float speed)
         {
-            TaleUtil.Assert.NotNull(TaleUtil.Props.cinematic.video.group, "CinematicVideoAction requires a group object; did you forget to register it in TaleMaster?");
-            TaleUtil.Assert.NotNull(TaleUtil.Props.cinematic.video.player, "CinematicVideoAction requires a video player object; did you forget to register it in TaleMaster?");
+            Assert.Condition(Props.cinematic.video.group != null, "CinematicVideoAction requires a group object; did you forget to register it in TaleMaster?");
+            Assert.Condition(Props.cinematic.video.player != null, "CinematicVideoAction requires a video player object; did you forget to register it in TaleMaster?");
 
             this.path = path;
             this.detatchTime = detatchTime;
@@ -61,7 +61,7 @@ namespace TaleUtil
             else state = State.LOAD;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             CinematicVideoAction clone = new CinematicVideoAction();
             clone.path = path;
@@ -77,7 +77,7 @@ namespace TaleUtil
         private VideoClip LoadVideo()
         {
             VideoClip clip = Resources.Load<VideoClip>(path);
-            TaleUtil.Assert.NotNull(clip, "The cinematic video '" + path + "' is missing");
+            Assert.Condition(clip != null, "The cinematic video '" + path + "' is missing");
 
             return clip;
         }
@@ -88,14 +88,14 @@ namespace TaleUtil
             {
                 case State.LOAD:
                 {
-                    TaleUtil.Props.cinematic.video.group.SetActive(true);
+                    Props.cinematic.video.group.SetActive(true);
 
-                    TaleUtil.Props.cinematic.video.player.playbackSpeed = speed;
-                    TaleUtil.Props.cinematic.video.player.EnableAudioTrack(0, true); // Audio must be set up before Prepare.
-                    TaleUtil.Props.cinematic.video.player.SetTargetAudioSource(0, TaleUtil.Props.cinematic.video.audio);
+                    Props.cinematic.video.player.playbackSpeed = speed;
+                    Props.cinematic.video.player.EnableAudioTrack(0, true); // Audio must be set up before Prepare.
+                    Props.cinematic.video.player.SetTargetAudioSource(0, Props.cinematic.video.audio);
 
-                    TaleUtil.Props.cinematic.video.player.clip = LoadVideo();
-                    TaleUtil.Props.cinematic.video.player.Prepare();
+                    Props.cinematic.video.player.clip = LoadVideo();
+                    Props.cinematic.video.player.Prepare();
 
                     state = State.WAIT_FOR_PREPARATION;
 
@@ -103,7 +103,7 @@ namespace TaleUtil
                 }
                 case State.WAIT_FOR_PREPARATION:
                 {
-                    if(TaleUtil.Props.cinematic.video.player.isPrepared)
+                    if(Props.cinematic.video.player.isPrepared)
                     {
                         state = State.PLAY;
                     }
@@ -112,7 +112,7 @@ namespace TaleUtil
                 }
                 case State.PLAY:
                 {
-                    TaleUtil.Props.cinematic.video.player.Play();
+                    Props.cinematic.video.player.Play();
 
                     if(detatchTime < 0f)
                         return true;
@@ -124,7 +124,7 @@ namespace TaleUtil
                             break;
                         case DetatchType.AFTER:
                             state = State.WAIT_WITH_DETATCH_AFTER;
-                            startTime = TaleUtil.Props.cinematic.video.player.time;
+                            startTime = Props.cinematic.video.player.time;
                             break;
                         case DetatchType.FIXED:
                             state = State.WAIT_WITH_DETATCH_FIXED;
@@ -136,7 +136,7 @@ namespace TaleUtil
                 case State.WAIT_WITH_DETATCH_BEFORE:
                 {
                     // Less than (or equal to) detatchTime seconds left, or the video stopped by reaching the end.
-                    if (TaleUtil.Props.cinematic.video.player.time >= TaleUtil.Props.cinematic.video.player.length - detatchTime * TaleUtil.Props.cinematic.video.player.playbackSpeed || (!TaleUtil.Props.cinematic.video.player.isPlaying))
+                    if (Props.cinematic.video.player.time >= Props.cinematic.video.player.length - detatchTime * Props.cinematic.video.player.playbackSpeed || (!Props.cinematic.video.player.isPlaying))
                     {
                         return true;
                     }
@@ -146,7 +146,7 @@ namespace TaleUtil
                 case State.WAIT_WITH_DETATCH_AFTER:
                 {
                     // At least detatchTime seconds passed, or the video stopped by reaching the end.
-                    if (TaleUtil.Props.cinematic.video.player.time - startTime >= detatchTime * TaleUtil.Props.cinematic.video.player.playbackSpeed || (!TaleUtil.Props.cinematic.video.player.isPlaying))
+                    if (Props.cinematic.video.player.time - startTime >= detatchTime * Props.cinematic.video.player.playbackSpeed || (!Props.cinematic.video.player.isPlaying))
                     {
                         return true;
                     }
@@ -156,7 +156,7 @@ namespace TaleUtil
                 case State.WAIT_WITH_DETATCH_FIXED:
                 {
                     // Time reached, or the video stopped by reaching the end.
-                    if(TaleUtil.Props.cinematic.video.player.time >= detatchTime || (!TaleUtil.Props.cinematic.video.player.isPlaying))
+                    if(Props.cinematic.video.player.time >= detatchTime || (!Props.cinematic.video.player.isPlaying))
                     {
                         return true;
                     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TaleUtil
 {
-    public class CameraZoomAction : TaleUtil.Action
+    public class CameraZoomAction : Action
     {
         private enum State
         {
@@ -14,7 +14,7 @@ namespace TaleUtil
 
         private float factor;
         private float transitionDuration;
-        private TaleUtil.Delegates.InterpolationDelegate interpolation;
+        private Delegates.InterpolationDelegate interpolation;
 
         private float clock;
 
@@ -24,20 +24,20 @@ namespace TaleUtil
 
         private CameraZoomAction() { }
 
-        public CameraZoomAction(float factor, float transitionDuration, TaleUtil.Delegates.InterpolationDelegate interpolation)
+        public CameraZoomAction(float factor, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {
-            TaleUtil.Assert.NotNull(TaleUtil.Props.camera, "CameraZoomAction requires a main camera object (which could not be found)");
+            Assert.Condition(Props.camera != null, "CameraZoomAction requires a main camera object (which could not be found)");
 
             this.factor = factor;
             this.transitionDuration = transitionDuration;
-            this.interpolation = interpolation == null ? TaleUtil.Math.Identity : interpolation;
+            this.interpolation = interpolation == null ? Math.Identity : interpolation;
 
             clock = 0f;
 
             state = State.SETUP;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             CameraZoomAction clone = new CameraZoomAction();
             clone.factor = factor;
@@ -55,8 +55,8 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    initialSize = TaleUtil.Props.camera.obj.orthographicSize;
-                    factor = (1f / factor) * TaleUtil.Props.camera.baseOrthographicSize; // 0.5f zoom = (1f / 0.5f) * base size = 2 * base size
+                    initialSize = Props.camera.obj.orthographicSize;
+                    factor = (1f / factor) * Props.camera.baseOrthographicSize; // 0.5f zoom = (1f / 0.5f) * base size = 2 * base size
 
                     state = State.TRANSITION;
 
@@ -71,7 +71,7 @@ namespace TaleUtil
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
-                    TaleUtil.Props.camera.obj.orthographicSize = TaleUtil.Math.Interpolate(initialSize, factor, interpolationFactor);
+                    Props.camera.obj.orthographicSize = Math.Interpolate(initialSize, factor, interpolationFactor);
 
                     if(clock == transitionDuration)
                         return true;

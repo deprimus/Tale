@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TaleUtil
 {
-    public class TransitionAction : TaleUtil.Action
+    public class TransitionAction : Action
     {
         public enum Type
         {
@@ -18,7 +18,7 @@ namespace TaleUtil
             TRANSITION
         }
 
-        private TaleUtil.Props.TransitionData data;
+        private Props.TransitionData data;
         private float duration;
 
         private Type type;
@@ -34,23 +34,23 @@ namespace TaleUtil
         {
             transition = transition.ToLowerInvariant();
 
-            TaleUtil.Assert.Condition(TaleUtil.Props.transitions.ContainsKey(transition), string.Format("Unregistered transition '{0}'", transition));
+            Assert.Condition(Props.transitions.ContainsKey(transition), string.Format("Unregistered transition '{0}'", transition));
 
-            data = TaleUtil.Props.transitions[transition];
+            data = Props.transitions[transition];
 
-            TaleUtil.Assert.NotNull(data.canvas, string.Format("Transition '{0}' does not have a canvas associated with it; did you forget to register it in TaleMaster?", transition));
-            TaleUtil.Assert.NotNull(data.animator, string.Format("Transition '{0}' does not have an animator associated with it; did you forget to register it in TaleMaster?", transition));
+            Assert.Condition(data.canvas != null, string.Format("Transition '{0}' does not have a canvas associated with it; did you forget to register it in TaleMaster?", transition));
+            Assert.Condition(data.animator != null, string.Format("Transition '{0}' does not have an animator associated with it; did you forget to register it in TaleMaster?", transition));
 
             this.type = type;
             this.duration = duration;
 
-            animatorState = string.Format(TaleUtil.Config.TRANSITION_ANIMATOR_STATE_FORMAT, type == Type.IN ? "In" : "Out");
-            trigger = string.Format(TaleUtil.Config.TRANSITION_ANIMATOR_TRIGGER_FORMAT, type == Type.IN ? "In" : "Out");
+            animatorState = string.Format(Config.TRANSITION_ANIMATOR_STATE_FORMAT, type == Type.IN ? "In" : "Out");
+            trigger = string.Format(Config.TRANSITION_ANIMATOR_TRIGGER_FORMAT, type == Type.IN ? "In" : "Out");
 
             state = State.SETUP;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             TransitionAction clone = new TransitionAction();
             clone.data = data;
@@ -73,7 +73,7 @@ namespace TaleUtil
                         data.canvas.SetActive(true);
 
                     if(duration == 0)
-                        data.animator.speed = TaleUtil.Config.TRANSITION_INSTANT_SPEED;
+                        data.animator.speed = Config.TRANSITION_INSTANT_SPEED;
                     else data.animator.speed = 1f / duration;
 
                     data.animator.SetTrigger(trigger);
@@ -90,7 +90,7 @@ namespace TaleUtil
                         break;
 
                     data.animator.speed = 1f;
-                    data.animator.SetTrigger(TaleUtil.Config.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL);
+                    data.animator.SetTrigger(Config.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL);
 
                     if(type ==  Type.IN)
                         data.canvas.SetActive(false);

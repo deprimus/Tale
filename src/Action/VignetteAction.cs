@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TaleUtil
 {
-    public class VignetteAction : TaleUtil.Action
+    public class VignetteAction : Action
     {
         private enum State
         {
@@ -18,7 +18,7 @@ namespace TaleUtil
         private float smoothness;
         private float roundness;
         private bool? rounded;
-        private TaleUtil.Delegates.InterpolationDelegate interpolation;
+        private Delegates.InterpolationDelegate interpolation;
 
         private float clock;
 
@@ -31,13 +31,13 @@ namespace TaleUtil
 
         private VignetteAction() { }
 
-        public VignetteAction(float intensity, float transitionDuration, Color? color, float smoothness, float roundness, bool? rounded, TaleUtil.Delegates.InterpolationDelegate interpolation)
+        public VignetteAction(float intensity, float transitionDuration, Color? color, float smoothness, float roundness, bool? rounded, Delegates.InterpolationDelegate interpolation)
         {
-            TaleUtil.Assert.NotNull(TaleUtil.Props.postProcessing.bloom, "VignetteAction requires a vignette object (and, therefore, a PostProcessVolume component on the main camera)");
+            Assert.Condition(Props.postProcessing.bloom != null, "VignetteAction requires a vignette object (and, therefore, a PostProcessVolume component on the main camera)");
 
-            TaleUtil.Assert.Condition(intensity == float.MinValue || (intensity >= 0f && intensity <= 1f), "Vignette intensity must be between 0 and 1 (inclusive)");
-            TaleUtil.Assert.Condition(smoothness == float.MinValue || (smoothness > 0f && smoothness <= 1f), "Vignette smoothness must be between 0 (exclusive) and 1 (inclusive)");
-            TaleUtil.Assert.Condition(roundness == float.MinValue || (roundness >= 0f && roundness <= 1f), "Vignette roundness must be between 0 and 1 (inclusive)");
+            Assert.Condition(intensity == float.MinValue || (intensity >= 0f && intensity <= 1f), "Vignette intensity must be between 0 and 1 (inclusive)");
+            Assert.Condition(smoothness == float.MinValue || (smoothness > 0f && smoothness <= 1f), "Vignette smoothness must be between 0 (exclusive) and 1 (inclusive)");
+            Assert.Condition(roundness == float.MinValue || (roundness >= 0f && roundness <= 1f), "Vignette roundness must be between 0 and 1 (inclusive)");
 
             this.transitionDuration = transitionDuration;
             this.intensity = intensity;
@@ -45,14 +45,14 @@ namespace TaleUtil
             this.smoothness = smoothness;
             this.roundness = roundness;
             this.rounded = rounded;
-            this.interpolation = interpolation == null ? TaleUtil.Math.Identity : interpolation;
+            this.interpolation = interpolation == null ? Math.Identity : interpolation;
 
             clock = 0f;
 
             state = State.SETUP;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             VignetteAction clone = new VignetteAction();
             clone.transitionDuration = transitionDuration;
@@ -74,16 +74,16 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    TaleUtil.Props.postProcessing.vignette.intensity.overrideState  = true;
-                    TaleUtil.Props.postProcessing.vignette.color.overrideState      = true;
-                    TaleUtil.Props.postProcessing.vignette.smoothness.overrideState = true;
-                    TaleUtil.Props.postProcessing.vignette.roundness.overrideState  = true;
-                    TaleUtil.Props.postProcessing.vignette.rounded.overrideState    = true;
+                    Props.postProcessing.vignette.intensity.overrideState  = true;
+                    Props.postProcessing.vignette.color.overrideState      = true;
+                    Props.postProcessing.vignette.smoothness.overrideState = true;
+                    Props.postProcessing.vignette.roundness.overrideState  = true;
+                    Props.postProcessing.vignette.rounded.overrideState    = true;
 
-                    initialIntensity  = TaleUtil.Props.postProcessing.vignette.intensity.value;
-                    initialColor      = TaleUtil.Props.postProcessing.vignette.color.value;
-                    initialSmoothness = TaleUtil.Props.postProcessing.vignette.smoothness.value;
-                    initialRoundness  = TaleUtil.Props.postProcessing.vignette.roundness.value;
+                    initialIntensity  = Props.postProcessing.vignette.intensity.value;
+                    initialColor      = Props.postProcessing.vignette.color.value;
+                    initialSmoothness = Props.postProcessing.vignette.smoothness.value;
+                    initialRoundness  = Props.postProcessing.vignette.roundness.value;
 
                     if(intensity == float.MinValue)
                         intensity = initialIntensity;
@@ -94,9 +94,9 @@ namespace TaleUtil
                     if(roundness == float.MinValue)
                         roundness = initialRoundness;
                     if(rounded == null)
-                        rounded = TaleUtil.Props.postProcessing.vignette.rounded.value;
+                        rounded = Props.postProcessing.vignette.rounded.value;
 
-                    TaleUtil.Props.postProcessing.vignette.rounded.value = (bool) rounded;
+                    Props.postProcessing.vignette.rounded.value = (bool) rounded;
 
                     state = State.TRANSITION;
 
@@ -111,10 +111,10 @@ namespace TaleUtil
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
-                    TaleUtil.Props.postProcessing.vignette.intensity.value  = TaleUtil.Math.Interpolate(initialIntensity, intensity, interpolationFactor);
-                    TaleUtil.Props.postProcessing.vignette.color.value      = TaleUtil.Math.Interpolate(initialColor, (Color) color, interpolationFactor);
-                    TaleUtil.Props.postProcessing.vignette.smoothness.value = TaleUtil.Math.Interpolate(initialSmoothness, smoothness, interpolationFactor);
-                    TaleUtil.Props.postProcessing.vignette.roundness.value  = TaleUtil.Math.Interpolate(initialRoundness, roundness, interpolationFactor);
+                    Props.postProcessing.vignette.intensity.value  = Math.Interpolate(initialIntensity, intensity, interpolationFactor);
+                    Props.postProcessing.vignette.color.value      = Math.Interpolate(initialColor, (Color) color, interpolationFactor);
+                    Props.postProcessing.vignette.smoothness.value = Math.Interpolate(initialSmoothness, smoothness, interpolationFactor);
+                    Props.postProcessing.vignette.roundness.value  = Math.Interpolate(initialRoundness, roundness, interpolationFactor);
 
                     if(clock == transitionDuration)
                         return true;

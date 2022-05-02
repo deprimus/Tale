@@ -8,11 +8,12 @@ This document describes the setup process for [Tale](https://github.com/deprimus
 
 After following the setup process, you may start using Tale. Reading the [documentation]() is highly recommended for beginner users.
 
-This setup assumes you have at least minimal knowledge about Unity, the entity component system (ECS), and the C# programming language.
+This setup assumes you have at least minimal knowledge about Unity, and the C# programming language.
 You need to know what components are and how to add them to objects. The optional setup may require additional knowledge.
 
 The setup is split into 2 parts: required and optional. The former describes how to set up the Tale core, while the latter describes
-how to set up optional modules.
+how to set up optional modules (such as dialog, transitions, and others). In practice, the core by itself isn't of much use to you,
+so you will most likely want to set up at least one optional module.
 
 If you encounter issues during the setup (e.g. a canvas doesn't show up), make sure to read the [Troubleshooting](#troubleshooting) section.
 
@@ -40,7 +41,7 @@ don't interfere with the queue. Once an action is finished, it is removed from t
 
 You will need a new/existing Unity 2D project. For the purpose of this guide, a new project will be used.
 
-Please note that Tale was developed for Unity 2020.3.2f1. It is not guaranteed to work with any other versions.
+Please note that Tale was developed for Unity 2020.3.2f1. While it also works with 2021 and others, it's is not guaranteed to.
 
 You will also need the Tale source code.
 
@@ -136,6 +137,7 @@ It should look like this:
 </p>
 
 After doing so, drag the prefab into any existing/future scenes, and make sure that the master object always sits at the top of the hierarchy.
+This is not required, but recommended.
 
 If you want to modify the master object (e.g. to add optional modules), you should modify the prefab. This is the reason why it is recommended to
 finish setting up Tale before creating the prefab.
@@ -178,8 +180,11 @@ The dialog module uses the following props:
 
 - a canvas
 - an Animator component (can be attached to the canvas itself)
+- an object with the Image and Animator components for the avatar
 - two objects with TextMeshProUGUI components (one for the actor, one for the content)
 - two objects, CTC and ACTC (both are optional)
+
+The dialog module also supports voices. However, the voice prop is not part of the dialog module. To set up the voice support, see the [Audio](#audio) setup.
 
 Here is the general flow of a dialog action:
 
@@ -187,7 +192,7 @@ Here is the general flow of a dialog action:
 - if the dialog canvas is not activated, it is activated and the DialogIn animation will be played (if animations are present)
 - the dialog actor will be set, and the content will be typed character-by-character (if the dialog is in additive mode, the content
 will be added to the existing text. Otherwise, it will replace the existing text)
-- after the content is fully typed, the CTC object will be activated and placed after the text (or ACTC if the dialog is in additive mode)
+- after the content is fully typed, the CTC object will be activated and placed after the text (or ACTC instead of CTC if the dialog is in additive mode)
 - after the user advances the dialog, the CTC object is deactivated and:
   - if the next action is a dialog action, the canvas is left active
   - otherwise, the DialogOut animation is played (if present) and the canvas is deactivated
@@ -217,7 +222,7 @@ If the following window pops up, click on `Import TMP Essentials`.
   <img src="public/setup/tale_dialog_actor_content_obj.png" alt="Tale dialog actor and content">
 </p>
 
-You may place these objects anywhere on the canvas and customize them however you like (width, height, font, style, etc). In this example,
+You may place these objects anywhere on the canvas (there are no limits) and customize them however you like (width, height, font, style, etc). In this example,
 the actor and content objects will be placed at the bottom of the screen inside a panel like this:
 
 <p align="center">
@@ -242,6 +247,11 @@ You may also want to customize the overflow. In this example, the actor object u
 <p align="center">
   <img src="public/setup/tale_dialog_content_overflow.png" alt="Tale dialog content overflow">
 </p>
+
+#### Avatar
+
+If you also want avatar support, simply create an object with the Image component and place it anywhere on the canvas (just like the actor/content objects, there are no limits).
+The avatar can be animated later.
 
 #### Animations
 
@@ -275,7 +285,10 @@ It is recommended to save the animations in `Assets/Animations/Tale`.
 </p>
 
 Make sure the dialog canvas has an **active** `Animator` component and that the controller is set correctly.
-Set the update mode to `Unscaled Time`.
+You can set the update mode to `Unscaled Time`. However, if for example you make a game that has pause support
+(which sets the timeScale to something close to `0`), you may want to set this to normal so that the pause
+works for the dialog animations. However, in this case, any change to the time scale will affect the dialog animations.
+It's entirely up to you.
 
 <p align="center">
   <img src="public/setup/tale_dialog_canvas_animator_component.png" alt="Tale dialog canvas animator component">
@@ -355,6 +368,19 @@ The final controller should look like this.
   <img src="public/setup/tale_dialog_canvas_animator_transition4.png" alt="Tale dialog canvas animator transition 4">
 </p>
 
+##### Avatar animations
+
+If you want to add animations to the avatar, add an Animator component to the avatar object, and repeat all of the steps
+above for that component. The only changes are the names of the states and transitions, which can be changed in the config file:
+
+- DIALOG_AVATAR_ANIMATOR_STATE_IN
+- DIALOG_AVATAR_ANIMATOR_STATE_OUT
+- DIALOG_AVATAR_ANIMATOR_TRIGGER_IN
+- DIALOG_AVATAR_ANIMATOR_TRIGGER_OUT
+- DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL
+
+It's recommended to name the animations `DialogAvatarIn` and `DialogAvatarOut`.
+
 #### CTC Objects
 
 After the dialog content is written, the user has to click or press a button in order to advance the dialog. To indicate to the user to do so,
@@ -411,8 +437,9 @@ After setting up the dialog module, make sure that:
 
 - the dialog canvas is **not active**, and has its properties set to the same values as the starting values for the DialogIn animation (e.g. if your animation
 changes the canvas opacity from 0 to 1, make sure the canvas opacity is 0; only do this if animations are present)
-- The event system object is **active**
+- the event system object is **active**
 - the actor and content objects are **active** and have **no text**
+- the avatar (if it has animations) has its properties set to the same values as the starting values for the DialogAvatarIn animation
 - the CTC and ACTC are **not active** (if present)
 
 Tale will automatically activate and deactivate the props when needed, and expects these initial values.
@@ -423,6 +450,9 @@ Simply click on the master object and drag the objects where they belong.
 <p align="center">
   <img src="public/setup/tale_dialog_props.png" alt="Tale dialog props">
 </p>
+
+If you also have an avatar, simply drag the avatar object where it belongs. You will see it in the list.
+The above screenshot is from an older version of Tale which didn't support avatars.
 
 #### Test
 
@@ -450,19 +480,21 @@ public class TaleTest : MonoBehaviour
 > issue if you create a dialog action that executes immediately after the Play button is pressed. This issue should not appear
 > in builds.
 >
-> A fix for this issue is to use Tale.Wait(0.001f) at the beginning.
+> However, if it does appear in builds, a possible fix for this issue would be to use Tale.Wait(0.001f), or something similar, at the beginning.
 
 ### Audio
 
-The audio module can be used to play sounds and music. It is also used for dialog voices (this will be added in the future).
+The audio module can be used to play sounds and music. It is also used for dialog voices.
 Tale supports multi-channel sound. A channel is simply an AudioSource. The more channels you have, the more sounds you will
 be able to play at the same time. You can control each channel individually.
+
+Of course, you can set up only what you need: only sound, only music, only dialog voice, all of them, or any other combination.
 
 This module uses the following props:
 
 - an object with an AudioSource component for the music
 - multiple objects with AudioSource components for sounds (one for each channel)
-- an object with an AudioSource component for the voice
+- an object with an AudioSource component for the dialog voice
 
 Create an empty object called `Audio`. Make sure it is a child of the master object.
 
@@ -789,7 +821,7 @@ The cinematic module uses the following props:
 - an object with a RawImage component
 - an object with an AudioSource component (for videos)
 
-First, create the dialog canvas and name it `Cinematic Canvas`. If an EventSystem object is created, make sure that it is also a child of the master object.
+First, create the cinematic canvas and name it `Cinematic Canvas`. If an EventSystem object is created, make sure that it is also a child of the master object.
 
 <p align="center">
   <img src="public/setup/tale_cinematic_canvas.png" alt="Tale cinematic canvas">
@@ -1239,3 +1271,6 @@ public class TaleTest : MonoBehaviour
       For each Tale canvas, try changing the `Sort Order` to a high number like `1000`.
       Of course, you may adjust these values in order to change the order of the Tale canvases (e.g. transition canvas over dialog canvas).
       However, all canvases should have a value that is higher than the value of any other canvas.
+- Dialog, transitions and others are affected by timeScale
+    - those actions use `Time.deltaTime`. If you don't want them to be affected by the time scale, see the source code of each action and change `deltaTime` to `fixedDeltaTime`.
+      An option could be added in the future to make it easier to change this. For now, change it manually.

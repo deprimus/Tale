@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace TaleUtil
 {
-    public class CinematicVideoPauseAction : TaleUtil.Action
+    public class CinematicVideoPauseAction : Action
     {
 
         public CinematicVideoPauseAction() {
-            TaleUtil.Assert.NotNull(TaleUtil.Props.cinematic.video.player, "CinematicVideoPauseAction requires a video player object; did you forget to register it in TaleMaster?");
+            Assert.Condition(Props.cinematic.video.player != null, "CinematicVideoPauseAction requires a video player object; did you forget to register it in TaleMaster?");
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             CinematicVideoPauseAction clone = new CinematicVideoPauseAction();
 
@@ -20,7 +20,7 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            TaleUtil.Props.cinematic.video.player.Pause();
+            Props.cinematic.video.player.Pause();
             return true;
         }
     }

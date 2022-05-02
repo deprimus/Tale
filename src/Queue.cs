@@ -37,6 +37,7 @@ namespace TaleUtil
 
         public static void Run()
         {
+            // As simple as it gets.
             if(data.Count > 0 && data.First.Value.Run())
                 Dequeue(); // Run if queue is not empty. After running, if the action is done, dequeue.
         }

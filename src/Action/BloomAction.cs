@@ -34,7 +34,7 @@ namespace TaleUtil
 
         public BloomAction(float intensity, float transitionDuration, Color? color, float threshold, float diffusion, float anamorphicRatio, TaleUtil.Delegates.InterpolationDelegate interpolation)
         {
-            TaleUtil.Assert.NotNull(TaleUtil.Props.postProcessing.bloom, "BloomAction requires a bloom object (and, therefore, a PostProcessVolume component on the main camera)");
+            TaleUtil.Assert.Condition(Props.postProcessing.bloom != null, "BloomAction requires a bloom object (and, therefore, a PostProcessVolume component on the main camera)");
 
             TaleUtil.Assert.Condition(intensity == float.MinValue || intensity >= 0f, "Bloom intensity must be at least 0");
             TaleUtil.Assert.Condition(threshold == float.MinValue || threshold >= 0f, "Bloom threshold must be at least 0");

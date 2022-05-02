@@ -66,6 +66,8 @@ namespace TaleUtil
 
             while(node != null)
             {
+                // Run the action. If it's done, remove it. Move on to the next action, repeat.
+                // That's it.
                 if(node.Value.Run())
                 {
                     LinkedListNode<TaleUtil.Action> next = node.Next;
@@ -78,7 +80,8 @@ namespace TaleUtil
                 }
             }
         }
-
+        
+        // This will be used in the future when there is support for manually stopping parallel actions.
         public class Pointer
         {
             public ulong start;

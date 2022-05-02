@@ -20,7 +20,8 @@ namespace TaleUtil
         public static Dictionary<string, TransitionData> transitions;
         public static Dictionary<string, Texture> cameraEffects;
 
-        public static void Init(GameObject dialogCanvas, GameObject dialogActor, GameObject dialogContent, Animator dialogAnimator, GameObject dialogCtc, GameObject dialogActc,
+        // Yes, this is messy. See TaleMaster.cs on why this was written like this.
+        public static void Init(GameObject dialogCanvas, GameObject dialogActor, GameObject dialogContent, GameObject dialogAvatar, Animator dialogAnimator, GameObject dialogCtc, GameObject dialogActc,
                                 GameObject audioGroup, GameObject audioSoundGroup, AudioSource[] audioSound, AudioSource audioMusic, AudioSource audioVoice,
                                 GameObject cinematicCanvas, GameObject cinematicSubtitles, GameObject cinematicSubtitlesBackground, GameObject cinematicSubtitlesGroup,
                                 Animator cinematicBackgroundGroupAnimator, GameObject cinematicBackground, GameObject cinematicBackgroundAlt,
@@ -29,7 +30,7 @@ namespace TaleUtil
         {
             ReinitCamera();
 
-            dialog               = new Dialog(dialogCanvas, dialogActor, dialogContent, dialogAnimator, dialogCtc, dialogActc);
+            dialog               = new Dialog(dialogCanvas, dialogActor, dialogContent, dialogAvatar, dialogAnimator, dialogCtc, dialogActc);
             audio                = new Audio(audioGroup, audioSoundGroup, audioSound, audioMusic, audioVoice);
             cinematic            = new Cinematic(cinematicCanvas, cinematicSubtitles, cinematicSubtitlesBackground, cinematicSubtitlesGroup);
             cinematic.background = new CinematicBackground(cinematicBackgroundGroupAnimator, cinematicBackground, cinematicBackgroundAlt);
@@ -95,7 +96,6 @@ namespace TaleUtil
         {
             public UnityEngine.Camera obj;
             public float baseOrthographicSize;
-            //public Transform transform;
 
             public Camera(UnityEngine.Camera camera)
             {
@@ -117,6 +117,9 @@ namespace TaleUtil
             public TextMeshProUGUI actor;
             public TextMeshProUGUI content;
 
+            public Image avatar;
+            public Animator avatarAnimator;
+
             public Animator animator;
 
             public GameObject ctc;
@@ -125,34 +128,59 @@ namespace TaleUtil
             public GameObject actc;
             public RectTransform actcTransform;
 
-            public Dialog(GameObject canvas, GameObject actor, GameObject content, Animator animator, GameObject ctc, GameObject actc)
+            public Dialog(GameObject canvas, GameObject actor, GameObject content, GameObject avatar, Animator animator, GameObject ctc, GameObject actc)
             {
                 if(canvas != null)
                 {
                     this.canvas = canvas;
 
-                    if(actor != null)
+                    // You could argue that the user should directly pass a TextMeshProUGUI component, and you would be right.
+                    // However, due to the fact that Tale was originally written like this, it hasn't been changed for compatibility reasons.
+                    // This should be changed in the future. Some day.
+                    if (actor != null)
+                    {
                         this.actor = actor.GetComponent<TextMeshProUGUI>();
+                    }
 
-                    if(content != null)
+                    if (content != null)
+                    {
                         this.content = content.GetComponent<TextMeshProUGUI>();
 
-                    this.animator = animator;
+                    }
 
-                    if(this.actor == null)
+                    if (this.actor == null)
+                    {
                         Warning("Dialog actor object does not have a TextMeshProUGUI component");
+                    }
 
-                    if(this.content == null)
+                    if (this.content == null)
+                    {
                         Warning("Dialog content object does not have a TextMeshProUGUI component");
+                    }
+
+                    if (avatar != null)
+                    {
+                        this.avatar = avatar.GetComponent<Image>();
+                        this.avatarAnimator = avatar.GetComponent<Animator>();
+
+                        if(this.avatar == null)
+                        {
+                            Warning("Dialog avatar object does not have an Image component");
+                        }
+                    }
+
+                    this.animator = animator;
 
                     this.ctc = ctc;
 
                     if(this.ctc != null)
                     {
                         ctcTransform = this.ctc.GetComponent<RectTransform>();
-                        
-                        if(ctcTransform == null)
+
+                        if (ctcTransform == null)
+                        {
                             Warning("Dialog CTC object does not have a RectTransform component");
+                        }
                     }
 
                     this.actc = actc;
@@ -161,8 +189,10 @@ namespace TaleUtil
                     {
                         actcTransform = this.actc.GetComponent<RectTransform>();
 
-                        if(actcTransform == null)
+                        if (actcTransform == null)
+                        {
                             Warning("Dialog CTC (Additive) object does not have a RectTransform component");
+                        }
                     }
                 }
             }
@@ -184,8 +214,10 @@ namespace TaleUtil
                 this.music = music;
                 this.voice = voice;
 
-                if(soundGroup == null && sound != null && sound.Length > 0)
+                if (soundGroup == null && sound != null && sound.Length > 0)
+                {
                     Warning("The audio sound channel list is not empty, but the audio sound group is null");
+                }
             }
         }
 
@@ -205,25 +237,33 @@ namespace TaleUtil
                 {
                     this.canvas = canvas;
 
-                    if(subtitlesGroup != null)
+                    if (subtitlesGroup != null)
+                    {
                         this.subtitlesGroup = subtitlesGroup;
+                    }
 
                     if(subtitles != null)
                     {
                         this.subtitles = subtitles.GetComponent<TextMeshProUGUI>();
 
                         if (this.subtitles == null)
+                        {
                             Warning("Cinematic subtitles object does not have a TextMeshProUGUI component");
+                        }
                         else if (this.subtitlesGroup == null)
+                        {
                             Warning("Cinematic subtitles object is not null, but the cinematic subtitles group is null");
+                        }
                     }
 
                     if(subtitlesBackground != null)
                     {
                         this.subtitlesBackground = subtitlesBackground.GetComponent<RectTransform>();
 
-                        if(this.subtitlesBackground == null)
+                        if (this.subtitlesBackground == null)
+                        {
                             Warning("Cinematic subtitles background object does not have a RectTransform component");
+                        }
                     }
                 }
             }
@@ -248,11 +288,15 @@ namespace TaleUtil
                     this.image = background.GetComponent<Image>();
                     this.transform = background.GetComponent<RectTransform>();
 
-                    if(this.image == null)
+                    if (this.image == null)
+                    {
                         Warning("Cinematic background object does not have an Image component");
+                    }
 
                     if (this.transform == null)
+                    {
                         Warning("Cinematic background object does not have a RectTransform component");
+                    }
 
                     if(backgroundAlt != null)
                     {
@@ -260,10 +304,14 @@ namespace TaleUtil
                         this.transformAlt = backgroundAlt.GetComponent<RectTransform>();
 
                         if (this.imageAlt == null)
+                        {
                             Warning("Cinematic background (alternative) object does not have an Image component");
+                        }
 
                         if (this.transformAlt == null)
+                        {
                             Warning("Cinematic background (alternative) object does not have a RectTransform component");
+                        }
                     }
                 }
 
@@ -309,7 +357,8 @@ namespace TaleUtil
                 this.player = player;
                 this.audio = audio;
 
-                if(this.player != null) {
+                if(this.player != null)
+                {
                     this.player.loopPointReached += TaleUtil.Events.OnCinematicVideoEnd;
                 }
             }

@@ -15,15 +15,17 @@ namespace TaleUtil
             else list[index] = value;
         }
         
-        // This extension method relies on 'triangle' animators.
+        // These extension methods rely on 'triangle' animators.
         // Idle --trigger1--> state1 --trigger2-->Idle
         // Idle --trigger3--> state2 --trigger2-->Idle
         // etc
         public static bool StateFinished(this Animator animator, string state)
         {
-            AnimatorStateInfo inInfo = animator.GetCurrentAnimatorStateInfo(0);
-
-            return (inInfo.IsName(state) && inInfo.normalizedTime >= 1f);
+            return animator.GetCurrentAnimatorStateInfo(0).StateFinished(state);
+        }
+        public static bool StateFinished(this AnimatorStateInfo info, string state)
+        {
+            return (info.IsName(state) && info.normalizedTime >= 1f);
         }
     }
 }

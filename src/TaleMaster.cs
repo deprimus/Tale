@@ -8,6 +8,58 @@ using UnityEngine.Rendering.PostProcessing;
 [DefaultExecutionOrder(-1000)]
 public class TaleMaster : MonoBehaviour
 {
+    // Hello Tale!
+    void Awake()
+    {
+        if(Tale.alive)
+        {
+            Destroy(gameObject); // Prevent multiple master objects from existing at the same time.
+            return;
+        }
+
+        TaleUtil.Queue.Init();
+        TaleUtil.Parallel.Init();
+        TaleUtil.Triggers.Init();
+
+        // Yes, this looks messy, but it's easier for the user to assign the raw objects and components in the inspector, and for
+        // Tale to process them and make all necessary initializations and checks in Init(), than to force the user to do everything by themselves.
+        // If I wanted to do everything by myself, I wouldn't have used Tale.
+        //
+        // Sure, in the future it would be nice to pass a single object containing all args to this Init() function, but it's fine for now.
+        //
+        // Also, everything is assigned to static variables so they are ready to be used by actions. Sure, a singleton is better practice,
+        // but it's simpler with static variables.
+        //
+        // TaleUtil.Props.anything is cleaner than TaleUtil.Props.GetInstance().anything
+        //
+        // Keep it simple, stupid
+        TaleUtil.Props.Init(dialogCanvas, dialogActor, dialogContent, dialogAvatar, dialogAnimator, dialogCtc, dialogActc,
+                            audioGroup, audioSoundGroup, audioSound, audioMusic, audioVoice,
+                            cinematicCanvas, cinematicSubtitles, cinematicSubtitlesBackground, cinematicSubtitlesGroup,
+                            cinematicBackgroundGroupAnimator, cinematicBackground, cinematicBackgroundAlt,
+                            cinematicVideoGroup, cinematicVideoPlayer, cinematicVideoAudioSource,
+                            transitions, cameraEffects);
+
+        // Events
+        SceneManager.sceneLoaded += TaleUtil.Events.OnSceneLoaded; // This is used to re-assign the camera when the scene changes
+
+        DontDestroyOnLoad(gameObject);
+        Tale.alive = true;
+    }
+
+    // The heart of Tale ;)
+    void Update()
+    {
+        // That's it. That's literally it. No fancy or complex stuff. Just Run().
+        TaleUtil.Queue.Run();
+        TaleUtil.Parallel.Run();
+    }
+
+    void LateUpdate()
+    {
+        TaleUtil.Triggers.Update();
+    }
+
     // TODO: Add brackets to all switch cases in the project.
 #if UNITY_EDITOR
     [Header("Dialog")]
@@ -24,6 +76,11 @@ public class TaleMaster : MonoBehaviour
     [Rename("Content")]
 #endif
     public GameObject dialogContent;
+
+#if UNITY_EDITOR
+    [Rename("Avatar")]
+#endif
+    public GameObject dialogAvatar;
 
 #if UNITY_EDITOR
     [Rename("Animator")]
@@ -139,41 +196,4 @@ public class TaleMaster : MonoBehaviour
     [Space(20)]
 #endif
     public TaleUtil.Props.CameraEffect[] cameraEffects;
-
-    void Awake()
-    {
-        if(Tale.alive)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        TaleUtil.Queue.Init();
-        TaleUtil.Parallel.Init();
-        TaleUtil.Triggers.Init();
-
-        TaleUtil.Props.Init(dialogCanvas, dialogActor, dialogContent, dialogAnimator, dialogCtc, dialogActc,
-                            audioGroup, audioSoundGroup, audioSound, audioMusic, audioVoice,
-                            cinematicCanvas, cinematicSubtitles, cinematicSubtitlesBackground, cinematicSubtitlesGroup,
-                            cinematicBackgroundGroupAnimator, cinematicBackground, cinematicBackgroundAlt,
-                            cinematicVideoGroup, cinematicVideoPlayer, cinematicVideoAudioSource,
-                            transitions, cameraEffects);
-
-        // Events.
-        SceneManager.sceneLoaded += TaleUtil.Events.OnSceneLoaded;
-
-        DontDestroyOnLoad(gameObject);
-        Tale.alive = true;
-    }
-
-    void Update()
-    {
-        TaleUtil.Queue.Run();
-        TaleUtil.Parallel.Run();
-    }
-
-    void LateUpdate()
-    {
-        TaleUtil.Triggers.Update();
-    }
 }

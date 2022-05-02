@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TaleUtil
 {
-    public class CameraEffectAction : TaleUtil.Action
+    public class CameraEffectAction : Action
     {
         private enum State
         {
@@ -15,7 +15,7 @@ namespace TaleUtil
 
         private float transitionDuration;
         private Texture lut;
-        private TaleUtil.Delegates.InterpolationDelegate interpolation;
+        private Delegates.InterpolationDelegate interpolation;
 
         private float clock;
         private float initialContribution;
@@ -23,16 +23,16 @@ namespace TaleUtil
 
         private CameraEffectAction() { }
 
-        public CameraEffectAction(string effect, float transitionDuration, TaleUtil.Delegates.InterpolationDelegate interpolation)
+        public CameraEffectAction(string effect, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {
-            TaleUtil.Assert.NotNull(TaleUtil.Props.postProcessing.colorGrading, "CameraEffectAction requires a color grading object (and, therefore, a PostProcessVolume component on the main camera)");
+            Assert.Condition(Props.postProcessing.colorGrading != null, "CameraEffectAction requires a color grading object (and, therefore, a PostProcessVolume component on the main camera)");
 
             if (effect != null)
             {
                 effect = effect.ToLower();
-                TaleUtil.Assert.Condition(TaleUtil.Props.cameraEffects.ContainsKey(effect), string.Format("Unregistered camera effect '{0}'", effect));
+                Assert.Condition(Props.cameraEffects.ContainsKey(effect), string.Format("Unregistered camera effect '{0}'", effect));
 
-                lut = TaleUtil.Props.cameraEffects[effect];
+                lut = Props.cameraEffects[effect];
             }
             else
             {
@@ -40,14 +40,14 @@ namespace TaleUtil
             }
 
             this.transitionDuration = transitionDuration;
-            this.interpolation = interpolation == null ? TaleUtil.Math.Identity : interpolation;
+            this.interpolation = interpolation == null ? Math.Identity : interpolation;
 
             clock = 0f;
 
             state = State.SETUP;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             CameraEffectAction clone = new CameraEffectAction();
             clone.transitionDuration = transitionDuration;
@@ -66,20 +66,20 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    //TaleUtil.Props.postProcessing.colorGrading.active = true;
-                    TaleUtil.Props.postProcessing.colorGrading.ldrLut.overrideState = true;
-                    TaleUtil.Props.postProcessing.colorGrading.ldrLutContribution.overrideState = true;
+                    //Props.postProcessing.colorGrading.active = true;
+                    Props.postProcessing.colorGrading.ldrLut.overrideState = true;
+                    Props.postProcessing.colorGrading.ldrLutContribution.overrideState = true;
 
                     if(lut != null)
                     {
-                        TaleUtil.Props.postProcessing.colorGrading.ldrLut.value = lut;
-                        TaleUtil.Props.postProcessing.colorGrading.ldrLutContribution.value = 0f;
+                        Props.postProcessing.colorGrading.ldrLut.value = lut;
+                        Props.postProcessing.colorGrading.ldrLutContribution.value = 0f;
 
                         state = State.TRANSITION_IN;
                     }
                     else
                     {
-                        initialContribution = TaleUtil.Props.postProcessing.colorGrading.ldrLutContribution.value;
+                        initialContribution = Props.postProcessing.colorGrading.ldrLutContribution.value;
                         state = State.TRANSITION_OUT;
                     }
 
@@ -94,7 +94,7 @@ namespace TaleUtil
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
-                    TaleUtil.Props.postProcessing.colorGrading.ldrLutContribution.value = TaleUtil.Math.Interpolate(0f, 1f, interpolationFactor);
+                    Props.postProcessing.colorGrading.ldrLutContribution.value = Math.Interpolate(0f, 1f, interpolationFactor);
 
                     if(clock == transitionDuration)
                         return true;
@@ -110,13 +110,13 @@ namespace TaleUtil
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
-                    TaleUtil.Props.postProcessing.colorGrading.ldrLutContribution.value = TaleUtil.Math.Interpolate(initialContribution, 0f, interpolationFactor);
+                    Props.postProcessing.colorGrading.ldrLutContribution.value = Math.Interpolate(initialContribution, 0f, interpolationFactor);
 
                     if(clock == transitionDuration)
                     {
-                        TaleUtil.Props.postProcessing.colorGrading.ldrLut.value = null;
-                        TaleUtil.Props.postProcessing.colorGrading.ldrLut.overrideState = false;
-                        //TaleUtil.Props.postProcessing.colorGrading.active = false;
+                        Props.postProcessing.colorGrading.ldrLut.value = null;
+                        Props.postProcessing.colorGrading.ldrLut.overrideState = false;
+                        //Props.postProcessing.colorGrading.active = false;
 
                         return true;
                     }
