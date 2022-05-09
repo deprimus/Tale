@@ -115,6 +115,11 @@ namespace TaleUtil
             ctcTransform.position = new Vector3(x, y, bottomRight.z);
         }
 
+        bool HasAnimateableAvatar()
+        {
+            return (avatar != null && Props.dialog.avatar != null && Props.dialog.avatarAnimator != null);
+        }
+
         bool ActivateCanvasAnimation(string state)
         {
             if (Props.dialog.animator != null)
@@ -128,7 +133,7 @@ namespace TaleUtil
 
         bool ActivateAvatarAnimation(string state)
         {
-            if (avatar != null && Props.dialog.avatar != null && Props.dialog.avatarAnimator != null)
+            if (HasAnimateableAvatar())
             {
                 Props.dialog.avatarAnimator.SetTrigger(state);
                 return true;
@@ -709,7 +714,14 @@ namespace TaleUtil
                             break;
                         case Config.DialogAnimationOutMode.CANVAS_AVATAR:
                             // Canvas animation finished, now wait for the avatar animation
-                            state = State.AVATAR_TRANSITION_OUT;
+                            if(HasAnimateableAvatar())
+                            {
+                                state = State.AVATAR_TRANSITION_OUT;
+                            }
+                            else
+                            {
+                                goto default; // There's no avatar, done
+                            }
                             break;
                         case Config.DialogAnimationOutMode.AVATAR_THEN_CANVAS:
                             // Fallthrough
