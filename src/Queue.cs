@@ -22,6 +22,19 @@ namespace TaleUtil
         public static void Remove(TaleUtil.Action action) =>
             data.Remove(action);
 
+        public static void RemoveLast(TaleUtil.Action action)
+        {
+            // If the queue has actions, and the last action is this one, remove it.
+            // This is used by multiple actions, such as QueueAction, which handle the
+            // actions on their own.
+            Action queueAction = FetchLast();
+
+            if(queueAction != null && action == queueAction)
+            {
+                data.RemoveLast();
+            }
+        }
+
         public static TaleUtil.Action Enqueue(TaleUtil.Action act)
         {
             data.AddLast(act);

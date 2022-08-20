@@ -44,14 +44,17 @@ public static class Tale
     public static TaleUtil.Action Multiplex(params TaleUtil.Action[] actions) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.MultiplexAction(actions));
 
+    public static TaleUtil.Action Queue(params TaleUtil.Action[] actions) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.QueueAction(actions));
+
     public static TaleUtil.Action Parallel(params TaleUtil.Action[] actions) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.ParallelAction(actions));
 
     public static TaleUtil.Action ParallelQueue(params TaleUtil.Action[] actions) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.ParallelAction(new TaleUtil.Action[] { new TaleUtil.ParallelQueueAction(actions) }));
+        TaleUtil.Queue.Enqueue(new TaleUtil.ParallelAction(new TaleUtil.Action[] { new TaleUtil.QueueAction(actions) }));
 
-    public static TaleUtil.Action Repeat(ulong count, params TaleUtil.Action[] actions) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.RepeatAction(count, actions));
+    public static TaleUtil.Action Repeat(ulong count, TaleUtil.Action action) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.RepeatAction(count, action));
 
     public static TaleUtil.Action Scene(int index = 1) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(index));
@@ -75,6 +78,9 @@ public static class Tale
 
     public static TaleUtil.Action Wait(float amount = 1f) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.WaitAction(amount));
+
+    public static TaleUtil.Action Delayed(float amount, TaleUtil.Action action) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.DelayedAction(amount, action));
 
     public static TaleUtil.Action Exec(TaleUtil.Delegates.ShallowDelegate action) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.ExecAction(action));
