@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +13,7 @@ namespace TaleUtil
             SHUFFLE_LOOP
         }
 
-        private enum State
+        enum State
         {
             PLAY,
             WAIT,
@@ -22,23 +21,23 @@ namespace TaleUtil
             FADE_OUT
         }
 
-        private List<string> paths;
-        private Mode mode;
-        private float volume;
-        private float pitch;
+        List<string> paths;
+        Mode mode;
+        float volume;
+        float pitch;
 
-        private List<AudioClip> sources;
-        private List<AudioClip> current;
+        List<AudioClip> sources;
+        List<AudioClip> current;
         public int currentIndex;
 
-        private float stopDuration;
+        float stopDuration;
         Delegates.InterpolationDelegate interpolation;
-        private float clock;
-        private float initialVolume;
+        float clock;
+        float initialVolume;
 
-        private State state;
+        State state;
 
-        private MusicAction() { }
+        MusicAction() { }
 
         public MusicAction(List<string> paths, Mode mode, float volume, float pitch)
         {
@@ -63,10 +62,10 @@ namespace TaleUtil
 
             this.stopDuration = stopDuration;
             this.interpolation = interpolation == null ? Math.Identity : interpolation;
-            this.clock = 0f;
+            clock = 0f;
         }
 
-        private AudioClip LoadAudio(string path)
+        AudioClip LoadAudio(string path)
         {
             AudioClip clip = Resources.Load<AudioClip>(path);
             Assert.Condition(clip != null, "The music clip '" + path + "' is missing");
@@ -76,7 +75,7 @@ namespace TaleUtil
 
         // TODO: implement a global music modifier (1.0 = normal, 0.5 = half), and apply it every time.
 
-        private void Finish()
+        void Finish()
         {
             Props.audio.music.clip = null;
 
@@ -93,7 +92,7 @@ namespace TaleUtil
             }
         }
 
-        private void ReinitList()
+        void ReinitList()
         {
             currentIndex = -1;
 
@@ -135,14 +134,14 @@ namespace TaleUtil
             }
         }
 
-        private void LoadNext()
+        void LoadNext()
         {
             ++currentIndex;
             Props.audio.music.clip = current[currentIndex];
             Props.audio.music.Play();
         }
 
-        private bool HasNext()
+        bool HasNext()
         {
             return currentIndex < current.Count - 1;
         }

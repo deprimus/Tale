@@ -2,26 +2,27 @@
 
 namespace TaleUtil
 {
-    public class DelayedAction : TaleUtil.Action
+    public class DelayedAction : Action
     {
         float amount;
-        TaleUtil.Action action;
+        Action action;
 
         float clock;
 
         DelayedAction() { }
 
-        public DelayedAction(float amount, TaleUtil.Action action)
+        public DelayedAction(float amount, Action action)
         {
             this.amount = amount;
             this.action = action;
 
-            TaleUtil.Queue.RemoveLast(action);
+            // Remove the action from the Tale queue because it will be handled here
+            Queue.RemoveLast(action);
 
             clock = 0f;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             DelayedAction clone = new DelayedAction();
             clone.amount = amount;
@@ -32,14 +33,16 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            clock += Time.deltaTime;
-
             if (clock >= amount)
             {
                 return action.Run();
             }
+            else
+            {
+                clock += Time.deltaTime;
 
-            return false;
+                return false;
+            }
         }
     }
 }

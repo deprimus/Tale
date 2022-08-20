@@ -1,10 +1,10 @@
 namespace TaleUtil
 {
-    public class RepeatAction : TaleUtil.Action
+    public class RepeatAction : Action
     {
         ulong count;
-        TaleUtil.Action action;
-        TaleUtil.Action originalAction;
+        Action action;
+        Action originalAction;
 
         RepeatAction() { }
 
@@ -14,10 +14,10 @@ namespace TaleUtil
             originalAction = action;
             this.action = originalAction.Clone();
 
-            TaleUtil.Queue.RemoveLast(action);
+            Queue.RemoveLast(action);
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             RepeatAction clone = new RepeatAction(count, originalAction);
 

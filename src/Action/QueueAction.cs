@@ -1,34 +1,32 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace TaleUtil
 {
-    public class QueueAction : TaleUtil.Action
+    public class QueueAction : Action
     {
-        private LinkedList<TaleUtil.Action> actions;
+        LinkedList<Action> actions;
 
-        private QueueAction() { }
+        QueueAction() { }
 
-        public QueueAction(TaleUtil.Action[] actions)
+        public QueueAction(Action[] actions)
         {
-            this.actions = new LinkedList<TaleUtil.Action>();
+            this.actions = new LinkedList<Action>();
 
             for(int i = actions.Length - 1; i >= 0; --i)
             {
                 this.actions.AddFirst(actions[i]);
 
                 // Remove the action from the big Tale queue, because it will be added to this internal queue.
-                TaleUtil.Queue.RemoveLast(actions[i]);
+                Queue.RemoveLast(actions[i]);
             }
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             QueueAction clone = new QueueAction();
-            clone.actions = new LinkedList<TaleUtil.Action>();
+            clone.actions = new LinkedList<Action>();
 
-            LinkedListNode<TaleUtil.Action> node = actions.First;
+            LinkedListNode<Action> node = actions.First;
 
             while (node != null)
             {
@@ -41,7 +39,7 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            LinkedListNode<TaleUtil.Action> node = actions.First;
+            LinkedListNode<Action> node = actions.First;
 
             if(node == null)
                 return true;

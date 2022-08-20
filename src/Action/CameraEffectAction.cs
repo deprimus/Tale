@@ -1,27 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
 {
     public class CameraEffectAction : Action
     {
-        private enum State
+        enum State
         {
             SETUP,
             TRANSITION_IN,
             TRANSITION_OUT
         }
 
-        private float transitionDuration;
-        private Texture lut;
-        private Delegates.InterpolationDelegate interpolation;
+        float transitionDuration;
+        Texture lut;
+        Delegates.InterpolationDelegate interpolation;
 
-        private float clock;
-        private float initialContribution;
-        private State state;
+        float clock;
+        float initialContribution;
+        State state;
 
-        private CameraEffectAction() { }
+        CameraEffectAction() { }
 
         public CameraEffectAction(string effect, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {

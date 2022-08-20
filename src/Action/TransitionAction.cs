@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
@@ -12,23 +10,23 @@ namespace TaleUtil
             OUT
         }
 
-        private enum State
+        enum State
         {
             SETUP,
             TRANSITION
         }
 
-        private Props.TransitionData data;
-        private float duration;
+        Props.TransitionData data;
+        float duration;
 
-        private Type type;
+        Type type;
 
-        private string animatorState;
-        private string trigger;
+        string animatorState;
+        string trigger;
 
-        private State state;
+        State state;
 
-        private TransitionAction() { }
+        TransitionAction() { }
 
         public TransitionAction(string transition, Type type, float duration)
         {

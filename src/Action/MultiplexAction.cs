@@ -1,14 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace TaleUtil
 {
-    public class MultiplexAction : TaleUtil.Action
+    public class MultiplexAction : Action
     {
-        private LinkedList<TaleUtil.Action> actions;
+        LinkedList<Action> actions;
 
-        private MultiplexAction() { }
+        MultiplexAction() { }
 
         // How this works:
         //
@@ -27,29 +25,25 @@ namespace TaleUtil
         //     Tale.Scene()
         // );
 
-        public MultiplexAction(TaleUtil.Action[] actions)
+        public MultiplexAction(Action[] actions)
         {
-            this.actions = new LinkedList<TaleUtil.Action>();
+            this.actions = new LinkedList<Action>();
 
             for(int i = actions.Length - 1; i >= 0; --i)
             {
                 this.actions.AddFirst(actions[i]);
 
-                TaleUtil.Action queueAction = TaleUtil.Queue.FetchLast();
-
-                if(queueAction != null && actions[i] == queueAction)
-                {
-                    TaleUtil.Queue.Remove(queueAction); // Remove the action from the queue, because it will be added to the multiplex list.
-                }
+                // Remove the action from the queue, because it will be added to the multiplex list.
+                Queue.RemoveLast(actions[i]);
             }
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             MultiplexAction clone = new MultiplexAction();
-            clone.actions = new LinkedList<TaleUtil.Action>();
+            clone.actions = new LinkedList<Action>();
 
-            LinkedListNode<TaleUtil.Action> node = actions.First;
+            LinkedListNode<Action> node = actions.First;
 
             while(node != null)
             {
@@ -62,13 +56,13 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            LinkedListNode<TaleUtil.Action> node = actions.First;
+            LinkedListNode<Action> node = actions.First;
 
             while(node != null)
             {
                 if(node.Value.Run())
                 {
-                    LinkedListNode<TaleUtil.Action> next = node.Next;
+                    LinkedListNode<Action> next = node.Next;
                     actions.Remove(node);
                     node = next;
                 }

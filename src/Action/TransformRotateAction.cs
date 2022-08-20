@@ -1,46 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
 {
-    public class TransformRotateAction : TaleUtil.Action
+    public class TransformRotateAction : Action
     {
-        private enum State
+        enum State
         {
             SETUP,
             TRANSITION
         }
 
-        private TaleUtil.Props.Transformable transformable;
-        private Vector3 rotation;
-        private float transitionDuration;
-        private TaleUtil.Delegates.InterpolationDelegate interpolation;
-        private bool relative;
+        Props.Transformable transformable;
+        Vector3 rotation;
+        float transitionDuration;
+        Delegates.InterpolationDelegate interpolation;
+        bool relative;
 
-        private float clock;
+        float clock;
 
-        private Vector3 initialRotation;
+        Vector3 initialRotation;
 
-        private State state;
+        State state;
 
-        private TransformRotateAction() { }
+        TransformRotateAction() { }
 
-        public TransformRotateAction(TaleUtil.Props.Transformable transformable, Vector3 rotation, float transitionDuration, TaleUtil.Delegates.InterpolationDelegate interpolation, bool relative)
+        public TransformRotateAction(Props.Transformable transformable, Vector3 rotation, float transitionDuration, Delegates.InterpolationDelegate interpolation, bool relative)
         {
             this.transformable = transformable;
             this.rotation = rotation;
             this.transitionDuration = transitionDuration;
-            this.interpolation = interpolation == null ? TaleUtil.Math.Identity : interpolation;
+            this.interpolation = interpolation == null ? Math.Identity : interpolation;
             this.relative = relative;
             
             // Normalize the angles from any number to 0->360
             // If relative, normalize in SETUP
             if (!relative)
             {
-                this.rotation.x = TaleUtil.Math.NormalizeAngle(this.rotation.x);
-                this.rotation.y = TaleUtil.Math.NormalizeAngle(this.rotation.y);
-                this.rotation.z = TaleUtil.Math.NormalizeAngle(this.rotation.z);
+                this.rotation.x = Math.NormalizeAngle(this.rotation.x);
+                this.rotation.y = Math.NormalizeAngle(this.rotation.y);
+                this.rotation.z = Math.NormalizeAngle(this.rotation.z);
             }
 
             clock = 0f;
@@ -48,10 +46,10 @@ namespace TaleUtil
             state = State.SETUP;
         }
 
-        public TransformRotateAction(Transform transform, Vector3 rotation, float transitionDuration, TaleUtil.Delegates.InterpolationDelegate interpolation, bool relative)
-            : this(new TaleUtil.Props.Transformable(transform), rotation, transitionDuration, interpolation, relative) { }
+        public TransformRotateAction(Transform transform, Vector3 rotation, float transitionDuration, Delegates.InterpolationDelegate interpolation, bool relative)
+            : this(new Props.Transformable(transform), rotation, transitionDuration, interpolation, relative) { }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             TransformRotateAction clone = new TransformRotateAction();
             clone.transformable = transformable;
@@ -78,9 +76,9 @@ namespace TaleUtil
                     {
                         rotation = new Vector3(initialRotation.x + rotation.x, initialRotation.y + rotation.y, initialRotation.z + rotation.z);
                         
-                        //rotation.x = TaleUtil.Math.NormalizeAngle(rotation.x);
-                        //rotation.y = TaleUtil.Math.NormalizeAngle(rotation.y);
-                        //rotation.z = TaleUtil.Math.NormalizeAngle(rotation.z);
+                        //rotation.x = Math.NormalizeAngle(rotation.x);
+                        //rotation.y = Math.NormalizeAngle(rotation.y);
+                        //rotation.z = Math.NormalizeAngle(rotation.z);
                     }
                     break;
                 }
@@ -105,15 +103,15 @@ namespace TaleUtil
                     // TODO: Use user-defined interpolation
 
                     if(rotation.x != float.MinValue)
-                        x = TaleUtil.Math.Interpolate(initialRotation.x, rotation.x, interpolationFactor);
+                        x = Math.Interpolate(initialRotation.x, rotation.x, interpolationFactor);
                     else x = transformable.transform.eulerAngles.x;
 
                     if(rotation.y != float.MinValue)
-                        y = TaleUtil.Math.Interpolate(initialRotation.y, rotation.y, interpolationFactor);
+                        y = Math.Interpolate(initialRotation.y, rotation.y, interpolationFactor);
                     else y = transformable.transform.eulerAngles.y;
 
                     if(rotation.z != float.MinValue)
-                        z = TaleUtil.Math.Interpolate(initialRotation.z, rotation.z, interpolationFactor);
+                        z = Math.Interpolate(initialRotation.z, rotation.z, interpolationFactor);
                     else z = transformable.transform.eulerAngles.z;
 
 

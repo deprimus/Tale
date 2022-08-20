@@ -1,7 +1,3 @@
-#pragma warning disable 0162 // Disable the 'unreachable code' warning caused by config constants.
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -9,13 +5,13 @@ namespace TaleUtil
 {
     public class CinematicSubtitleAction : Action
     {
-        private enum State
+        enum State
         {
             SETUP,
             WAIT
         }
 
-        private struct RectBounds
+        struct RectBounds
         {
             public float left;
             public float right;
@@ -31,15 +27,15 @@ namespace TaleUtil
             }
         }
 
-        private string content;
-        private float ttl;
-        private bool showBackground;
+        string content;
+        float ttl;
+        bool showBackground;
 
-        private State state;
+        State state;
 
-        private float clock;
+        float clock;
 
-        private CinematicSubtitleAction() { }
+        CinematicSubtitleAction() { }
 
         public CinematicSubtitleAction(string content, float ttl, bool showBackground)
         {

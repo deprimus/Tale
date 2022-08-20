@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
 {
     public class SoundAction : Action
     {
-        private enum State
+        enum State
         {
             PLAY,
             STOP,
@@ -14,13 +12,13 @@ namespace TaleUtil
         }
 
         public int channel;
-        private string path;
-        private float volume;
-        private float pitch;
+        string path;
+        float volume;
+        float pitch;
 
-        private State state;
+        State state;
 
-        private SoundAction() { }
+        SoundAction() { }
 
         public SoundAction(int channel, string path, float volume, float pitch)
         {
@@ -39,7 +37,7 @@ namespace TaleUtil
             else state = State.STOP;
         }
 
-        private AudioClip LoadAudio()
+        AudioClip LoadAudio()
         {
             AudioClip clip = Resources.Load<AudioClip>(path);
             Assert.Condition(clip != null, "The sound clip '" + path + "' is missing");
@@ -47,7 +45,7 @@ namespace TaleUtil
             return clip;
         }
 
-        private void Finish()
+        void Finish()
         {
             Props.audio.sound[channel].clip = null;
 

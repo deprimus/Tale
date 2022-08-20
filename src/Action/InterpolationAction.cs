@@ -1,31 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
 {
-    public class InterpolationAction<T> : TaleUtil.Action
+    public class InterpolationAction<T> : Action
     {
-        private enum State
+        enum State
         {
             TRANSITION_FLOAT,
             TRANSITION_VECTOR,
             TRANSITION_COLOR
         }
 
-        private T initial;
-        private T target;
-        private TaleUtil.Delegates.CallbackDelegate<T> callback;
-        private float transitionDuration;
-        private TaleUtil.Delegates.InterpolationDelegate interpolation;
+        T initial;
+        T target;
+        Delegates.CallbackDelegate<T> callback;
+        float transitionDuration;
+        Delegates.InterpolationDelegate interpolation;
 
-        private float clock;
+        float clock;
 
-        private State state;
+        State state;
 
-        private InterpolationAction() { }
+        InterpolationAction() { }
 
-        public InterpolationAction(T initial, T target, TaleUtil.Delegates.CallbackDelegate<T> callback, float transitionDuration, TaleUtil.Delegates.InterpolationDelegate interpolation)
+        public InterpolationAction(T initial, T target, Delegates.CallbackDelegate<T> callback, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {
             if (typeof(T) == typeof(float))
             {
@@ -41,19 +39,19 @@ namespace TaleUtil
             }
             else
             {
-                TaleUtil.Assert.Impossible("<T> must be either float, Vector3 or Color for InterpolationAction");
+                Assert.Impossible("<T> must be either float, Vector3 or Color for InterpolationAction");
             }
 
             this.initial = initial;
             this.target = target;
             this.callback = callback;
             this.transitionDuration = transitionDuration;
-            this.interpolation = interpolation == null ? TaleUtil.Math.Identity : interpolation;
+            this.interpolation = interpolation == null ? Math.Identity : interpolation;
 
             clock = 0f;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             InterpolationAction<T> clone = new InterpolationAction<T>();
             clone.initial = initial;
@@ -67,7 +65,7 @@ namespace TaleUtil
             return clone;
         }
 
-        private void Tick()
+        void Tick()
         {
             clock += Time.deltaTime;
 
@@ -85,18 +83,18 @@ namespace TaleUtil
             {
                 case State.TRANSITION_FLOAT:
                 {
-                    callback((T) (object) TaleUtil.Math.Interpolate((float) (object) initial, (float) (object) target, interpolationFactor));
+                    callback((T) (object) Math.Interpolate((float) (object) initial, (float) (object) target, interpolationFactor));
                     break;
                 }
                 case State.TRANSITION_VECTOR:
                 {
-                    callback((T)(object)TaleUtil.Math.Interpolate((Vector3) (object) initial, (Vector3) (object) target, interpolationFactor));
+                    callback((T)(object)Math.Interpolate((Vector3) (object) initial, (Vector3) (object) target, interpolationFactor));
                     break;
 
                 }
                 case State.TRANSITION_COLOR:
                 {
-                    callback((T) (object) TaleUtil.Math.Interpolate((Color) (object) initial, (Color) (object) target, interpolationFactor));
+                    callback((T) (object) Math.Interpolate((Color) (object) initial, (Color) (object) target, interpolationFactor));
                     break;
                 }
             }

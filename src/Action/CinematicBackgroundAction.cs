@@ -1,9 +1,6 @@
 #pragma warning disable 0162 // Disable the 'unreachable code' warning caused by config constants.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 namespace TaleUtil
 {
@@ -16,7 +13,7 @@ namespace TaleUtil
             CROSSFADE
         }
 
-        private enum State
+        enum State
         {
             INSTANT,
             CROSSFADE_SETUP,
@@ -26,16 +23,16 @@ namespace TaleUtil
             CUSTOM_TRANSITION_IN
         }
 
-        private string path;
-        private float speed;
+        string path;
+        float speed;
 
-        private State state;
+        State state;
 
-        private float clock;
+        float clock;
 
-        private string customAnimatorState;
+        string customAnimatorState;
 
-        private CinematicBackgroundAction() { }
+        CinematicBackgroundAction() { }
 
         public CinematicBackgroundAction(string path, Type type, float speed)
         {
@@ -44,7 +41,7 @@ namespace TaleUtil
             this.path = path;
             this.speed = speed;
 
-            this.clock = 0f;
+            clock = 0f;
 
             switch (type)
             {
@@ -62,7 +59,7 @@ namespace TaleUtil
             }
         }
 
-        private Sprite LoadSprite()
+        Sprite LoadSprite()
         {
             Sprite sprite = Resources.Load<Sprite>(path);
             Assert.Condition(sprite != null, "The cinematic background '" + path + "' is missing");
@@ -161,8 +158,6 @@ namespace TaleUtil
 
                     Props.cinematic.background.groupAnimator.speed = 1f;
                     return true;
-
-                    break;
                 }
             }
 

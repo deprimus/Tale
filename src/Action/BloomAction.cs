@@ -1,45 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
 {
-    public class BloomAction : TaleUtil.Action
+    public class BloomAction : Action
     {
-        private enum State
+        enum State
         {
             SETUP,
             TRANSITION
         }
 
-        private float transitionDuration;
-        private float intensity;
-        private Color? color;
-        private float threshold;
-        private float diffusion;
-        private float anamorphicRatio;
-        private TaleUtil.Delegates.InterpolationDelegate interpolation;
+        float transitionDuration;
+        float intensity;
+        Color? color;
+        float threshold;
+        float diffusion;
+        float anamorphicRatio;
+        Delegates.InterpolationDelegate interpolation;
 
-        private float clock;
+        float clock;
 
-        private float initialIntensity;
-        private Color initialColor;
-        private float initialThreshold;
-        private float initialDiffusion;
-        private float initialAnamorphicRatio;
+        float initialIntensity;
+        Color initialColor;
+        float initialThreshold;
+        float initialDiffusion;
+        float initialAnamorphicRatio;
 
-        private State state;
+        State state;
 
-        private BloomAction() { }
+        BloomAction() { }
 
-        public BloomAction(float intensity, float transitionDuration, Color? color, float threshold, float diffusion, float anamorphicRatio, TaleUtil.Delegates.InterpolationDelegate interpolation)
+        public BloomAction(float intensity, float transitionDuration, Color? color, float threshold, float diffusion, float anamorphicRatio, Delegates.InterpolationDelegate interpolation)
         {
-            TaleUtil.Assert.Condition(Props.postProcessing.bloom != null, "BloomAction requires a bloom object (and, therefore, a PostProcessVolume component on the main camera)");
+            Assert.Condition(Props.postProcessing.bloom != null, "BloomAction requires a bloom object (and, therefore, a PostProcessVolume component on the main camera)");
 
-            TaleUtil.Assert.Condition(intensity == float.MinValue || intensity >= 0f, "Bloom intensity must be at least 0");
-            TaleUtil.Assert.Condition(threshold == float.MinValue || threshold >= 0f, "Bloom threshold must be at least 0");
-            TaleUtil.Assert.Condition(diffusion == float.MinValue || (diffusion >= 1f && diffusion <= 10f), "Bloom diffusion must be between 1 and 10 (inclusive)");
-            TaleUtil.Assert.Condition(anamorphicRatio == float.MinValue || (anamorphicRatio >= -1f && anamorphicRatio <= 1f), "Bloom anamorphic ratio must be between -1 and 1 (inclusive)");
+            Assert.Condition(intensity == float.MinValue || intensity >= 0f, "Bloom intensity must be at least 0");
+            Assert.Condition(threshold == float.MinValue || threshold >= 0f, "Bloom threshold must be at least 0");
+            Assert.Condition(diffusion == float.MinValue || (diffusion >= 1f && diffusion <= 10f), "Bloom diffusion must be between 1 and 10 (inclusive)");
+            Assert.Condition(anamorphicRatio == float.MinValue || (anamorphicRatio >= -1f && anamorphicRatio <= 1f), "Bloom anamorphic ratio must be between -1 and 1 (inclusive)");
 
             this.transitionDuration = transitionDuration;
             this.intensity = intensity;
@@ -47,14 +45,14 @@ namespace TaleUtil
             this.threshold = threshold;
             this.diffusion = diffusion;
             this.anamorphicRatio = anamorphicRatio;
-            this.interpolation = interpolation == null ? TaleUtil.Math.Identity : interpolation;
+            this.interpolation = interpolation == null ? Math.Identity : interpolation;
 
             clock = 0f;
 
             state = State.SETUP;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             BloomAction clone = new BloomAction();
             clone.transitionDuration = transitionDuration;
@@ -76,17 +74,17 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    TaleUtil.Props.postProcessing.bloom.intensity.overrideState       = true;
-                    TaleUtil.Props.postProcessing.bloom.color.overrideState           = true;
-                    TaleUtil.Props.postProcessing.bloom.threshold.overrideState       = true;
-                    TaleUtil.Props.postProcessing.bloom.diffusion.overrideState       = true;
-                    TaleUtil.Props.postProcessing.bloom.anamorphicRatio.overrideState = true;
+                    Props.postProcessing.bloom.intensity.overrideState       = true;
+                    Props.postProcessing.bloom.color.overrideState           = true;
+                    Props.postProcessing.bloom.threshold.overrideState       = true;
+                    Props.postProcessing.bloom.diffusion.overrideState       = true;
+                    Props.postProcessing.bloom.anamorphicRatio.overrideState = true;
 
-                    initialIntensity       = TaleUtil.Props.postProcessing.bloom.intensity.value;
-                    initialColor           = TaleUtil.Props.postProcessing.bloom.color.value;
-                    initialThreshold       = TaleUtil.Props.postProcessing.bloom.threshold.value;
-                    initialDiffusion       = TaleUtil.Props.postProcessing.bloom.diffusion.value;
-                    initialAnamorphicRatio = TaleUtil.Props.postProcessing.bloom.anamorphicRatio.value;
+                    initialIntensity       = Props.postProcessing.bloom.intensity.value;
+                    initialColor           = Props.postProcessing.bloom.color.value;
+                    initialThreshold       = Props.postProcessing.bloom.threshold.value;
+                    initialDiffusion       = Props.postProcessing.bloom.diffusion.value;
+                    initialAnamorphicRatio = Props.postProcessing.bloom.anamorphicRatio.value;
 
                     if(intensity == float.MinValue)
                         intensity = initialIntensity;
@@ -112,11 +110,11 @@ namespace TaleUtil
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
-                    TaleUtil.Props.postProcessing.bloom.intensity.value       = TaleUtil.Math.Interpolate(initialIntensity, intensity, interpolationFactor);
-                    TaleUtil.Props.postProcessing.bloom.color.value           = TaleUtil.Math.Interpolate(initialColor, (Color)color, interpolationFactor);
-                    TaleUtil.Props.postProcessing.bloom.threshold.value       = TaleUtil.Math.Interpolate(initialThreshold, threshold, interpolationFactor);
-                    TaleUtil.Props.postProcessing.bloom.diffusion.value       = TaleUtil.Math.Interpolate(initialDiffusion, diffusion, interpolationFactor);
-                    TaleUtil.Props.postProcessing.bloom.anamorphicRatio.value = TaleUtil.Math.Interpolate(initialAnamorphicRatio, anamorphicRatio, interpolationFactor);
+                    Props.postProcessing.bloom.intensity.value       = Math.Interpolate(initialIntensity, intensity, interpolationFactor);
+                    Props.postProcessing.bloom.color.value           = Math.Interpolate(initialColor, (Color)color, interpolationFactor);
+                    Props.postProcessing.bloom.threshold.value       = Math.Interpolate(initialThreshold, threshold, interpolationFactor);
+                    Props.postProcessing.bloom.diffusion.value       = Math.Interpolate(initialDiffusion, diffusion, interpolationFactor);
+                    Props.postProcessing.bloom.anamorphicRatio.value = Math.Interpolate(initialAnamorphicRatio, anamorphicRatio, interpolationFactor);
 
                     if(clock == transitionDuration)
                         return true;

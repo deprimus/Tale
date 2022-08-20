@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
 {
-    public class WaitAction : TaleUtil.Action
+    public class WaitAction : Action
     {
-        private float amount;
-        private float clock;
+        float amount;
+        float clock;
 
-        private WaitAction() { }
+        WaitAction() { }
 
         public WaitAction(float amount)
         {
@@ -17,7 +15,7 @@ namespace TaleUtil
             clock = 0f;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             WaitAction clone = new WaitAction();
             clone.amount = amount;
@@ -30,9 +28,7 @@ namespace TaleUtil
         {
             clock += Time.deltaTime;
 
-            if(clock >= amount)
-                return true;
-            return false;
+            return (clock >= amount);
         }
     }
 }

@@ -1,22 +1,21 @@
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace TaleUtil
 {
-    public class SceneAction : TaleUtil.Action
+    public class SceneAction : Action
     {
-        private enum Type
+        enum Type
         {
             INDEX,
             PATH
         }
 
-        private string path;
-        private int index;
+        string path;
+        int index;
 
-        private Type type;
+        Type type;
 
-        private SceneAction() { }
+        SceneAction() { }
 
         public SceneAction(int index)
         {
@@ -30,7 +29,7 @@ namespace TaleUtil
             type = Type.PATH;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             SceneAction clone = new SceneAction();
             clone.index = index;

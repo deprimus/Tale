@@ -1,24 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace TaleUtil
 {
-    public class ParallelStopAction : TaleUtil.Action
+    public class ParallelStopAction : Action
     {
-        private TaleUtil.Parallel.Pointer ptr;
+        Parallel.Pointer ptr;
 
-        private ParallelStopAction() { }
+        ParallelStopAction() { }
 
-        public ParallelStopAction(TaleUtil.Parallel.Pointer ptr)
+        public ParallelStopAction(Parallel.Pointer ptr)
         {
             this.ptr = ptr;
         }
 
-        public override TaleUtil.Action Clone()
+        public override Action Clone()
         {
             ParallelStopAction clone = new ParallelStopAction();
-            clone.ptr = new TaleUtil.Parallel.Pointer(ptr.start, ptr.size);
+            clone.ptr = new Parallel.Pointer(ptr.start, ptr.size);
 
             return clone;
         }

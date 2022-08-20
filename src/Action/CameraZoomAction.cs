@@ -1,28 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
 {
     public class CameraZoomAction : Action
     {
-        private enum State
+        enum State
         {
             SETUP,
             TRANSITION
         }
 
-        private float factor;
-        private float transitionDuration;
-        private Delegates.InterpolationDelegate interpolation;
+        float factor;
+        float transitionDuration;
+        Delegates.InterpolationDelegate interpolation;
 
-        private float clock;
+        float clock;
 
-        private float initialSize;
+        float initialSize;
 
-        private State state;
+        State state;
 
-        private CameraZoomAction() { }
+        CameraZoomAction() { }
 
         public CameraZoomAction(float factor, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {

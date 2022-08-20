@@ -1,10 +1,5 @@
-#pragma warning disable 0162 // Disable the 'unreachable code' warning caused by config constants.
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
-using TMPro;
 
 namespace TaleUtil
 {
@@ -17,7 +12,7 @@ namespace TaleUtil
             FIXED
         }
 
-        private enum State
+        enum State
         {
             LOAD,
             WAIT_FOR_PREPARATION,
@@ -33,16 +28,16 @@ namespace TaleUtil
             CUSTOM_TRANSITION_IN
         }
 
-        private string path;
-        private float speed;
-        private float detatchTime;
-        private DetatchType detatchType;
+        string path;
+        float speed;
+        float detatchTime;
+        DetatchType detatchType;
 
-        private State state;
+        State state;
 
-        private double startTime; // VideoPlayer.time is of type double.
+        double startTime; // VideoPlayer.time is of type double.
 
-        private CinematicVideoAction() { }
+        CinematicVideoAction() { }
 
         public CinematicVideoAction(string path, float detatchTime, DetatchType detatchType, float speed)
         {
@@ -74,7 +69,7 @@ namespace TaleUtil
             return clone;
         }
 
-        private VideoClip LoadVideo()
+        VideoClip LoadVideo()
         {
             VideoClip clip = Resources.Load<VideoClip>(path);
             Assert.Condition(clip != null, "The cinematic video '" + path + "' is missing");

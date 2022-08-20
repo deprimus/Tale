@@ -1,35 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
 {
     public class VignetteAction : Action
     {
-        private enum State
+        enum State
         {
             SETUP,
             TRANSITION
         }
 
-        private float transitionDuration;
-        private float intensity;
-        private Color? color;
-        private float smoothness;
-        private float roundness;
-        private bool? rounded;
-        private Delegates.InterpolationDelegate interpolation;
+        float transitionDuration;
+        float intensity;
+        Color? color;
+        float smoothness;
+        float roundness;
+        bool? rounded;
+        Delegates.InterpolationDelegate interpolation;
 
-        private float clock;
+        float clock;
 
-        private float initialIntensity;
-        private Color initialColor;
-        private float initialSmoothness;
-        private float initialRoundness;
+        float initialIntensity;
+        Color initialColor;
+        float initialSmoothness;
+        float initialRoundness;
 
-        private State state;
+        State state;
 
-        private VignetteAction() { }
+        VignetteAction() { }
 
         public VignetteAction(float intensity, float transitionDuration, Color? color, float smoothness, float roundness, bool? rounded, Delegates.InterpolationDelegate interpolation)
         {
