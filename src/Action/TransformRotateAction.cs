@@ -32,8 +32,7 @@ namespace TaleUtil
             this.interpolation = interpolation == null ? Math.Identity : interpolation;
             this.relative = relative;
             
-            // Normalize the angles from any number to 0->360
-            // If relative, normalize in SETUP
+            // Normalize the angles from any number to 0->360, only if it's not a relative rotation
             if (!relative)
             {
                 this.rotation.x = Math.NormalizeAngle(this.rotation.x);
@@ -74,12 +73,51 @@ namespace TaleUtil
 
                     if(relative)
                     {
+                        // Manual: rotate exactly how much the user said
                         rotation = new Vector3(initialRotation.x + rotation.x, initialRotation.y + rotation.y, initialRotation.z + rotation.z);
                         
+                        // Don't normalize, because if we want to rotate 720 degrees to the left, it should rotate around twice,
+                        // and it shouldn't be normalized to 0.
                         //rotation.x = Math.NormalizeAngle(rotation.x);
                         //rotation.y = Math.NormalizeAngle(rotation.y);
                         //rotation.z = Math.NormalizeAngle(rotation.z);
                     }
+                    else
+                    {
+                        // Auto: find the shortest rotation
+                        //
+                        // Basically, here's an example of what this accomplishes:
+                        // angle: 0,   target: 270 -> angle: 360
+                        // angle: 0,   target: 90  -> angle: 0
+                        // angle: 270, target: 0   -> target: 360
+                        if(initialRotation.x < rotation.x)
+                        {
+                            initialRotation.x = Math.NearestEquivalentAngle(initialRotation.x, rotation.x);
+                        }
+                        else
+                        {
+                            rotation.x = Math.NearestEquivalentAngle(rotation.x, initialRotation.x);
+                        }
+
+                        if (initialRotation.y < rotation.y)
+                        {
+                            initialRotation.y = Math.NearestEquivalentAngle(initialRotation.y, rotation.y);
+                        }
+                        else
+                        {
+                            rotation.y = Math.NearestEquivalentAngle(rotation.y, initialRotation.y);
+                        }
+
+                        if (initialRotation.z < rotation.z)
+                        {
+                            initialRotation.z = Math.NearestEquivalentAngle(initialRotation.z, rotation.z);
+                        }
+                        else
+                        {
+                            rotation.z = Math.NearestEquivalentAngle(rotation.z, initialRotation.z);
+                        }
+                    }
+
                     break;
                 }
                 case State.TRANSITION:
