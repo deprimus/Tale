@@ -56,6 +56,12 @@ public static class Tale
     public static TaleUtil.Action Repeat(ulong count, TaleUtil.Action action) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.RepeatAction(count, action));
 
+    public static TaleUtil.Action Trigger(string name) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.ExecAction(() => TaleUtil.Triggers.Set(name)));
+
+    public static TaleUtil.Action Interruptible(string trigger, TaleUtil.Action action) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.InterruptibleAction(trigger, action));
+
     public static TaleUtil.Action Scene(int index = 1) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(index));
     public static TaleUtil.Action Scene(string path) =>
