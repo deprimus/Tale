@@ -172,6 +172,18 @@ public static class Tale
         public static TaleUtil.Action RotateZ(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformRotateAction(TaleUtil.Props.camera, new Vector3(Default.FLOAT, Default.FLOAT, degrees), transitionDuration, interpolation, true));
 
+        public static TaleUtil.Action Shake(Vector2 magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.TransformShakeAction(TaleUtil.Props.camera, magnitude, duration, interpolation));
+
+        public static TaleUtil.Action Shake(float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.TransformShakeAction(TaleUtil.Props.camera, new Vector2(magnitude, magnitude), duration, interpolation));
+
+        public static TaleUtil.Action ShakeX(float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.TransformShakeAction(TaleUtil.Props.camera, new Vector2(magnitude, Default.FLOAT), duration, interpolation));
+
+        public static TaleUtil.Action ShakeY(float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.TransformShakeAction(TaleUtil.Props.camera, new Vector2(Default.FLOAT, magnitude), duration, interpolation));
+
         public static TaleUtil.Action Effect(string name = null, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.CameraEffectAction(name, transitionDuration, interpolation));
 
@@ -219,6 +231,18 @@ public static class Tale
 
         public static TaleUtil.Action RotateZ(UnityEngine.Transform transform, float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformRotateAction(transform, new Vector3(Default.FLOAT, Default.FLOAT, degrees), transitionDuration, interpolation, true));
+
+        public static TaleUtil.Action Shake(UnityEngine.Transform transform, Vector2 magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.TransformShakeAction(transform, magnitude, duration, interpolation));
+
+        public static TaleUtil.Action Shake(UnityEngine.Transform transform, float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.TransformShakeAction(transform, new Vector2(magnitude, magnitude), duration, interpolation));
+
+        public static TaleUtil.Action ShakeX(UnityEngine.Transform transform, float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.TransformShakeAction(transform, new Vector2(magnitude, Default.FLOAT), duration, interpolation));
+
+        public static TaleUtil.Action ShakeY(UnityEngine.Transform transform, float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.TransformShakeAction(transform, new Vector2(Default.FLOAT, magnitude), duration, interpolation));
     }
 
     public static class Cinema

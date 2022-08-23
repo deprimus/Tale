@@ -27,7 +27,13 @@
 
         public override bool Run()
         {
-            return (Triggers.Get(trigger) || action.Run());
+            if (Triggers.Get(trigger))
+            {
+                action.OnInterrupt();
+                return true;
+            }
+
+            return action.Run();
         }
     }
 }

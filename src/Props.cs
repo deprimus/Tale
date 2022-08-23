@@ -82,6 +82,10 @@ namespace TaleUtil
         }
 
         // A constant reference to a changing Transform reference.
+        // For example, when changing scenes, the Camera transform reference changes as well.
+        // This is problematic, because some Tale actions need to have a valid Transform reference at all times.
+        // Transformable solves this problem by simply wrapping around a Transform.
+        // Even if the Transform reference changes, the Transformable address always stays the same.
         public class Transformable
         {
             public Transform transform;
@@ -96,6 +100,7 @@ namespace TaleUtil
         {
             public UnityEngine.Camera obj;
             public float baseOrthographicSize;
+            public ParticleSystem snow;
 
             public Camera(UnityEngine.Camera camera)
             {
@@ -107,6 +112,8 @@ namespace TaleUtil
                 obj = camera;
                 baseOrthographicSize = obj.orthographicSize;
                 transform = obj.GetComponent<Transform>();
+
+                snow = GameObject.Find("Snow").GetComponent<ParticleSystem>();
             }
         }
 

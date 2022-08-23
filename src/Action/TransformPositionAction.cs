@@ -49,8 +49,11 @@ namespace TaleUtil
             clone.pos = pos;
             clone.transitionDuration = transitionDuration;
             clone.interpolation = interpolation;
+            clone.relative = relative;
             clone.clock = clock;
             clone.state = state;
+            clone.initialPos = initialPos;
+            clone.isRectTransform = isRectTransform;
 
             return clone;
         }
