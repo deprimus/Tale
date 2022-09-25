@@ -45,6 +45,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             TransformPositionAction clone = new TransformPositionAction();
+            clone.delta = delta;
             clone.transformable = transformable;
             clone.pos = pos;
             clone.transitionDuration = transitionDuration;
@@ -84,7 +85,7 @@ namespace TaleUtil
                 }
                 case State.TRANSITION:
                 {
-                    clock += Time.deltaTime;
+                    clock += delta();
 
                     if(clock > transitionDuration)
                         clock = transitionDuration;

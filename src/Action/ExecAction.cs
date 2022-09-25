@@ -14,6 +14,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             ExecAction clone = new ExecAction();
+            clone.delta = delta;
             clone.action = action;
 
             return clone;

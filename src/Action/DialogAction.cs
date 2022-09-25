@@ -187,6 +187,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             DialogAction clone = new DialogAction();
+            clone.delta = delta;
             clone.actor = actor;
             clone.content = content;
             clone.avatar = avatar;
@@ -466,7 +467,7 @@ namespace TaleUtil
                 {
                     if(index < contentInfo.characterCount)
                     {
-                        clock += Time.deltaTime;
+                        clock += delta();
 
                         int numChars;
 

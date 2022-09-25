@@ -149,6 +149,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             MusicAction clone = new MusicAction();
+            clone.delta = delta;
             clone.paths = new List<string>(paths);
             clone.mode = mode;
             clone.volume = volume;
@@ -187,6 +188,7 @@ namespace TaleUtil
                     if(!Props.audio.music.isPlaying)
                     {
                         // The trigger was activated on this frame. Prepare to handle it in the next frame.
+                        // Since the music has finished and a trigger was set, there's no point in starting a new song.
                         if(Triggers.GetImmediate("tale_music_stop"))
                             return false;
 
@@ -222,7 +224,7 @@ namespace TaleUtil
                 }
                 case State.FADE_OUT:
                 {
-                    clock += Time.deltaTime;
+                    clock += delta();
 
                     if(clock > stopDuration)
                         clock = stopDuration;

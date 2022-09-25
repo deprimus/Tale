@@ -59,6 +59,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             CinematicVideoAction clone = new CinematicVideoAction();
+            clone.delta = delta;
             clone.path = path;
             clone.detatchTime = detatchTime;
             clone.detatchType = detatchType;

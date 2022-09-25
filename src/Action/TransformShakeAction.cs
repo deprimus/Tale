@@ -43,6 +43,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             TransformShakeAction clone = new TransformShakeAction();
+            clone.delta = delta;
             clone.transformable = transformable;
             clone.magnitude = magnitude;
             clone.transitionDuration = transitionDuration;
@@ -88,7 +89,7 @@ namespace TaleUtil
                     }
                 case State.TRANSITION:
                     {
-                        clock += Time.deltaTime;
+                        clock += delta();
 
                         if (clock > transitionDuration)
                             clock = transitionDuration;

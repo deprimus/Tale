@@ -18,6 +18,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             WaitAction clone = new WaitAction();
+            clone.delta = delta;
             clone.amount = amount;
             clone.clock = clock;
 
@@ -26,7 +27,7 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            clock += Time.deltaTime;
+            clock += delta();
 
             return (clock >= amount);
         }

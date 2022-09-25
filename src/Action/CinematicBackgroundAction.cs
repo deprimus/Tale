@@ -70,6 +70,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             CinematicBackgroundAction clone = new CinematicBackgroundAction();
+            clone.delta = delta;
             clone.path = path;
             clone.speed = speed;
             clone.state = state;
@@ -102,7 +103,7 @@ namespace TaleUtil
                 }
                 case State.CROSSFADE:
                 {
-                    clock += Time.deltaTime;
+                    clock += delta();
 
                     if(clock > speed)
                         clock = speed;

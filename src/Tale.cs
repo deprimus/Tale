@@ -62,6 +62,12 @@ public static class Tale
     public static TaleUtil.Action Interruptible(string trigger, TaleUtil.Action action) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.InterruptibleAction(trigger, action));
 
+    public static TaleUtil.Action Unscaled(TaleUtil.Action action)
+    {
+        action.SetDeltaCallback(() => Time.unscaledDeltaTime);
+        return action;
+    }
+
     public static TaleUtil.Action Scene(int index = 1) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(index));
     public static TaleUtil.Action Scene(string path) =>

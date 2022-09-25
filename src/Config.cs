@@ -34,7 +34,7 @@ namespace TaleUtil
             CANVAS_AVATAR       // canvas + avatar (both at the same time)
         }
 
-        public const DialogAnimationInMode  DIALOG_ANIMATION_IN_MODE  = DialogAnimationInMode.CANVAS_AVATAR_THEN_TEXT;
+        public const DialogAnimationInMode  DIALOG_ANIMATION_IN_MODE  = DialogAnimationInMode.AVATAR_THEN_CANVAS_THEN_TEXT;
         public const DialogAnimationOutMode DIALOG_ANIMATION_OUT_MODE = DialogAnimationOutMode.CANVAS_AVATAR;
 
         public enum CTCAlignment // Alignment modes for the Click-To-Continue (CTC) animation.

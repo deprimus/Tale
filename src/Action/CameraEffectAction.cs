@@ -48,6 +48,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             CameraEffectAction clone = new CameraEffectAction();
+            clone.delta = delta;
             clone.transitionDuration = transitionDuration;
             clone.lut = lut;
             clone.interpolation = interpolation;
@@ -85,7 +86,7 @@ namespace TaleUtil
                 }
                 case State.TRANSITION_IN:
                 {
-                    clock += Time.deltaTime;
+                    clock += delta();
 
                     if (clock > transitionDuration)
                         clock = transitionDuration;
@@ -101,7 +102,7 @@ namespace TaleUtil
                 }
                 case State.TRANSITION_OUT:
                 {
-                    clock += Time.deltaTime;
+                    clock += delta();
 
                     if (clock > transitionDuration)
                         clock = transitionDuration;

@@ -24,6 +24,22 @@ namespace TaleUtil
 
             return angle;
         }
+
+        // Given an angle, gets the nearest equivalent angle considering a target value
+        // Example:
+        // angle: 0, tagert: 270 -> angle: 360
+        // angle: 0, target: 90  -> angle: 0
+        public static float NearestEquivalentAngle(float angle, float target)
+        {
+            float diff = angle - target;
+
+            if (Mathf.Abs(diff) > Mathf.Abs(diff + 360f))
+            {
+                return angle + 360f;
+            }
+
+            return angle;
+        }
         
         public static float Identity(float t)
         {

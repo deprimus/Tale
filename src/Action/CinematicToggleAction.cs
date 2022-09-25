@@ -12,6 +12,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             CinematicToggleAction clone = new CinematicToggleAction();
+            clone.delta = delta;
 
             return clone;
         }

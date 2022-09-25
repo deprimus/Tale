@@ -88,6 +88,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             SoundAction clone = new SoundAction();
+            clone.delta = delta;
             clone.channel = channel;
             clone.path = path;
             clone.volume = volume;

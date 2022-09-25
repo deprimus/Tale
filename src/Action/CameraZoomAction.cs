@@ -38,6 +38,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             CameraZoomAction clone = new CameraZoomAction();
+            clone.delta = delta;
             clone.factor = factor;
             clone.transitionDuration = transitionDuration;
             clone.interpolation = interpolation;
@@ -62,7 +63,7 @@ namespace TaleUtil
                 }
                 case State.TRANSITION:
                 {
-                    clock += Time.deltaTime;
+                    clock += delta();
 
                     if(clock > transitionDuration)
                         clock = transitionDuration;

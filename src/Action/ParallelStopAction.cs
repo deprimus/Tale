@@ -14,6 +14,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             ParallelStopAction clone = new ParallelStopAction();
+            clone.delta = delta;
             clone.ptr = new Parallel.Pointer(ptr.start, ptr.size);
 
             return clone;

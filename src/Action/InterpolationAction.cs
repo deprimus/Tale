@@ -54,6 +54,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             InterpolationAction<T> clone = new InterpolationAction<T>();
+            clone.delta = delta;
             clone.initial = initial;
             clone.target = target;
             clone.callback = callback;
@@ -67,7 +68,7 @@ namespace TaleUtil
 
         void Tick()
         {
-            clock += Time.deltaTime;
+            clock += delta();
 
             if (clock > transitionDuration)
                 clock = transitionDuration;

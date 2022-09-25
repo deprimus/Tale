@@ -57,6 +57,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             CinematicSubtitleAction clone = new CinematicSubtitleAction();
+            clone.delta = delta;
             clone.content = content;
             clone.ttl = ttl;
             clone.showBackground = showBackground;
@@ -127,7 +128,7 @@ namespace TaleUtil
                 }
                 case State.WAIT:
                 {
-                    clock += Time.deltaTime;
+                    clock += delta();
 
                     if(clock >= ttl)
                     {

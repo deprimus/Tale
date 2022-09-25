@@ -12,14 +12,24 @@ namespace TaleUtil
         {
             this.count = count;
             originalAction = action;
-            this.action = originalAction.Clone();
 
             Queue.RemoveLast(action);
+
+            this.action = originalAction.Clone();
+        }
+
+        public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
+        {
+            base.SetDeltaCallback(callback);
+
+            originalAction.SetDeltaCallback(callback);
+            action.SetDeltaCallback(callback);
         }
 
         public override Action Clone()
         {
             RepeatAction clone = new RepeatAction(count, originalAction);
+            clone.delta = delta;
 
             return clone;
         }

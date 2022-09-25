@@ -32,6 +32,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             SceneAction clone = new SceneAction();
+            clone.delta = delta;
             clone.index = index;
             clone.path = path;
             clone.type = type;

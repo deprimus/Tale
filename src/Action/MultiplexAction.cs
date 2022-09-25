@@ -38,9 +38,24 @@ namespace TaleUtil
             }
         }
 
+        public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
+        {
+            base.SetDeltaCallback(callback);
+
+            LinkedListNode<Action> node = actions.First;
+
+            // Change the delta callback for all children
+            while (node != null)
+            {
+                node.Value.SetDeltaCallback(callback);
+                node = node.Next;
+            }
+        }
+
         public override Action Clone()
         {
             MultiplexAction clone = new MultiplexAction();
+            clone.delta = delta;
             clone.actions = new LinkedList<Action>();
 
             LinkedListNode<Action> node = actions.First;

@@ -22,9 +22,16 @@ namespace TaleUtil
             clock = 0f;
         }
 
+        public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
+        {
+            base.SetDeltaCallback(callback);
+            action.SetDeltaCallback(callback);
+        }
+
         public override Action Clone()
         {
             DelayedAction clone = new DelayedAction();
+            clone.delta = delta;
             clone.amount = amount;
             clone.clock = clock;
 
@@ -39,7 +46,7 @@ namespace TaleUtil
             }
             else
             {
-                clock += Time.deltaTime;
+                clock += delta();
 
                 return false;
             }

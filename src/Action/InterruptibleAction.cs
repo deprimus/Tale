@@ -16,9 +16,16 @@
             Queue.RemoveLast(action);
         }
 
+        public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
+        {
+            base.SetDeltaCallback(callback);
+            action.SetDeltaCallback(callback);
+        }
+
         public override Action Clone()
         {
             InterruptibleAction clone = new InterruptibleAction();
+            clone.delta = delta;
             clone.trigger = trigger;
             clone.action = action;
 

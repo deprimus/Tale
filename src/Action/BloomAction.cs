@@ -55,6 +55,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             BloomAction clone = new BloomAction();
+            clone.delta = delta;
             clone.transitionDuration = transitionDuration;
             clone.intensity = intensity;
             clone.color = color;
@@ -103,7 +104,7 @@ namespace TaleUtil
                 }
                 case State.TRANSITION:
                 {
-                    clock += Time.deltaTime;
+                    clock += delta();
 
                     if (clock > transitionDuration)
                         clock = transitionDuration;

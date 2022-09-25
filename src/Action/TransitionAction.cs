@@ -51,6 +51,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             TransitionAction clone = new TransitionAction();
+            clone.delta = delta;
             clone.data = data;
             clone.duration = duration;
             clone.type = type;

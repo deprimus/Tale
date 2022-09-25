@@ -10,6 +10,7 @@ namespace TaleUtil
         public override Action Clone()
         {
             CinematicVideoPauseAction clone = new CinematicVideoPauseAction();
+            clone.delta = delta;
 
             return clone;
         }

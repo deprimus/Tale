@@ -51,12 +51,15 @@ namespace TaleUtil
         public override Action Clone()
         {
             TransformRotateAction clone = new TransformRotateAction();
+            clone.delta = delta;
             clone.transformable = transformable;
             clone.rotation = rotation;
             clone.transitionDuration = transitionDuration;
             clone.interpolation = interpolation;
+            clone.relative = relative;
             clone.clock = clock;
             clone.state = state;
+            clone.initialRotation = initialRotation;
 
             return clone;
         }
@@ -122,7 +125,7 @@ namespace TaleUtil
                 }
                 case State.TRANSITION:
                 {
-                    clock += Time.deltaTime;
+                    clock += delta();
 
                     if(clock > transitionDuration)
                         clock = transitionDuration;
