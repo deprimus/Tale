@@ -18,6 +18,7 @@ namespace TaleUtil
             PLAY,
             WAIT,
             STOP,
+            SYNC,
             FADE_OUT
         }
 
@@ -31,6 +32,7 @@ namespace TaleUtil
         public int currentIndex;
 
         float stopDuration;
+        float syncTimestamp;
         Delegates.InterpolationDelegate interpolation;
         float clock;
         float initialVolume;
@@ -63,6 +65,14 @@ namespace TaleUtil
             this.stopDuration = stopDuration;
             this.interpolation = interpolation == null ? Math.Identity : interpolation;
             clock = 0f;
+        }
+
+        // Music sync
+        public MusicAction(float syncTimestamp)
+        {
+            state = State.SYNC;
+
+            this.syncTimestamp = syncTimestamp;
         }
 
         AudioClip LoadAudio(string path)
@@ -221,6 +231,12 @@ namespace TaleUtil
                     state = State.FADE_OUT;
 
                     return false;
+                }
+                case State.SYNC:
+                {
+                    // Music is done, or the sync timestamp was reached
+                    // If the timestamp is float.MinValue, then wait for the end of the music
+                    return (!Props.audio.music.isPlaying || (syncTimestamp != float.MinValue && Props.audio.music.time >= syncTimestamp));
                 }
                 case State.FADE_OUT:
                 {

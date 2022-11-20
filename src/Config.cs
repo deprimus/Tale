@@ -69,6 +69,7 @@ namespace TaleUtil
         public const string TRANSITION_ANIMATOR_TRIGGER_FORMAT = "Transition{0}";
         public const string TRANSITION_ANIMATOR_TRIGGER_NEUTRAL = "Neutral";
 
+        public const string ASSET_ROOT_SCENE = "Scenes/";
         public const string ASSET_ROOT_AUDIO_SOUND = "Audio/Sound/";
         public const string ASSET_ROOT_AUDIO_MUSIC = "Audio/Music/";
         public const string ASSET_ROOT_CINEMATIC_BACKGROUND = "Cinematic/Backgrounds";

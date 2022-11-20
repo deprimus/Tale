@@ -8,6 +8,7 @@ namespace TaleUtil
         {
             PLAY,
             STOP,
+            SYNC,
             WAIT
         }
 
@@ -15,11 +16,13 @@ namespace TaleUtil
         string path;
         float volume;
         float pitch;
+        float syncTimestamp;
 
         State state;
 
         SoundAction() { }
 
+        // null path -> stop sound
         public SoundAction(int channel, string path, float volume, float pitch)
         {
             Assert.Condition(Props.audio.soundGroup != null, "SoundAction requires a sound group object; did you forget to register it in TaleMaster?");
@@ -32,9 +35,23 @@ namespace TaleUtil
             this.volume = volume;
             this.pitch = pitch;
 
-            if(path != null)
+            if (path != null)
+            {
                 state = State.PLAY;
-            else state = State.STOP;
+            }
+            else
+            {
+                state = State.STOP;
+            }
+        }
+
+        // Sound sync
+        public SoundAction(int channel, float syncTimestamp)
+        {
+            state = State.SYNC;
+
+            this.channel = channel;
+            this.syncTimestamp = syncTimestamp;
         }
 
         AudioClip LoadAudio()
@@ -124,6 +141,12 @@ namespace TaleUtil
                     Finish();
 
                     return true;
+                }
+                case State.SYNC:
+                {
+                    // Sound is done, or the sync timestamp was reached
+                    // If the timestamp is float.MinValue, then wait for the end of the sound
+                    return (!Props.audio.sound[channel].isPlaying || (syncTimestamp != float.MinValue && Props.audio.sound[channel].time >= syncTimestamp));
                 }
                 case State.WAIT:
                 {
