@@ -891,6 +891,8 @@ If you create 2 background images, make sure the second one comes BEFORE the fir
 like an instant transition (because the first background is not rendered over the second one when it should be. This is solved by using the aforementioned
 hierarchy order).
 
+Also, when using crossfade, you should use images that have no transparent pixels. Otherwise, some parts of the images will appear instantly, instead of fading.
+
 In this example, 2 images will be created in order to support crossfade.
 
 <p align="center">

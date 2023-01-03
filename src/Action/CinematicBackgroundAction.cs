@@ -108,7 +108,9 @@ namespace TaleUtil
                     if(clock > speed)
                         clock = speed;
 
-                    Props.cinematic.background.GetActiveImage().color = new Color32(255, 255, 255, (byte) (255 * (1f - clock / speed)));
+                    Color activeColor = Props.cinematic.background.GetActiveImage().color;
+
+                    Props.cinematic.background.GetActiveImage().color = new Color32((byte)(activeColor.r * 255), (byte)(activeColor.g * 255), (byte)(activeColor.b * 255), (byte) (255 * (1f - clock / speed)));
 
                     if(clock == speed)
                     {
