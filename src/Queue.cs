@@ -7,6 +7,8 @@ namespace TaleUtil
     {
         private static LinkedList<TaleUtil.Action> data;
 
+        private static ulong totalActionCount = 0;
+
         public static TaleUtil.Action Fetch() =>
             data.First.Value;
 
@@ -38,6 +40,7 @@ namespace TaleUtil
         public static TaleUtil.Action Enqueue(TaleUtil.Action act)
         {
             data.AddLast(act);
+            ++totalActionCount;
             return act;
         }
 
@@ -53,6 +56,11 @@ namespace TaleUtil
             // As simple as it gets.
             if(data.Count > 0 && data.First.Value.Run())
                 Dequeue(); // Run if queue is not empty. After running, if the action is done, dequeue.
+        }
+
+        public static ulong GetTotalActionCount()
+        {
+            return totalActionCount;
         }
     }
 }
