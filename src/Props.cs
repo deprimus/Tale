@@ -100,7 +100,6 @@ namespace TaleUtil
         {
             public UnityEngine.Camera obj;
             public float baseOrthographicSize;
-            public ParticleSystem snow;
 
             public Camera(UnityEngine.Camera camera)
             {
@@ -112,8 +111,6 @@ namespace TaleUtil
                 obj = camera;
                 baseOrthographicSize = obj.orthographicSize;
                 transform = obj.GetComponent<Transform>();
-
-                snow = GameObject.Find("Snow").GetComponent<ParticleSystem>();
             }
         }
 
