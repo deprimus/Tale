@@ -165,6 +165,8 @@ namespace TaleUtil
                     if (avatar != null)
                     {
                         this.avatar = avatar.GetComponent<Image>();
+                        // TODO: if we get the animator component directly from the avatar object,
+                        // why not do the same for the dialog canvas?
                         this.avatarAnimator = avatar.GetComponent<Animator>();
 
                         if(this.avatar == null)

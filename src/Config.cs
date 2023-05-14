@@ -4,6 +4,10 @@ namespace TaleUtil
 {
     public static class Config
     {
+        // Default width and height used for creating canvases, render textures, etc
+        public const int REFERENCE_WIDTH = 1920;
+        public const int REFERENCE_HEIGHT = 1080;
+
         public const uint DIALOG_CPS = 50; // Characters per second, aka how fast to type the text.
         public const uint CINEMATIC_SUBTITLE_CPS = 50;
 
@@ -80,5 +84,9 @@ namespace TaleUtil
 
         public const string CINEMATIC_BACKGROUND_ANIMATOR_STATE_FORMAT = "CinematicBackground{0}";
         public const string CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER = "Transition";
+
+        public const int DIALOG_SORT_ORDER = 300;
+        public const int TRANSITION_SORT_ORDER = 200;
+        public const int CINEMATIC_SORT_ORDER = 100;
     }
 }

@@ -46,6 +46,9 @@ namespace TaleUtil
         float clock;
         float screenToWorldUnit;
 
+        bool hasAnimation;
+        bool hasAvatarAnimation;
+
         DialogAction() { }
 
         public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive)
@@ -75,6 +78,9 @@ namespace TaleUtil
             clock = 0f;
 
             index = (timePerChar == 0) ? content.Length : 0;
+
+            hasAnimation = HasAnimation();
+            hasAvatarAnimation = HasAnimateableAvatar();
         }
 
         bool Advance()
@@ -115,14 +121,71 @@ namespace TaleUtil
             ctcTransform.position = new Vector3(x, y, bottomRight.z);
         }
 
+        bool HasAnimation()
+        {
+            if (Props.dialog.animator == null)
+            {
+                return false;
+            }
+
+            if (!Props.dialog.animator.HasStates(
+                "Dialog",
+                "Canvas animator doesn't have a state named {0} (this is needed for Tale)",
+                Config.DIALOG_CANVAS_ANIMATOR_STATE_IN,
+                Config.DIALOG_CANVAS_ANIMATOR_STATE_OUT
+            ))
+            {
+                return false;
+            }
+
+            if (!Props.dialog.animator.HasTriggers(
+                "Dialog",
+                "Canvas animator doesn't have a trigger named {0} (this is needed for Tale)",
+                Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN,
+                Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT,
+                Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL
+            ))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         bool HasAnimateableAvatar()
         {
-            return (avatar != null && Props.dialog.avatar != null && Props.dialog.avatarAnimator != null);
+            if (avatar == null || Props.dialog.avatar == null || Props.dialog.avatarAnimator == null)
+            {
+                return false;
+            }
+
+            if (!Props.dialog.avatarAnimator.HasStates(
+                "Dialog",
+                "Avatar animator doesn't have a state named {0} (this is needed for Tale)",
+                Config.DIALOG_AVATAR_ANIMATOR_STATE_IN,
+                Config.DIALOG_AVATAR_ANIMATOR_STATE_OUT
+            ))
+            {
+                return false;
+            }
+
+            if (!Props.dialog.avatarAnimator.HasTriggers(
+                "Dialog",
+                "Avatar animator doesn't have a trigger named {0} (this is needed for Tale)",
+                Config.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN,
+                Config.DIALOG_AVATAR_ANIMATOR_TRIGGER_OUT,
+                Config.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL
+            ))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         bool ActivateCanvasAnimation(string state)
         {
-            if (Props.dialog.animator != null)
+            if (hasAnimation)
             {
                 Props.dialog.animator.SetTrigger(state);
                 return true;
@@ -133,7 +196,7 @@ namespace TaleUtil
 
         bool ActivateAvatarAnimation(string state)
         {
-            if (HasAnimateableAvatar())
+            if (hasAvatarAnimation)
             {
                 Props.dialog.avatarAnimator.SetTrigger(state);
                 return true;
@@ -154,7 +217,7 @@ namespace TaleUtil
 
         void ActivateCanvasAnimationNeutral()
         {
-            if (Props.dialog.animator != null)
+            if (hasAnimation)
             {
                 switch (Config.DIALOG_ANIMATION_IN_MODE)
                 {
@@ -316,12 +379,18 @@ namespace TaleUtil
                                 break;
                             case Config.DialogAnimationInMode.CANVAS_AVATAR_THEN_TEXT:
                                 {
-                                    bool hasAnimation = ActivateCanvasAnimationIn();
-                                    hasAnimation = ActivateAvatarAnimationIn() || hasAnimation;
-
                                     if(hasAnimation)
                                     {
+                                        // The canvas is animated;
+                                        // The avatar may or may not be animated, so try to activate its animation too
+                                        ActivateCanvasAnimationIn();
+                                        ActivateAvatarAnimationIn();
                                         state = State.TRANSITION_IN;
+                                    }
+                                    else if (hasAvatarAnimation)
+                                    {
+                                        ActivateAvatarAnimationIn();
+                                        state = State.AVATAR_TRANSITION_IN;
                                     }
                                     else
                                     {
@@ -341,7 +410,7 @@ namespace TaleUtil
                         }
                     }
 
-                    screenToWorldUnit = Screen.width / 1920f;
+                    screenToWorldUnit = Screen.width / Config.REFERENCE_WIDTH;
 
                     if (avatar != null)
                     {
@@ -382,16 +451,29 @@ namespace TaleUtil
                             state = State.BEGIN_WRITE;
                             break;
                         case Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_THEN_TEXT:
-                            Props.dialog.avatarAnimator.SetTrigger(Config.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN);
-                            state = State.AVATAR_TRANSITION_IN;
+                            if (ActivateAvatarAnimationIn())
+                            {
+                                state = State.AVATAR_TRANSITION_IN;
+                            }
+                            else
+                            {
+                                state = State.BEGIN_WRITE;
+                            }
                             break;
                         case Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_TEXT:
-                            Props.dialog.avatarAnimator.SetTrigger(Config.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN);
+                            ActivateAvatarAnimationIn();
                             state = State.BEGIN_WRITE;
                             break;
                         case Config.DialogAnimationInMode.CANVAS_AVATAR_THEN_TEXT:
                             // Canvas animation done, now wait for the avatar animation
-                            state = State.AVATAR_TRANSITION_IN;
+                            if (hasAvatarAnimation)
+                            {
+                                state = State.AVATAR_TRANSITION_IN;
+                            }
+                            else
+                            {
+                                state = State.BEGIN_WRITE;
+                            }
                             break;
                         default:
                             Log.Warning("Dialog", "Unreachable block reached: default case in TRANSITION_IN (report this to the devs)");
@@ -426,11 +508,17 @@ namespace TaleUtil
                             state = State.BEGIN_WRITE;
                             break;
                         case Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_THEN_TEXT:
-                            Props.dialog.animator.SetTrigger(Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN);
-                            state = State.TRANSITION_IN;
+                            if (ActivateCanvasAnimationIn())
+                            {
+                                state = State.TRANSITION_IN;
+                            }
+                            else
+                            {
+                                state = State.BEGIN_WRITE;
+                            }
                             break;
                         case Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_TEXT:
-                            Props.dialog.animator.SetTrigger(Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN);
+                            ActivateCanvasAnimationIn();
                             state = State.BEGIN_WRITE;
                             break;
                         default:
@@ -665,7 +753,14 @@ namespace TaleUtil
 
                             if (hasAnimation)
                             {
+                                ActivateCanvasAnimationOut();
+                                ActivateAvatarAnimationOut();
                                 state = State.TRANSITION_OUT;
+                            }
+                            else if(hasAvatarAnimation)
+                            {
+                                ActivateAvatarAnimationOut();
+                                state = State.AVATAR_TRANSITION_OUT;
                             }
                             else
                             {
@@ -715,7 +810,7 @@ namespace TaleUtil
                             break;
                         case Config.DialogAnimationOutMode.CANVAS_AVATAR:
                             // Canvas animation finished, now wait for the avatar animation
-                            if(HasAnimateableAvatar())
+                            if(hasAvatarAnimation)
                             {
                                 state = State.AVATAR_TRANSITION_OUT;
                             }
