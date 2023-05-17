@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEditor;
-using UnityEditor.Animations;
 using TMPro;
 
 namespace TaleUtil
@@ -203,21 +202,7 @@ namespace TaleUtil
 
         static void SetupTransitions(GameObject master)
         {
-            TaleMaster tale = master.GetComponent<TaleMaster>();
-
-            // Fade
-            GameObject transition = CreateTransition("Transition Fade Canvas");
-            GameObjectUtility.SetParentAndAlign(transition, master);
-            transition.SetActive(false);
-
-            GameObject darkness = CreateDarkness("Fade Darkness");
-            GameObjectUtility.SetParentAndAlign(darkness, transition);
-
-            tale.transitions = new Props.Transition[1];
-
-            tale.transitions[0] = new Props.Transition();
-            tale.transitions[0].name = "Fade";
-            tale.transitions[0].data = new Props.TransitionData(transition, transition.GetComponent<Animator>());
+            CreateTaleTransition(master, "Fade");
         }
 
         static void SetupCinematic(GameObject master)

@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -10,12 +11,35 @@ namespace TaleUtil
 {
     public partial class Editor
     {
-        static GameObject CreateTransition(string name)
+        static GameObject FindTaleMaster()
         {
-            GameObject canvas = CreateCanvas(name, Config.TRANSITION_SORT_ORDER);
-            AddAnimator(canvas);
+            if (!TagExists("TaleMaster"))
+            {
+                return null;
+            }
 
-            return canvas;
+            return GameObject.FindGameObjectWithTag("TaleMaster");
+        }
+
+        static bool TagExists(string name)
+        {
+            return UnityEditorInternal.InternalEditorUtility.tags.Contains(name);
+        }
+
+        static void CreateTag(string name)
+        {
+            if (!TagExists(name))
+            {
+                SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+                SerializedProperty tagsProp = tagManager.FindProperty("tags");
+
+                int index = tagsProp.arraySize;
+                tagsProp.InsertArrayElementAtIndex(index);
+                SerializedProperty newTag = tagsProp.GetArrayElementAtIndex(index);
+                newTag.stringValue = name;
+
+                tagManager.ApplyModifiedPropertiesWithoutUndo();
+            }
         }
 
         static GameObject CreateAudioSource(string name)
@@ -43,6 +67,51 @@ namespace TaleUtil
             return darkness;
         }
 
+        static void CreateTaleTransition(GameObject master, string name)
+        {
+            TaleMaster tale = master.GetComponent<TaleMaster>();
+
+            // Fade
+            GameObject canvas = CreateCanvas(string.Format("Transition {0} Canvas", name), Config.TRANSITION_SORT_ORDER);
+            GameObjectUtility.SetParentAndAlign(canvas, master);
+
+            Animator anim = AddAnimator(canvas);
+
+            canvas.SetActive(false);
+
+            GameObject darkness = CreateDarkness("Darkness");
+            darkness.GetComponent<Image>().color = new Color32(0, 0, 0, 0);
+            GameObjectUtility.SetParentAndAlign(darkness, canvas);
+
+            CreateCompleteTriangleAnimator(anim, string.Format("Transition{0}", name),
+                string.Format(Config.TRANSITION_ANIMATOR_STATE_FORMAT, "In"),
+                string.Format(Config.TRANSITION_ANIMATOR_STATE_FORMAT, "Out"),
+                string.Format(Config.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "In"),
+                string.Format(Config.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "Out"),
+                Config.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL,
+                "Darkness", typeof(Image), "m_Color.a",
+                AnimationCurve.Linear(0f, 1f, 1f, 0f),
+                AnimationCurve.Linear(0f, 0f, 1f, 1f));
+
+            if (tale.transitions == null)
+            {
+                tale.transitions = new Props.Transition[1];
+            }
+            else
+            {
+                Props.Transition[] transitions = new Props.Transition[tale.transitions.Length + 1];
+                System.Array.Copy(tale.transitions, transitions, tale.transitions.Length);
+
+                tale.transitions = transitions;
+            }
+
+            int index = tale.transitions.Length - 1;
+
+            tale.transitions[index] = new Props.Transition();
+            tale.transitions[index].name = name;
+            tale.transitions[index].data = new Props.TransitionData(canvas, canvas.GetComponent<Animator>());
+        }
+
         // Generates the states, triggers and clips for an Animator which are required by Tale
         static void CreateCompleteTriangleAnimator(Animator anim, string controllerName, string stateIn, string stateOut, string triggerIn, string triggerOut, string triggerNeutral, string animatedPath, System.Type animatedType, string animatedProperty, AnimationCurve curveIn, AnimationCurve curveOut)
         {
@@ -66,20 +135,20 @@ namespace TaleUtil
             AnimatorState dialogIn = states.AddStateNoWriteDefaults(stateIn);
 
             AnimationClip clip = new AnimationClip();
-            clip.name = stateIn;
+            clip.name = controllerName + "In";
             clip.SetLoop(false);
             clip.SetCurve(animatedPath, animatedType, animatedProperty, curveIn);
-            AssetDatabase.CreateAsset(clip, Path.Enroot(root, stateIn + ".anim"));
+            AssetDatabase.CreateAsset(clip, Path.Enroot(root, clip.name + ".anim"));
 
             dialogIn.motion = clip;
 
             AnimatorState dialogOut = states.AddStateNoWriteDefaults(stateOut);
 
             clip = new AnimationClip();
-            clip.name = stateOut;
+            clip.name = controllerName + "Out";
             clip.SetLoop(false);
             clip.SetCurve(animatedPath, animatedType, animatedProperty, curveOut);
-            AssetDatabase.CreateAsset(clip, Path.Enroot(root, stateOut + ".anim"));
+            AssetDatabase.CreateAsset(clip, Path.Enroot(root, clip.name + ".anim"));
 
             dialogOut.motion = clip;
 
@@ -135,10 +204,12 @@ namespace TaleUtil
         {
             AnimatorStateTransition transition = idle.AddTransition(stateIn);
             transition.hasExitTime = false;
+            transition.duration = 0f;
             transition.AddCondition(AnimatorConditionMode.If, 0, triggerIn);
 
             transition = idle.AddTransition(stateOut);
             transition.hasExitTime = false;
+            transition.duration = 0f;
             transition.AddCondition(AnimatorConditionMode.If, 0, triggerOut);
 
             transition = stateIn.AddTransition(idle);

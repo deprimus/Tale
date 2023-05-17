@@ -29,6 +29,9 @@ namespace TaleUtil
             SetupTransitions(master);
             SetupCinematic(master);
 
+            CreateTag("TaleMaster");
+            master.tag = "TaleMaster";
+
             Undo.RegisterCreatedObjectUndo(master, "Create " + master.name);
             Selection.activeGameObject = master;
         }
@@ -37,6 +40,21 @@ namespace TaleUtil
         static void CreateSplashScene()
         {
 
+        }
+
+        [MenuItem("Tale/Create/Transition", priority = 1)]
+        static void CreateTransition()
+        {
+            if (FindTaleMaster() == null)
+            {
+                EditorUtility.DisplayDialog("Tale Master not found in this scene", "Please set up Tale before creating transitions.", "Ok");
+            }
+            else
+            {
+                CreateTransitionDialog dialog = EditorWindow.GetWindow<CreateTransitionDialog>();
+                dialog.titleContent = new GUIContent("Create Transition");
+                dialog.ShowPopup();
+            }
         }
     }
 }
