@@ -196,6 +196,7 @@ namespace TaleUtil
             // Voice
             GameObject voice = CreateAudioSource("Voice");
             GameObjectUtility.SetParentAndAlign(voice, group);
+            AddAudioReverbFilter(voice);
 
             tale.audioVoice = voice.GetComponent<AudioSource>();
         }

@@ -76,6 +76,7 @@ namespace TaleUtil
         public const string ASSET_ROOT_SCENE = "Scenes/";
         public const string ASSET_ROOT_AUDIO_SOUND = "Audio/Sound/";
         public const string ASSET_ROOT_AUDIO_MUSIC = "Audio/Music/";
+        public const string ASSET_ROOT_AUDIO_VOICE = "Audio/Voice/";
         public const string ASSET_ROOT_CINEMATIC_BACKGROUND = "Cinematic/Backgrounds";
         public const string ASSET_ROOT_CINEMATIC_VIDEO = "Cinematic/Video";
 

@@ -200,6 +200,28 @@ namespace TaleUtil
             return anim;
         }
 
+        static AudioReverbFilter AddAudioReverbFilter(GameObject obj)
+        {
+            AudioReverbFilter filter = obj.AddComponent<AudioReverbFilter>();
+            filter.reverbPreset = AudioReverbPreset.User;
+            filter.dryLevel = 0f;
+            filter.room = 0f;
+            filter.roomHF = 0f;
+            filter.roomLF = 0f;
+            filter.decayTime = 0.5f;
+            filter.decayHFRatio = 1.5f;
+            filter.reflectionsLevel = -1300f;
+            filter.reflectionsDelay = 0f;
+            filter.reverbLevel = -1000f;
+            filter.reverbDelay = 0f;
+            filter.hfReference = 5000f;
+            filter.lfReference = 250f;
+            filter.diffusion = 60f;
+            filter.density = 50f;
+
+            return filter;
+        }
+
         static void CreateAnimatorTransitions(AnimatorState idle, AnimatorState stateIn, AnimatorState stateOut, string triggerIn, string triggerOut, string triggerNeutral)
         {
             AnimatorStateTransition transition = idle.AddTransition(stateIn);

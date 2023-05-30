@@ -211,6 +211,7 @@ namespace TaleUtil
             public AudioSource[] sound;
             public AudioSource music;
             public AudioSource voice;
+            public AudioReverbFilter voiceReverb;
 
             public Audio(GameObject group, GameObject soundGroup, AudioSource[] sound, AudioSource music, AudioSource voice)
             {
@@ -223,6 +224,11 @@ namespace TaleUtil
                 if (soundGroup == null && sound != null && sound.Length > 0)
                 {
                     Warning("The audio sound channel list is not empty, but the audio sound group is null");
+                }
+
+                if (voice != null)
+                {
+                    voiceReverb = voice.gameObject.GetComponent<AudioReverbFilter>();
                 }
             }
         }

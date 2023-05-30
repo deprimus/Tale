@@ -35,6 +35,7 @@ namespace TaleUtil
         string voice;
 
         bool loopVoice;
+        bool reverb;
 
         public Type type;
         State state;
@@ -51,15 +52,60 @@ namespace TaleUtil
 
         DialogAction() { }
 
-        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive)
+        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb)
         {
-            Assert.Condition(Props.dialog.content != null,
-                "DialogAction requires a content object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
+            if (content != null)
+            {
+                SoftAssert.Condition(Props.dialog.content != null,
+                    "DialogAction requires a content object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
+            }
+            else
+            {
+                Log.Warning("DIALOG", "DialogAction has null content; did you mean to do this?");
+            }
 
             if (actor != null)
             {
-                Assert.Condition(Props.dialog.actor != null,
+                SoftAssert.Condition(Props.dialog.actor != null,
                     "DialogAction requires an actor object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
+            }
+
+            if (reverb)
+            {
+                if (!SoftAssert.Condition(Props.audio.voiceReverb != null,
+                    "DialogAction has Reverb set to true, but there is no AudioReverbFilter component on the Audio Voice prop; reverb will be disabled"))
+                {
+                    reverb = false;
+                }
+            }
+
+            if (voice != null)
+            {
+                if (!SoftAssert.Condition(Props.audio.group != null,
+                        "A voice clip was passed to the dialog action, but no audio group prop is available; voice will be disabled")
+                ||
+                    !SoftAssert.Condition(Props.audio.voice != null,
+                        "A voice clip was passed to the dialog action, but no audio voice prop is available; voice will be disabled"))
+                {
+                    voice = null;
+                }
+            }
+            else
+            {
+                if (!SoftAssert.Condition(!reverb,
+                    "DialogAction has no voice, but Reverb is set to true; ignoring"))
+                {
+                    reverb = false;
+                }
+            }
+
+            if (reverb)
+            {
+                if (!SoftAssert.Condition(Props.audio.voiceReverb != null,
+                    "Dialog action has Reverb set to true, but there is no AudioReverbFilter component on the Audio Voice object; reverb will be disabled"))
+                {
+                    reverb = false;
+                }
             }
 
             this.actor = actor;
@@ -67,6 +113,7 @@ namespace TaleUtil
             this.avatar = avatar;
             this.voice = voice;
             this.loopVoice = loopVoice;
+            this.reverb = reverb;
 
             type = additive ? Type.ADDITIVE : Type.OVERRIDE;
             state = State.SETUP;
@@ -273,24 +320,24 @@ namespace TaleUtil
                 {
                     if (voice != null)
                     {
-                        Assert.Condition(Props.audio.group != null,
-                            "A voice clip was passed to the dialog action, but no audio group prop is available; did you forget to register it in TaleMaster?");
-                        Assert.Condition(Props.audio.voice != null,
-                            "A voice clip was passed to the dialog action, but no audio voice prop is available; did you forget to register it in TaleMaster?");
-
-                        if (!Props.audio.group.activeSelf)
+                        if (Props.audio.group != null && !Props.audio.group.activeSelf)
                         {
                             Props.audio.group.SetActive(true);
                         }
 
-                        if (!Props.audio.voice.gameObject.activeSelf)
+                        if (Props.audio.voice != null && !Props.audio.voice.gameObject.activeSelf)
                         {
                             Props.audio.voice.gameObject.SetActive(true);
                         }
 
+                        if (Props.audio.voiceReverb != null)
+                        {
+                            Props.audio.voiceReverb.enabled = reverb;
+                        }
+
                         Props.audio.voice.clip = Resources.Load<AudioClip>(voice);
 
-                        Assert.Condition(Props.audio.voice != null, "The voice audio clip '" + voice + "' is missing");
+                        SoftAssert.Condition(Props.audio.voice != null, "The voice audio clip '" + voice + "' is missing");
 
                         Props.audio.voice.loop = loopVoice;
                     }
@@ -308,7 +355,11 @@ namespace TaleUtil
                     }
                     else
                     {
-                        Assert.Condition(type == Type.OVERRIDE, "Additive dialog must be preceded by a dialog action");
+                        // TODO: this may break things such as Clone(), so watch out if that happens (because type is modified in Run())
+                        if (!SoftAssert.Condition(type == Type.OVERRIDE, "Additive dialog must be preceded by a dialog action; setting type to Override"))
+                        {
+                            type = Type.OVERRIDE;
+                        }
 
                         if(actor != null)
                         {
@@ -414,12 +465,12 @@ namespace TaleUtil
 
                     if (avatar != null)
                     {
-                        Assert.Condition(Props.dialog.avatar != null,
-                            "An avatar was passed to the dialog action, but no avatar prop is available; did you forget to register it in TaleMaster?");
+                        SoftAssert.Condition(Props.dialog.avatar != null,
+                            "An avatar was passed to the dialog action, but no avatar prop is available?");
 
                         Props.dialog.avatar.sprite = (Sprite) Resources.Load<Sprite>(avatar);
 
-                        Assert.Condition(Props.dialog.avatar.sprite != null, "The avatar '" + avatar + "' is missing");
+                        SoftAssert.Condition(Props.dialog.avatar.sprite != null, "The avatar '" + avatar + "' is missing");
                     }
 
                     break;

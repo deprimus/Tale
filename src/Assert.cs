@@ -10,4 +10,18 @@ namespace TaleUtil
         public static void Impossible(string msg) =>
             Debug.Assert(false, "[TALE] " + msg);
     }
+
+    // These don't stop the execution, and also aren't removed in release builds
+    public static class SoftAssert
+    {
+        public static bool Condition(bool condition, string msg)
+        {
+            if (!condition)
+            {
+                Log.Warning("TALE", msg);
+            }
+
+            return condition;
+        }
+    }
 }

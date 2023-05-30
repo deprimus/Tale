@@ -73,8 +73,8 @@ public static class Tale
     public static TaleUtil.Action Scene(string path) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(TaleUtil.Config.ASSET_ROOT_SCENE + path));
 
-    public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice, loopVoice, additive));
+    public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice != null ? TaleUtil.Path.Enroot(TaleUtil.Config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb));
 
     public static TaleUtil.Action Transition(string name, TransitionType type, float duration = 1f) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.TransitionAction(name, (TaleUtil.TransitionAction.Type) (int) type, duration));
