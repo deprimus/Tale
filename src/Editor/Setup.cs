@@ -253,7 +253,7 @@ namespace TaleUtil
             string file = "VideoRenderTexture.renderTexture";
 
             Directory.CreateDirectory(dir);
-            AssetDatabase.CreateAsset(texture, Path.Enroot(dir, file));
+            AssetDatabase.CreateAsset(texture, Path.NormalizeAssetPath(dir, file));
 
             GameObject video = new GameObject("Video Player");
             GameObjectUtility.SetParentAndAlign(video, group);
@@ -309,6 +309,11 @@ namespace TaleUtil
             tform = bg.GetComponent<RectTransform>();
             tform.sizeDelta = new Vector2(0f, 0f);
             tform.anchoredPosition = new Vector2(0f, -300f);
+        }
+
+        static void SetupTaleSplashScene()
+        {
+            CreateSplashScene("Tale", Resources.Load<Sprite>("Tale/Logo"), Resources.Load<AudioClip>("Tale/Splash"), 0);
         }
     }
 }

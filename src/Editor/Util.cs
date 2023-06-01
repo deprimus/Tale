@@ -4,8 +4,10 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.Animations;
+using UnityEditor.SceneManagement;
 
 namespace TaleUtil
 {
@@ -40,6 +42,106 @@ namespace TaleUtil
 
                 tagManager.ApplyModifiedPropertiesWithoutUndo();
             }
+        }
+
+        static void CreateSplashScene(string name, Sprite logo, AudioClip sound, int buildIndex = -1)
+        {
+            string currentScenePath = EditorSceneManager.GetActiveScene().path;
+
+            string root = "Assets/Scenes/Splash";
+            string scenePath = string.Format("{0}/{1}.unity", root, name);
+
+            Directory.CreateDirectory(root);
+
+            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            EditorSceneManager.SaveScene(scene, scenePath);
+
+            scene = EditorSceneManager.OpenScene(scene.path, OpenSceneMode.Single);
+
+            GameObject canvas = CreateCanvas("Canvas", 0);
+            GameObject bg = CreateDarkness("Darkness");
+            GameObjectUtility.SetParentAndAlign(bg, canvas);
+
+            GameObject obj = new GameObject("Logo");
+            GameObjectUtility.SetParentAndAlign(obj, canvas);
+
+            Image img = obj.AddComponent<Image>();
+            img.color = Color.white;
+            img.preserveAspect = true;
+            img.sprite = logo;
+
+            RectTransform tform = obj.GetComponent<RectTransform>();
+
+            float factor;
+
+            if (logo.bounds.size.x > logo.bounds.size.y)
+            {
+                // width > height
+                // resize based on width
+                factor = (0.6f * Config.REFERENCE_WIDTH) / logo.bounds.size.x;
+            }
+            else
+            {
+                // height > width
+                // resize based on height
+                factor = (0.6f * Config.REFERENCE_HEIGHT) / logo.bounds.size.y;
+            }
+
+            tform.sizeDelta = new Vector2(factor * logo.bounds.size.x, factor * logo.bounds.size.y);
+            tform.anchoredPosition = new Vector2(0f, 0f);
+
+            obj = new GameObject("Splash Master");
+
+            Splash splash = obj.AddComponent<Splash>();
+            splash.soundPath = AssetDatabase.GetAssetPath(sound);
+
+            AddSceneToBuild(scenePath, buildIndex);
+
+            EditorSceneManager.SaveScene(scene, scenePath);
+            EditorSceneManager.SaveOpenScenes();
+
+            EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+        }
+
+        static void AddSceneToBuild(string scenePath, int index)
+        {
+            EditorBuildSettingsScene[] buildScenes = EditorBuildSettings.scenes;
+
+            EditorBuildSettingsScene target = null;
+
+            int currentIndex = -1;
+
+            for (int i = 0; i < buildScenes.Length; ++i)
+            {
+                if (buildScenes[i].path == scenePath)
+                {
+                    target = buildScenes[i];
+                    currentIndex = i;
+                }
+            }
+
+            if (target != null)
+            {
+                // Scene exists in build settings
+                target.enabled = true;
+            }
+            else
+            {
+                // Add it to the build settings
+                EditorBuildSettingsScene s = new EditorBuildSettingsScene(scenePath, true);
+                ArrayUtility.Add(ref buildScenes, s);
+                currentIndex = buildScenes.Length - 1;
+            }
+
+            if (currentIndex != index && index != -1)
+            {
+                EditorBuildSettingsScene tmp = buildScenes[index];
+                buildScenes[index] = buildScenes[currentIndex];
+                buildScenes[currentIndex] = tmp;
+            }
+
+            EditorSceneManager.SaveOpenScenes();
+            EditorBuildSettings.scenes = buildScenes;
         }
 
         static GameObject CreateAudioSource(string name)
@@ -138,7 +240,7 @@ namespace TaleUtil
             clip.name = controllerName + "In";
             clip.SetLoop(false);
             clip.SetCurve(animatedPath, animatedType, animatedProperty, curveIn);
-            AssetDatabase.CreateAsset(clip, Path.Enroot(root, clip.name + ".anim"));
+            AssetDatabase.CreateAsset(clip, string.Format("{0}/{1}.anim", root, clip.name));
 
             dialogIn.motion = clip;
 
@@ -148,13 +250,13 @@ namespace TaleUtil
             clip.name = controllerName + "Out";
             clip.SetLoop(false);
             clip.SetCurve(animatedPath, animatedType, animatedProperty, curveOut);
-            AssetDatabase.CreateAsset(clip, Path.Enroot(root, clip.name + ".anim"));
+            AssetDatabase.CreateAsset(clip, string.Format("{0}/{1}.anim", root, clip.name));
 
             dialogOut.motion = clip;
 
             CreateAnimatorTransitions(idle, dialogIn, dialogOut, triggerIn, triggerOut, triggerNeutral);
 
-            AssetDatabase.CreateAsset(ctrl, Path.Enroot(root, controllerName + ".controller"));
+            AssetDatabase.CreateAsset(ctrl, string.Format("{0}/{1}.controller", root, controllerName));
             anim.runtimeAnimatorController = ctrl;
         }
 
@@ -177,11 +279,11 @@ namespace TaleUtil
             clip.name = state;
             clip.SetLoop(true);
             clip.SetCurve(animatedPath, animatedType, animatedProperty, curve);
-            AssetDatabase.CreateAsset(clip, Path.Enroot(root, state + ".anim"));
+            AssetDatabase.CreateAsset(clip, string.Format("{0}/{1}.anim", root, state));
 
             idle.motion = clip;
 
-            AssetDatabase.CreateAsset(ctrl, Path.Enroot(root, controllerName + ".controller"));
+            AssetDatabase.CreateAsset(ctrl, string.Format("{0}/{1}.controller", root, controllerName));
             anim.runtimeAnimatorController = ctrl;
         }
 

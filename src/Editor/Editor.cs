@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UI;
 
 namespace TaleUtil
 {
@@ -39,7 +40,7 @@ namespace TaleUtil
         [MenuItem("Tale/Setup/3. Create Splash Scene", priority = 14)]
         static void CreateSplashScene()
         {
-
+            SetupTaleSplashScene();
         }
 
         [MenuItem("Tale/Create/Transition", priority = 1)]
