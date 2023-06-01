@@ -34,7 +34,7 @@ Here's what Tale currently provides:
 - **Other Actions**, such as:
   - Exec, for custom code that runs on the Tale queue
   - Repeat and Delay, for managing other actions
-  - Multiplex and Parallelize, for orchestrating many actions at the same time
+  - Multiplex and Parallel, for orchestrating many actions at the same time
 - **Editor Macros**, for setting up Tale and adding new props as easily as possible
 
 You can easily extend Tale by creating your own actions.
