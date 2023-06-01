@@ -2,11 +2,15 @@
   <img src="public/logo.png" alt="Tale">
 </p>
 
+# Note
+
+This setup guide is a bit outdated; you no longer have to do this whole setup manually because Tale now does it automatically :)
+
+If, however, you want to tweak Tale and change a few things, continue reading.
+
 # Setup
 
-This document describes the setup process for [Tale](https://github.com/deprimus/Tale), a storytelling and prop manipulation utility for Unity.
-
-After following the setup process, you may start using Tale. Reading the [documentation]() is highly recommended for beginner users.
+This document describes the setup process for [Tale](https://github.com/deprimus/Tale).
 
 This setup assumes you have at least minimal knowledge about Unity, and the C# programming language.
 You need to know what components are and how to add them to objects. The optional setup may require additional knowledge.
@@ -57,14 +61,13 @@ This section contains all necessary steps required to get Tale up and running. T
 
 Open your Unity project and make sure you have the Tale source code handy. The setup steps are as follows:
 
-### 1. Copy the Tale scripts
+### 1. Copy the Tale files
 
-In your project, if the `Assets/Scripts` directory doesn't exist, create it. Inside it, create another directory named `Tale`.
+Go to the Tale source code, navigate inside the `Assets` folder, and copy everything to the project `Assets` folder.
 
-Go to the Tale source code, navigate inside the `src` folder, and copy everything to the `Assets/Scripts/Tale` folder.
-This path is not imposed, but recommended.
+You should now have the following dirs: `Assets/Scripts/Tale` and `Assets/Resources/Tale`.
 
-The `Tale` directory should look something like this:
+The `Assets/Scripts/Tale` directory should look something like this:
 
 <p align="center">
   <img src="public/setup/tale_dir.png" alt="The Tale directory">
