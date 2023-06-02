@@ -39,7 +39,7 @@ Here's what Tale currently provides:
 
 You can easily extend Tale by creating your own actions.
 
-> Check out `Assets/Scripts/Tale/ExecAction.cs` to see how to implement a simple action.
+> Check out `Assets/Scripts/Tale/Action/ExecAction.cs` to see how to implement a simple action.
 
 # Getting started
 
