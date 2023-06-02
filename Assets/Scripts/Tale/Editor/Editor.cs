@@ -10,18 +10,19 @@ namespace TaleUtil
         [MenuItem("Tale/Setup/Run Full Setup", priority = 1)]
         static void FullSetup()
         {
-            InstallDependencies();
-            CreateMasterObject();
+            SetupInstallDependencies();
+            SetupCreateMasterObject();
+            SetupCreateSplashScene();
         }
 
         [MenuItem("Tale/Setup/1. Install Dependencies", priority = 12)]
-        static void InstallDependencies()
+        static void SetupInstallDependencies()
         {
             EditorApplication.ExecuteMenuItem("Window/TextMeshPro/Import TMP Essential Resources");
         }
 
         [MenuItem("Tale/Setup/2. Create Master Object", priority = 13)]
-        static void CreateMasterObject()
+        static void SetupCreateMasterObject()
         {
             GameObject master = new GameObject("Tale Master", typeof(TaleMaster));
 
@@ -38,7 +39,7 @@ namespace TaleUtil
         }
 
         [MenuItem("Tale/Setup/3. Create Splash Scene", priority = 14)]
-        static void CreateSplashScene()
+        static void SetupCreateSplashScene()
         {
             SetupTaleSplashScene();
         }
@@ -56,6 +57,14 @@ namespace TaleUtil
                 dialog.titleContent = new GUIContent("Create Transition");
                 dialog.ShowPopup();
             }
+        }
+
+        [MenuItem("Tale/Create/Splash Scene", priority = 2)]
+        static void CreateSplashScene()
+        {
+            CreateSplashSceneDialog dialog = EditorWindow.GetWindow<CreateSplashSceneDialog>();
+            dialog.titleContent = new GUIContent("Create Splash Scene");
+            dialog.ShowPopup();
         }
     }
 }
