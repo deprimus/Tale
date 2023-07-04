@@ -1,7 +1,8 @@
 #if UNITY_EDITOR
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
-using UnityEngine.UI;
+using UnityEditor.SceneManagement;
 
 namespace TaleUtil
 {
@@ -24,18 +25,26 @@ namespace TaleUtil
         [MenuItem("Tale/Setup/2. Create Master Object", priority = 13)]
         static void SetupCreateMasterObject()
         {
+            Scene s = EditorSceneManager.GetActiveScene();
+
             GameObject master = new GameObject("Tale Master", typeof(TaleMaster));
 
             SetupDialog(master);
             SetupAudio(master);
             SetupTransitions(master);
             SetupCinematic(master);
+            SetupDebug(master);
 
             CreateTag("TaleMaster");
             master.tag = "TaleMaster";
 
             Undo.RegisterCreatedObjectUndo(master, "Create " + master.name);
             Selection.activeGameObject = master;
+
+            if (s.path != null && s.path.Length > 0)
+            {
+                EditorSceneManager.SaveScene(s, s.path);
+            }
         }
 
         [MenuItem("Tale/Setup/3. Create Splash Scene", priority = 14)]

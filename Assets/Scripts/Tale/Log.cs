@@ -10,6 +10,9 @@ namespace TaleUtil
         public static void Warning(string category, string msg) =>
             Debug.LogWarning("[TALE] [" + category + "] " + msg);
 
+        public static void Warning(string msg) =>
+            Debug.LogWarning("[TALE] " + msg);
+
         public static void Error(string category, string msg) =>
             Debug.LogError("[TALE] [" + category + "] " + msg);
     }

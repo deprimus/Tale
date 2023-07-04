@@ -20,5 +20,10 @@ namespace TaleUtil
             Props.cinematic.video.player.Pause();
             return true;
         }
+
+        public override string ToString()
+        {
+            return "CinematicVideoPauseAction";
+        }
     }
 }

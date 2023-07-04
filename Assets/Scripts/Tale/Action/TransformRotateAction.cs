@@ -167,5 +167,10 @@ namespace TaleUtil
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return string.Format("TransformRotateAction ({0})", state.ToString());
+        }
     }
 }

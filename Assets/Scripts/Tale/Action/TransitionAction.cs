@@ -100,5 +100,10 @@ namespace TaleUtil
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return string.Format("TransitionAction ({0})", state.ToString());
+        }
     }
 }

@@ -55,5 +55,10 @@ namespace TaleUtil
 
             return actions.Count == 0;
         }
+
+        public override string ToString()
+        {
+            return "ParallelQueueAction";
+        }
     }
 }

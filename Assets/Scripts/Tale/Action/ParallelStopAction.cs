@@ -25,5 +25,10 @@ namespace TaleUtil
             ptr.Stop();
             return true;
         }
+
+        public override string ToString()
+        {
+            return "ParallelStopAction";
+        }
     }
 }

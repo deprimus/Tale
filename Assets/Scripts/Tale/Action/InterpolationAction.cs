@@ -102,5 +102,10 @@ namespace TaleUtil
 
             return clock == transitionDuration;
         }
+
+        public override string ToString()
+        {
+            return string.Format("InterpolationAction ({0})", state.ToString());
+        }
     }
 }

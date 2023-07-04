@@ -311,6 +311,30 @@ namespace TaleUtil
             tform.anchoredPosition = new Vector2(0f, -300f);
         }
 
+        static void SetupDebug(GameObject master)
+        {
+            TaleMaster tale = master.GetComponent<TaleMaster>();
+
+            GameObject obj = new GameObject("DebugMaster");
+            GameObjectUtility.SetParentAndAlign(obj, master);
+            DebugMaster debugMaster = obj.AddComponent<DebugMaster>();
+            obj.SetActive(true);
+
+            GameObject canvas = CreateCanvas("DebugInfo", Config.DEBUG_SORT_ORDER);
+            GameObjectUtility.SetParentAndAlign(canvas, obj);
+
+            DebugInfo debugInfo = canvas.AddComponent<DebugInfo>();
+            debugInfo.fps = CreateDebugInfoText("FPS", canvas, TextAlignmentOptions.TopLeft, new Vector2(0f, 1f), new Vector2(638f, 50f), new Vector2(339f, -30f));
+            debugInfo.sceneInfo = CreateDebugInfoText("SceneInfo", canvas, TextAlignmentOptions.Top, new Vector2(0.5f, 1f), new Vector2(603f, 50f), new Vector2(0f, -30f));
+            debugInfo.actionInfo = CreateDebugInfoText("ActionInfo", canvas, TextAlignmentOptions.TopLeft, new Vector2(1f, 1f), new Vector2(551f, 50f), new Vector2(-382f, -30f));
+            debugInfo.actionCountInfo = CreateDebugInfoText("ActionCountInfo", canvas, TextAlignmentOptions.TopRight, new Vector2(1f, 1f), new Vector2(87f, 50f), new Vector2(-63f, -30f));
+            canvas.SetActive(false);
+
+            debugMaster.debugInfo = canvas;
+
+            tale.debugMaster = debugMaster;
+        }
+
         static void SetupTaleSplashScene()
         {
             CreateSplashScene("Tale", Resources.Load<Sprite>("Tale/Logo"), Resources.Load<AudioClip>("Tale/Splash"), 0);

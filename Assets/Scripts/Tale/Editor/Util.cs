@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEditor.SceneManagement;
+using TMPro;
 
 namespace TaleUtil
 {
@@ -42,6 +43,27 @@ namespace TaleUtil
 
                 tagManager.ApplyModifiedPropertiesWithoutUndo();
             }
+        }
+
+        static TextMeshProUGUI CreateDebugInfoText(string name, GameObject parent, TextAlignmentOptions alignment, Vector2 anchor, Vector2 size, Vector2 pos)
+        {
+            GameObject obj = new GameObject(name);
+            GameObjectUtility.SetParentAndAlign(obj, parent);
+
+            TextMeshProUGUI text = obj.AddComponent<TextMeshProUGUI>();
+            text.fontSize = 12f;
+            text.color = new Color32(200, 200, 200, 255);
+            text.alignment = alignment;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+
+            RectTransform tform = obj.GetComponent<RectTransform>();
+            tform.anchorMin = anchor;
+            tform.anchorMax = tform.anchorMin;
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.sizeDelta = size;
+            tform.anchoredPosition = pos;
+
+            return text;
         }
 
         static void CreateSplashScene(string name, Sprite logo, AudioClip sound, int buildIndex = -1)
@@ -100,7 +122,10 @@ namespace TaleUtil
             EditorSceneManager.SaveScene(scene, scenePath);
             EditorSceneManager.SaveOpenScenes();
 
-            EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+            if (currentScenePath != null && currentScenePath.Length > 0)
+            {
+                EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+            }
         }
 
         static void AddSceneToBuild(string scenePath, int index)
@@ -228,6 +253,11 @@ namespace TaleUtil
             ctrl.AddParameter(triggerIn, AnimatorControllerParameterType.Trigger);
             ctrl.AddParameter(triggerOut, AnimatorControllerParameterType.Trigger);
             ctrl.AddParameter(triggerNeutral, AnimatorControllerParameterType.Trigger);
+
+            if (ctrl.layers[0].stateMachine == null)
+            {
+                ctrl.layers[0].stateMachine = new AnimatorStateMachine();
+            }
 
             AnimatorStateMachine states = ctrl.layers[0].stateMachine;
 

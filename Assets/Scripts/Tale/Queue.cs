@@ -18,6 +18,9 @@ namespace TaleUtil
         public static TaleUtil.Action FetchLast() =>
             data.Count > 0 ? data.ElementAt(data.Count - 1) : null;
 
+        public static TaleUtil.Action FetchIfAny() =>
+            data.Count > 0 ? data.First.Value : null;
+
         public static int Count() =>
             data.Count;
 

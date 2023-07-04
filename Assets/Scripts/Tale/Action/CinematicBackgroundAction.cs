@@ -166,5 +166,10 @@ namespace TaleUtil
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return string.Format("CinematicBackgroundAction ({0})", state.ToString());
+        }
     }
 }

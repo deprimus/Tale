@@ -124,5 +124,10 @@ namespace TaleUtil
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return string.Format("VignetteAction ({0})", state.ToString());
+        }
     }
 }

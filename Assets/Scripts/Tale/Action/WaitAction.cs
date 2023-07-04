@@ -31,5 +31,10 @@ namespace TaleUtil
 
             return (clock >= amount);
         }
+
+        public override string ToString()
+        {
+            return string.Format("WaitAction ({0} left)", Mathf.Max(0f, amount - clock).ToString("0.0"));
+        }
     }
 }

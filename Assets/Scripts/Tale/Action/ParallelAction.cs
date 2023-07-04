@@ -49,5 +49,10 @@ namespace TaleUtil
             Parallel.Add(actions);
             return true;
         }
+
+        public override string ToString()
+        {
+            return "ParallelAction";
+        }
     }
 }

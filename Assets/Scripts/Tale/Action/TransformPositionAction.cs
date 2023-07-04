@@ -133,5 +133,10 @@ namespace TaleUtil
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return string.Format("TransformPositionAction ({0})", state.ToString());
+        }
     }
 }

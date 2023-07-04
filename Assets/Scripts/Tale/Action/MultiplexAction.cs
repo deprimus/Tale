@@ -89,5 +89,10 @@ namespace TaleUtil
 
             return (actions.Count == 0); // Finish when all actions are done.
         }
+
+        public override string ToString()
+        {
+            return "MultiplexAction";
+        }
     }
 }

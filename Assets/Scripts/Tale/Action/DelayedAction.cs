@@ -51,5 +51,10 @@ namespace TaleUtil
                 return false;
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("DelayedAction ({0} left)", Mathf.Max(0f, amount - clock).ToString("0.0"));
+        }
     }
 }

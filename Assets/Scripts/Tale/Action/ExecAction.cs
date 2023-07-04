@@ -25,5 +25,10 @@ namespace TaleUtil
             action();
             return true;
         }
+
+        public override string ToString()
+        {
+            return "ExecAction";
+        }
     }
 }

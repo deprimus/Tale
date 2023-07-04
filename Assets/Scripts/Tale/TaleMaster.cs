@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+#pragma warning disable 0162 // Disable the 'unreachable code' warning caused by config constants.
+
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
-using UnityEngine.Rendering.PostProcessing;
 
 [DefaultExecutionOrder(-1000)]
 public class TaleMaster : MonoBehaviour
@@ -15,6 +14,14 @@ public class TaleMaster : MonoBehaviour
         {
             Destroy(gameObject); // Prevent multiple master objects from existing at the same time.
             return;
+        }
+
+        if (TaleUtil.Config.SHOW_DEBUG_INFO_BY_DEFAULT)
+        {
+            if (TaleUtil.SoftAssert.Condition(debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object"))
+            {
+                debugMaster.ShowDebugInfo();
+            }
         }
 
         TaleUtil.Queue.Init();
@@ -196,4 +203,9 @@ public class TaleMaster : MonoBehaviour
     [Space(20)]
 #endif
     public TaleUtil.Props.CameraEffect[] cameraEffects;
+
+#if UNITY_EDITOR
+    [Space(20)]
+#endif
+    public DebugMaster debugMaster;
 }

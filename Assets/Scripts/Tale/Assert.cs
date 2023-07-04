@@ -18,7 +18,7 @@ namespace TaleUtil
         {
             if (!condition)
             {
-                Log.Warning("TALE", msg);
+                Log.Warning(msg);
             }
 
             return condition;

@@ -42,5 +42,10 @@
 
             return action.Run();
         }
+
+        public override string ToString()
+        {
+            return string.Format("Interruptible action ({0})", action.ToString());
+        }
     }
 }

@@ -126,5 +126,10 @@ namespace TaleUtil
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return string.Format("CameraEffectAction ({0})", state.ToString());
+        }
     }
 }

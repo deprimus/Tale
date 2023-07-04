@@ -59,5 +59,12 @@ namespace TaleUtil
 
             return false;
         }
+
+        public override string ToString()
+        {
+            string left = (count == 0 ? "loop" : count.ToString() + " left");
+
+            return string.Format("RepeatAction ({0}, {1})", left, action.ToString());
+        }
     }
 }

@@ -155,5 +155,10 @@ namespace TaleUtil
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return string.Format("TransformShakeAction ({0})", state.ToString());
+        }
     }
 }

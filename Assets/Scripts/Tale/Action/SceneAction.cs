@@ -54,5 +54,10 @@ namespace TaleUtil
 
             return true;
         }
+
+        public override string ToString()
+        {
+            return "SceneAction";
+        }
     }
 }

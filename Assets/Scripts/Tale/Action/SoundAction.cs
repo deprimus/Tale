@@ -163,5 +163,10 @@ namespace TaleUtil
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return string.Format("SoundAction ({0})", state.ToString());
+        }
     }
 }
