@@ -59,6 +59,11 @@ namespace TaleUtil
             {
                 foreach (ChildAnimatorState st in layer.stateMachine.states)
                 {
+                    if (layer.stateMachine == null)
+                    {
+                        return false;
+                    }
+
                     if (st.state.nameHash == hash)
                     {
                         return true;

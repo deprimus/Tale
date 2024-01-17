@@ -8,21 +8,20 @@ namespace TaleUtil
 {
     public partial class Editor
     {
-        [MenuItem("Tale/Setup/Run Full Setup", priority = 1)]
-        static void FullSetup()
-        {
-            SetupInstallDependencies();
-            SetupCreateMasterObject();
-            SetupCreateSplashScene();
-        }
-
-        [MenuItem("Tale/Setup/1. Install Dependencies", priority = 12)]
+        [MenuItem("Tale/Setup/Install Dependencies", priority = 1)]
         static void SetupInstallDependencies()
         {
             EditorApplication.ExecuteMenuItem("Window/TextMeshPro/Import TMP Essential Resources");
         }
 
-        [MenuItem("Tale/Setup/2. Create Master Object", priority = 13)]
+        [MenuItem("Tale/Setup/Run Full Setup", priority = 2)]
+        static void FullSetup()
+        {
+            SetupCreateMasterObject();
+            SetupCreateSplashScene();
+        }
+
+        [MenuItem("Tale/Setup/1. Create Master Object", priority = 13)]
         static void SetupCreateMasterObject()
         {
             Scene s = EditorSceneManager.GetActiveScene();
@@ -47,7 +46,7 @@ namespace TaleUtil
             }
         }
 
-        [MenuItem("Tale/Setup/3. Create Splash Scene", priority = 14)]
+        [MenuItem("Tale/Setup/2. Create Splash Scene", priority = 14)]
         static void SetupCreateSplashScene()
         {
             SetupTaleSplashScene();
