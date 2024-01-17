@@ -43,10 +43,14 @@ You can easily extend Tale by creating your own actions.
 
 # Getting started
 
-1. Copy the `Assets` folder into your project's `Assets` folder
-2. In the toolbar, click `Tale -> Setup -> Run Full Setup`
-3. Click `Import` if a window pops up
-4. All done. Tale is now fully operational.
+1. In your project, open `Window -> Package Manager`
+2. Choose `Packages: In Unity Registry`
+3. Search `Post Processing` and install it
+4. Copy this repo's `Assets` folder into your project's `Assets` folder
+5. In the toolbar, click `Tale -> Setup -> Install Dependencies`
+6. Click `Import` if a window pops up (Tale needs the TextMeshPro Essentials package)
+7. In the toolbar, click `Tale -> Setup -> Run Full Setup`
+8. All done. Tale is now fully operational.
 
 The Tale source code is located in `Assets/Scripts/Tale`. The `Assets/Resources` dir contains additional resources, such as the Tale logo (which is used in the splash scene).
 
@@ -66,9 +70,9 @@ Tale also includes a Trigger system which allows scripts to send events to each 
 
 # Implementation
 
-Tale was designed for Unity 2020, but should also work with 2021 and newer versions. However, the Post-Processing actions are not guaranteed to work because they rely on the old Post Processing Stack v2.
+Tale was designed for Unity 2020. The Post-Processing actions are not guaranteed to work with newer versions because they rely on the old Post Processing Stack v2.
 
-We haven't encountered any problems for Unity 2020 and 2021. If you find one, open an issue. We haven't tested newer versions yet; when we eventually do it, you'll see a compatibility matrix here.
+We haven't encountered any problems for Unity 2020. If you find one, open an issue. We haven't tested newer versions yet; when we eventually do it, you'll see a compatibility matrix here.
 
 
 # Releases
