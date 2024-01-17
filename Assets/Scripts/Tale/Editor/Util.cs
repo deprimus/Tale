@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -66,7 +67,7 @@ namespace TaleUtil
             return text;
         }
 
-        static void CreateSplashScene(string name, Sprite logo, AudioClip sound, int buildIndex = -1)
+        static void CreateSplashScene(string name, Sprite logo, List<AudioClip> soundVariants, int buildIndex = -1)
         {
             string currentScenePath = EditorSceneManager.GetActiveScene().path;
 
@@ -115,7 +116,7 @@ namespace TaleUtil
             obj = new GameObject("Splash Master");
 
             Splash splash = obj.AddComponent<Splash>();
-            splash.soundPath = AssetDatabase.GetAssetPath(sound);
+            splash.soundVariants = soundVariants;
 
             AddSceneToBuild(scenePath, buildIndex);
 

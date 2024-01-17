@@ -1,10 +1,7 @@
 #if UNITY_EDITOR
-using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Video;
 using UnityEditor;
-using TMPro;
 
 namespace TaleUtil
 {
@@ -33,7 +30,7 @@ namespace TaleUtil
         {
             public new string name;
             public Sprite logo;
-            public AudioClip sound;
+            public List<AudioClip> soundVariants;
 
             void OnGUI()
             {
@@ -46,13 +43,34 @@ namespace TaleUtil
 
                 EditorGUILayout.Space(10);
 
-                sound = (AudioClip)EditorGUILayout.ObjectField("Splash sound", sound, typeof(AudioClip), false);
+                EditorGUILayout.LabelField("Splash Sound Variants", EditorStyles.boldLabel);
+                EditorGUI.indentLevel++;
 
-                EditorGUILayout.Space(10);
+                if (soundVariants != null)
+                {
+                    for (int i = 0; i < soundVariants.Count; i++)
+                    {
+                        soundVariants[i] = (AudioClip) EditorGUILayout.ObjectField("Sound " + i, soundVariants[i], typeof(AudioClip), false);
+                    }
+                }
+
+                EditorGUI.indentLevel--;
+
+                if (GUILayout.Button("Add Splash Sound"))
+                {
+                    if (soundVariants == null)
+                    {
+                        soundVariants = new List<AudioClip>();
+                    }
+
+                    soundVariants.Add(null);
+                }
+
+                EditorGUILayout.Space(20);
 
                 if (GUILayout.Button("OK") || Event.current.keyCode == KeyCode.Return)
                 {
-                    CreateSplashScene(name, logo, sound);
+                    CreateSplashScene(name, logo, soundVariants);
                     Close();
                 }
             }

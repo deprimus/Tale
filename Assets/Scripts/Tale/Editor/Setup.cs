@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -337,7 +338,7 @@ namespace TaleUtil
 
         static void SetupTaleSplashScene()
         {
-            CreateSplashScene("Tale", Resources.Load<Sprite>("Tale/Logo"), Resources.Load<AudioClip>("Tale/Splash"), 0);
+            CreateSplashScene("Tale", Resources.Load<Sprite>("Tale/Logo"), new List<AudioClip> { Resources.Load<AudioClip>("Tale/Splash") }, 0);
         }
     }
 }

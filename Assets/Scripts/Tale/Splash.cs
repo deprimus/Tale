@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class Splash : MonoBehaviour
 {
-    public string soundPath;
+    public List<AudioClip> soundVariants;
 
     public float fadeDelay = 1.5f;
 
@@ -12,7 +14,12 @@ public class Splash : MonoBehaviour
 
         Tale.Wait();
 
-        Tale.Sound.Play(soundPath);
+        if (soundVariants != null && soundVariants.Count > 0)
+        {
+            AudioClip sound = soundVariants[Random.Range(0, soundVariants.Count)];
+            Tale.Sound.Play(AssetDatabase.GetAssetPath(sound));
+        }
+
         Tale.Transition("fade", Tale.TransitionType.IN, 0.75f);
         Tale.Wait(fadeDelay);
         Tale.Transition("fade", Tale.TransitionType.OUT, 0.75f);
