@@ -28,18 +28,7 @@ public class TaleMaster : MonoBehaviour
         TaleUtil.Parallel.Init();
         TaleUtil.Triggers.Init();
 
-        // Yes, this looks messy, but it's easier for the user to assign the raw objects and components in the inspector, and for
-        // Tale to process them and make all necessary initializations and checks in Init(), than to force the user to do everything by themselves.
-        // If I wanted to do everything by myself, I wouldn't have used Tale.
-        //
-        // Sure, in the future it would be nice to pass a single object containing all args to this Init() function, but it's fine for now.
-        //
-        // Also, everything is assigned to static variables so they are ready to be used by actions. Sure, a singleton is better practice,
-        // but it's simpler with static variables.
-        //
-        // TaleUtil.Props.anything is cleaner than TaleUtil.Props.GetInstance().anything
-        //
-        // Keep it simple, stupid
+        // TODO: This is messy, fix it.
         TaleUtil.Props.Init(dialogCanvas, dialogActor, dialogContent, dialogAvatar, dialogAnimator, dialogCtc, dialogActc,
                             audioGroup, audioSoundGroup, audioSound, audioMusic, audioVoice,
                             cinematicCanvas, cinematicSubtitles, cinematicSubtitlesBackground, cinematicSubtitlesGroup,

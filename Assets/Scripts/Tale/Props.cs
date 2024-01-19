@@ -20,7 +20,7 @@ namespace TaleUtil
         public static Dictionary<string, TransitionData> transitions;
         public static Dictionary<string, Texture> cameraEffects;
 
-        // Yes, this is messy. See TaleMaster.cs on why this was written like this.
+        // TODO: This is messy, fix it.
         public static void Init(GameObject dialogCanvas, GameObject dialogActor, GameObject dialogContent, GameObject dialogAvatar, Animator dialogAnimator, GameObject dialogCtc, GameObject dialogActc,
                                 GameObject audioGroup, GameObject audioSoundGroup, AudioSource[] audioSound, AudioSource audioMusic, AudioSource audioVoice,
                                 GameObject cinematicCanvas, GameObject cinematicSubtitles, GameObject cinematicSubtitlesBackground, GameObject cinematicSubtitlesGroup,
