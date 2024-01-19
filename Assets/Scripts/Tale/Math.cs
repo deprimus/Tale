@@ -6,6 +6,21 @@ namespace TaleUtil
 {
     public static class Math
     {
+        // Maps a value N from [min, max] to [newMin, newMax]
+        public static float Map(float n, float min, float max, float newMin, float newMax)
+        {
+            return ((n - min) / (max - min)) * (newMax - newMin) + newMin;
+        }
+
+        // Maps a value N from [min, max] to [newMin, newMax] in an exponential manner.
+        // Ease In: lambda > 1 starts slow and accelerates towards newMax
+        // Ease Out: lambda < 1 starts fast and slowly converges to newMax
+        // Linear: lambda can't be 1; use the normal Map() function for that case
+        public static float ExpMap(float lambda, float n, float min, float max, float newMin, float newMax)
+        {
+            return (Mathf.Pow(lambda, n) - Mathf.Pow(lambda, min)) / (Mathf.Pow(lambda, max) - Mathf.Pow(lambda, min)) * (newMax - newMin) + newMin;
+        }
+
         // Normalize an angle from any number to 0->360
         public static float NormalizeAngle(float angle)
         {
