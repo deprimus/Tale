@@ -461,7 +461,7 @@ namespace TaleUtil
                         }
                     }
 
-                    screenToWorldUnit = Screen.width / Config.REFERENCE_WIDTH;
+                    screenToWorldUnit = ((float) Screen.width) / Config.REFERENCE_WIDTH;
 
                     if (avatar != null)
                     {
