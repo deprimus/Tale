@@ -45,7 +45,8 @@ namespace TaleUtil
 
         float timePerChar;
         float clock;
-        float screenToWorldUnit;
+        float screenToWorldUnitX;
+        float screenToWorldUnitY;
 
         bool hasAnimation;
         bool hasAvatarAnimation;
@@ -151,8 +152,8 @@ namespace TaleUtil
 
             Vector3 bottomRight = contentTransform.TransformPoint(lastCharInfo.bottomRight);
 
-            float x = bottomRight.x + xOffset * screenToWorldUnit;
-            float y = yOffset;
+            float x = bottomRight.x + xOffset * screenToWorldUnitX;
+            float y = yOffset * screenToWorldUnitY;
 
             if (alignment == Config.CTCAlignment.MIDDLE)
             {
@@ -461,9 +462,10 @@ namespace TaleUtil
                         }
                     }
 
-                    screenToWorldUnit = ((float) Screen.width) / Config.REFERENCE_WIDTH;
+                    screenToWorldUnitX = ((float) Screen.width) / Config.REFERENCE_WIDTH;
+                    screenToWorldUnitY = ((float) Screen.height) / Config.REFERENCE_HEIGHT;
 
-                    if (avatar != null)
+                        if (avatar != null)
                     {
                         SoftAssert.Condition(Props.dialog.avatar != null,
                             "An avatar was passed to the dialog action, but no avatar prop is available?");
