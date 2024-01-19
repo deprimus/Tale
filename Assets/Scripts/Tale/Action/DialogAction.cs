@@ -465,7 +465,7 @@ namespace TaleUtil
                     screenToWorldUnitX = ((float) Screen.width) / Config.REFERENCE_WIDTH;
                     screenToWorldUnitY = ((float) Screen.height) / Config.REFERENCE_HEIGHT;
 
-                        if (avatar != null)
+                    if (avatar != null)
                     {
                         SoftAssert.Condition(Props.dialog.avatar != null,
                             "An avatar was passed to the dialog action, but no avatar prop is available?");
