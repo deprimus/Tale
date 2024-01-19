@@ -247,6 +247,7 @@ namespace TaleUtil
             Directory.CreateDirectory(root);
 
             AnimatorController ctrl = new AnimatorController();
+            AssetDatabase.CreateAsset(ctrl, string.Format("{0}/{1}.controller", root, controllerName));
             ctrl.name = controllerName;
 
             ctrl.AddLayer("Base Layer");
@@ -265,7 +266,7 @@ namespace TaleUtil
             AnimatorState idle = states.AddStateNoWriteDefaults("Idle");
             states.defaultState = idle;
 
-            AnimatorState dialogIn = states.AddStateNoWriteDefaults(stateIn);
+            AnimatorState animStateIn = states.AddStateNoWriteDefaults(stateIn);
 
             AnimationClip clip = new AnimationClip();
             clip.name = controllerName + "In";
@@ -273,9 +274,9 @@ namespace TaleUtil
             clip.SetCurve(animatedPath, animatedType, animatedProperty, curveIn);
             AssetDatabase.CreateAsset(clip, string.Format("{0}/{1}.anim", root, clip.name));
 
-            dialogIn.motion = clip;
+            animStateIn.motion = clip;
 
-            AnimatorState dialogOut = states.AddStateNoWriteDefaults(stateOut);
+            AnimatorState animStateOut = states.AddStateNoWriteDefaults(stateOut);
 
             clip = new AnimationClip();
             clip.name = controllerName + "Out";
@@ -283,11 +284,10 @@ namespace TaleUtil
             clip.SetCurve(animatedPath, animatedType, animatedProperty, curveOut);
             AssetDatabase.CreateAsset(clip, string.Format("{0}/{1}.anim", root, clip.name));
 
-            dialogOut.motion = clip;
+            animStateOut.motion = clip;
 
-            CreateAnimatorTransitions(idle, dialogIn, dialogOut, triggerIn, triggerOut, triggerNeutral);
+            CreateAnimatorTransitions(idle, animStateIn, animStateOut, triggerIn, triggerOut, triggerNeutral);
 
-            AssetDatabase.CreateAsset(ctrl, string.Format("{0}/{1}.controller", root, controllerName));
             anim.runtimeAnimatorController = ctrl;
         }
 
@@ -297,6 +297,7 @@ namespace TaleUtil
             Directory.CreateDirectory(root);
 
             AnimatorController ctrl = new AnimatorController();
+            AssetDatabase.CreateAsset(ctrl, string.Format("{0}/{1}.controller", root, controllerName));
             ctrl.name = controllerName;
 
             ctrl.AddLayer("Base Layer");
@@ -314,7 +315,6 @@ namespace TaleUtil
 
             idle.motion = clip;
 
-            AssetDatabase.CreateAsset(ctrl, string.Format("{0}/{1}.controller", root, controllerName));
             anim.runtimeAnimatorController = ctrl;
         }
 
