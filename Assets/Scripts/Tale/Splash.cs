@@ -4,20 +4,18 @@ using UnityEditor;
 
 public class Splash : MonoBehaviour
 {
-    public List<AudioClip> soundVariants;
+    public List<string> soundVariants;
 
     public float fadeDelay = 1.5f;
 
     void Awake()
     {
-        Tale.Transition("fade", Tale.TransitionType.OUT, 0f);
-
         Tale.Wait();
 
         if (soundVariants != null && soundVariants.Count > 0)
         {
-            AudioClip sound = soundVariants[Random.Range(0, soundVariants.Count)];
-            Tale.Sound.Play(AssetDatabase.GetAssetPath(sound));
+            string sound = soundVariants[Random.Range(0, soundVariants.Count)];
+            Tale.Sound.Play(sound);
         }
 
         Tale.Transition("fade", Tale.TransitionType.IN, 0.75f);
