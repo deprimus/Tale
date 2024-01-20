@@ -115,8 +115,15 @@ namespace TaleUtil
 
             obj = new GameObject("Splash Master");
 
+            List<string> variants = new List<string>();
+
+            foreach (AudioClip clip in soundVariants)
+            {
+                variants.Add(AssetDatabase.GetAssetPath(clip));
+            }
+
             Splash splash = obj.AddComponent<Splash>();
-            splash.soundVariants = soundVariants;
+            splash.soundVariants = variants;
 
             AddSceneToBuild(scenePath, buildIndex);
 

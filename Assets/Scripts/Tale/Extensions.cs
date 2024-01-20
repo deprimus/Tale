@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Animations;
+#endif
 
 namespace TaleUtil
 {
@@ -29,6 +32,7 @@ namespace TaleUtil
             return (info.IsName(state) && info.normalizedTime >= 1f);
         }
 
+#if UNITY_EDITOR
         public static AnimatorState AddStateNoWriteDefaults(this AnimatorStateMachine machine, string name)
         {
             AnimatorState state = machine.AddState(name);
@@ -43,9 +47,11 @@ namespace TaleUtil
             settings.loopTime = loop;
             AnimationUtility.SetAnimationClipSettings(clip, settings);
         }
+#endif
 
         public static bool HasState(this Animator animator, string state)
         {
+#if UNITY_EDITOR
             AnimatorController ctrl = animator.runtimeAnimatorController as AnimatorController;
 
             if (!ctrl)
@@ -72,10 +78,14 @@ namespace TaleUtil
             }
 
             return false;
+#else
+            return true;
+#endif
         }
 
         public static bool HasTrigger(this Animator animator, string state)
         {
+#if UNITY_EDITOR
             AnimatorController ctrl = animator.runtimeAnimatorController as AnimatorController;
 
             if (!ctrl)
@@ -92,6 +102,9 @@ namespace TaleUtil
             }
 
             return false;
+#else
+            return true;
+#endif
         }
 
         // If a state is absent, this will log a warning with a given category and format
