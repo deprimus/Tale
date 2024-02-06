@@ -100,6 +100,9 @@ public static class Tale
     public static TaleUtil.Action Cinematic() =>
         TaleUtil.Queue.Enqueue(new TaleUtil.CinematicToggleAction());
 
+    public static TaleUtil.Action Animation(Animator animator, string trigger) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.ExecAction(() => animator.SetTrigger(trigger)));
+
     public static class Sound
     {
         public static TaleUtil.Action Play(string path, float volume = 1f, float pitch = 1f) =>
