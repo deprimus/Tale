@@ -32,6 +32,16 @@ namespace TaleUtil
             return (info.IsName(state) && info.normalizedTime >= 1f);
         }
 
+        public static Vector2 Div(this Vector2 left, Vector2 right)
+        {
+            return new Vector2(right.x == 0 ? left.x : left.x / right.x, right.y == 0 ? left.y : left.y / right.y);
+        }
+
+        public static Vector3 Div2D(this Vector3 left, Vector3 right)
+        {
+            return new Vector3(right.x == 0 ? left.x : left.x / right.x, right.y == 0 ? left.y : left.y / right.y, left.z);
+        }
+
 #if UNITY_EDITOR
         public static AnimatorState AddStateNoWriteDefaults(this AnimatorStateMachine machine, string name)
         {
