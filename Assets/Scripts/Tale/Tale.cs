@@ -151,19 +151,19 @@ public static class Tale
         public static TaleUtil.Action Position(Vector2 pos, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformPositionAction(TaleUtil.Props.camera, pos, transitionDuration, interpolation, false));
 
-        public static TaleUtil.Action Position(float x, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        public static TaleUtil.Action Position(float x = Default.FLOAT, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformPositionAction(TaleUtil.Props.camera, new Vector2(x, y), transitionDuration, interpolation, false));
 
         public static TaleUtil.Action Move(Vector2 pos, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformPositionAction(TaleUtil.Props.camera, pos, transitionDuration, interpolation, true));
 
-        public static TaleUtil.Action Move(float x, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        public static TaleUtil.Action Move(float x = Default.FLOAT, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformPositionAction(TaleUtil.Props.camera, new Vector2(x, y), transitionDuration, interpolation, true));
 
         public static TaleUtil.Action Zoom(float factor, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.CameraZoomAction(factor, transitionDuration, interpolation));
 
-        public static TaleUtil.Action Rotation(float degreesX, float degreesY, float degreesZ, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        public static TaleUtil.Action Rotation(float degreesX = Default.FLOAT, float degreesY = Default.FLOAT, float degreesZ = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformRotateAction(TaleUtil.Props.camera, new Vector3(degreesX, degreesY, degreesZ), transitionDuration, interpolation, false));
 
         public static TaleUtil.Action RotationX(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
@@ -175,7 +175,7 @@ public static class Tale
         public static TaleUtil.Action RotationZ(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformRotateAction(TaleUtil.Props.camera, new Vector3(Default.FLOAT, Default.FLOAT, degrees), transitionDuration, interpolation, false));
 
-        public static TaleUtil.Action Rotate(float degreesX, float degreesY, float degreesZ, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        public static TaleUtil.Action Rotate(float degreesX = Default.FLOAT, float degreesY = Default.FLOAT, float degreesZ = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformRotateAction(TaleUtil.Props.camera, new Vector3(degreesX, degreesY, degreesZ), transitionDuration, interpolation, true));
 
         public static TaleUtil.Action RotateX(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
@@ -214,16 +214,16 @@ public static class Tale
         public static TaleUtil.Action Position(UnityEngine.Transform transform, Vector2 pos, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformPositionAction(transform, pos, transitionDuration, interpolation, false));
 
-        public static TaleUtil.Action Position(UnityEngine.Transform transform, float x, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        public static TaleUtil.Action Position(UnityEngine.Transform transform, float x = Default.FLOAT, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformPositionAction(transform, new Vector2(x, y), transitionDuration, interpolation, false));
 
         public static TaleUtil.Action Move(UnityEngine.Transform transform, Vector2 pos, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformPositionAction(transform, pos, transitionDuration, interpolation, true));
 
-        public static TaleUtil.Action Move(UnityEngine.Transform transform, float x, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        public static TaleUtil.Action Move(UnityEngine.Transform transform, float x = Default.FLOAT, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformPositionAction(transform, new Vector2(x, y), transitionDuration, interpolation, true));
 
-        public static TaleUtil.Action Rotation(UnityEngine.Transform transform, float degreesX, float degreesY, float degreesZ, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        public static TaleUtil.Action Rotation(UnityEngine.Transform transform, float degreesX = Default.FLOAT, float degreesY = Default.FLOAT, float degreesZ = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformRotateAction(transform, new Vector3(degreesX, degreesY, degreesZ), transitionDuration, interpolation, false));
 
         public static TaleUtil.Action RotationX(UnityEngine.Transform transform, float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
@@ -235,7 +235,7 @@ public static class Tale
         public static TaleUtil.Action RotationZ(UnityEngine.Transform transform, float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformRotateAction(transform, new Vector3(Default.FLOAT, Default.FLOAT, degrees), transitionDuration, interpolation, false));
 
-        public static TaleUtil.Action Rotate(UnityEngine.Transform transform, float degreesX, float degreesY, float degreesZ, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+        public static TaleUtil.Action Rotate(UnityEngine.Transform transform, float degreesX = Default.FLOAT, float degreesY = Default.FLOAT, float degreesZ = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformRotateAction(transform, new Vector3(degreesX, degreesY, degreesZ), transitionDuration, interpolation, true));
 
         public static TaleUtil.Action RotateX(UnityEngine.Transform transform, float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
