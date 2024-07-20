@@ -103,6 +103,11 @@ def write_scene_script_wait(file):
     file.write('''     
         Tale.Wait();
 ''')
+    
+def write_scene_script_comment(file, what):
+    file.write(f'''
+        // {what}     
+''')
 
 state = State.SEARCHING_FOR_ENTRY_POINT
 scene = None
@@ -162,9 +167,10 @@ with open(file) as f:
                         characters.add(who)
 
                         write_scene_script_dialog(scene_file, who, what)
-                    else:
-                        if line.strip() == '---':
+                    elif line.strip() == '---':
                             write_scene_script_wait(scene_file)
+                    elif len(line.strip()) > 0:
+                        write_scene_script_comment(scene_file, line.strip())
                         
 
 if state == State.SEARCHING_FOR_ENTRY_POINT:
