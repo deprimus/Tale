@@ -98,17 +98,16 @@ Pauses like the one above will compile to Tale.Wait().
 
 ## Scene 2
 
-...
+Scenes don't have to be named 'Scene'. If the are, they will be renamed to 'Story', as
+to not confuse story scenes with the game scenes.
 
-## Credits
+This scene will be compiled to 'Story_2.cs'.
 
-Scenes don't have to be named 'Scene'. If the are, they will be renamed to 'Story'.
+## End - The last encounter
 
-## Intro - The first encounter
+Any spaces or special characters in the name will be removed or replaced with an underscore.
 
-Any spaces or special characters in the scene name will be removed or replaced with an underscore (_).
-
-This scene will be renamed and compiled into 'Intro_The_first_encounter.cs'
+This scene will be renamed and compiled into 'End_The_last_encounter.cs'
 ```
 
 The compiler will simply ignore what isn't under `# Script`, so you don't have to cut your original script to make it compile.
