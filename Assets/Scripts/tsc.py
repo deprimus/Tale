@@ -90,7 +90,7 @@ def write_scene_script_end(file):
 ''')
     
 def write_scene_script_dialog(file, who, what):
-    file.write(f'''     
+    file.write(f'''
         Dialog.{who}("{what}"''')
         
     if what.startswith('(') and what.endswith(')'):
@@ -100,13 +100,13 @@ def write_scene_script_dialog(file, who, what):
 ''')
     
 def write_scene_script_wait(file):
-    file.write('''     
+    file.write('''
         Tale.Wait();
 ''')
     
 def write_scene_script_comment(file, what):
     file.write(f'''
-        // {what}     
+        // {what}
 ''')
 
 state = State.SEARCHING_FOR_ENTRY_POINT
@@ -187,14 +187,14 @@ print('Writing Transition.cs')
 
 with open('Transition.cs', 'w') as f:
     f.write('''using UnityEngine;
-            
+
 public static class Transition {
     public static TaleUtil.Action FadeIn(float duration = 1f) =>
         Tale.Transition("fade", Tale.TransitionType.IN, duration);
-            
+
     public static TaleUtil.Action FadeOut(float duration = 1f) =>
         Tale.Transition("fade", Tale.TransitionType.OUT, duration);
-}            
+}
 ''')
     
 print('Writing Dialog.cs')
@@ -203,13 +203,13 @@ with open('Dialog.cs', 'w') as f:
     f.write('''using UnityEngine;
             
 public static class Dialog {''')
-    
+
     for character in characters:
         f.write(f'''
     public static TaleUtil.Action {character}(string what, string voice = null, bool additive = false, bool reverb = false) =>
         Tale.Dialog("{character}", what, null, voice, voice.ToLower().EndsWith("Loop"), additive, reverb);
 ''')
-        
+
     f.write('''
 }
 ''')
