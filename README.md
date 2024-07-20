@@ -36,6 +36,7 @@ Here's what Tale currently provides:
   - Repeat and Delay, for managing other actions
   - Multiplex and Parallel, for orchestrating many actions at the same time
 - **Editor Macros**, for setting up Tale and adding new props as easily as possible
+- **Script Compiler**, for easily generating Tale code from story scripts
 
 You can easily extend Tale by creating your own actions.
 
@@ -57,6 +58,57 @@ The Tale source code is located in `Assets/Scripts/Tale`. The `Assets/Resources`
 Here's the old setup in case you want to manually set up Tale, or want to see how it works: [setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md).
 
 There is currently no documentation; there will be one someday.
+
+# Story scripts
+
+## Compiling
+If you have a story script, you can compile it to Tale code. Simply navigate to `Assets/Scripts` and run:
+
+```sh
+python tsc.py <your_story_file>.md
+```
+
+The Tale scripts will be generated under `Scenes`, and you will also see `Dialog.cs` and `Transition.cs` which contain helper methods.
+
+## What are they?
+Story scripts are basically markdown files in a specific format:
+
+```md
+...
+
+# Script
+
+## Scene 1
+
+This is a description. It will be inserted as a C# comment.
+
+Character1: This is dialog. It will be compiled to Tale.Dialog()
+Character2: Yes.
+
+There is also support for reverb.
+
+Character1: (This dialog will be compiled with reverb: true).
+
+---
+
+Pauses like the one above will compile to Tale.Wait().
+
+## Scene 2
+
+...
+
+## Credits
+
+Scenes don't have to be named 'Scene'. If the are, they will be renamed to 'Story'.
+
+## Intro - The first encounter
+
+Any spaces or special characters in the scene name will be removed or replaced with an underscore (_).
+
+This scene will be renamed and compiled into 'Intro_The_first_encounter.cs'
+```
+
+The compiler will simply ignore what isn't under `# Script`, so you don't have to cut your original script to make it compile.
 
 # Design
 
