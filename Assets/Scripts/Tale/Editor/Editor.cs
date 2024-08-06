@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
@@ -8,22 +9,34 @@ namespace TaleUtil
 {
     public partial class Editor
     {
-        [MenuItem("Tale/Setup/Install Dependencies", priority = 1)]
-        static void SetupInstallDependencies()
-        {
-            EditorApplication.ExecuteMenuItem("Window/TextMeshPro/Import TMP Essential Resources");
-        }
-
-        [MenuItem("Tale/Setup/Run Full Setup", priority = 2)]
+        [MenuItem("Tale/Setup/Run Full Setup", priority = 1)]
         static void FullSetup()
         {
             SetupCreateMasterObject();
             SetupCreateSplashScene();
         }
 
-        [MenuItem("Tale/Setup/1. Create Master Object", priority = 13)]
+        [MenuItem("Tale/Setup/Manual Setup", priority = 12)]
+        static void ManualSetupDummy() { }
+
+        [MenuItem("Tale/Setup/Manual Setup", true, priority = 12)]
+        static bool ManualSetupDummyValidate() => false;
+
+        [MenuItem("Tale/Setup/1. Install Dependencies", priority = 13)]
+        static void SetupInstallDependencies()
+        {
+            EditorApplication.ExecuteMenuItem("Window/TextMeshPro/Import TMP Essential Resources");
+        }
+
+        [MenuItem("Tale/Setup/2. Create Master Object", priority = 14)]
         static void SetupCreateMasterObject()
         {
+            if (File.Exists(TALE_PREFAB_PATH))
+            {
+                EditorUtility.DisplayDialog("Tale Master already created", "Tale Master prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_PREFAB_PATH, "Ok");
+                return;
+            }
+
             Scene s = EditorSceneManager.GetActiveScene();
 
             GameObject master = new GameObject("Tale Master", typeof(TaleMaster));
@@ -40,13 +53,15 @@ namespace TaleUtil
             Undo.RegisterCreatedObjectUndo(master, "Create " + master.name);
             Selection.activeGameObject = master;
 
+            CreateTaleMasterPrefab(master);
+
             if (s.path != null && s.path.Length > 0)
             {
                 EditorSceneManager.SaveScene(s, s.path);
             }
         }
 
-        [MenuItem("Tale/Setup/2. Create Splash Scene", priority = 14)]
+        [MenuItem("Tale/Setup/3. Create Splash Scene", priority = 15)]
         static void SetupCreateSplashScene()
         {
             SetupTaleSplashScene();
@@ -55,18 +70,22 @@ namespace TaleUtil
         [MenuItem("Tale/Create/Transition", priority = 1)]
         static void CreateTransition()
         {
+            if (!TaleWasSetUp())
+            {
+                EditorUtility.DisplayDialog("Tale not set up", "Please set up Tale before creating transitions:\n\nTale -> Setup -> Run Full Setup", "Ok");
+                return;
+            }
+
             if (FindTaleMaster() == null)
             {
-                EditorUtility.DisplayDialog("Tale Master not found in this scene", "Please set up Tale before creating transitions.", "Ok");
+                InstantiateTaleMasterPrefab();
             }
-            else
-            {
-                CreateTransitionDialog dialog = EditorWindow.GetWindow<CreateTransitionDialog>();
-                dialog.titleContent = new GUIContent("Tale - Create Transition");
-                dialog.minSize = new Vector2(400f, 210f);
-                dialog.maxSize = dialog.minSize;
-                dialog.ShowPopup();
-            }
+
+            CreateTransitionDialog dialog = EditorWindow.GetWindow<CreateTransitionDialog>();
+            dialog.titleContent = new GUIContent("Tale - Create Transition");
+            dialog.minSize = new Vector2(400f, 210f);
+            dialog.maxSize = dialog.minSize;
+            dialog.ShowPopup();
         }
 
         [MenuItem("Tale/Create/Splash Scene", priority = 2)]

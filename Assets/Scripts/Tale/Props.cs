@@ -4,18 +4,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.Assertions;
-using UnityEngine.Rendering.PostProcessing;
 using TMPro;
+
+#if UNITY_POST_PROCESSING_STACK_V2
+using UnityEngine.Rendering.PostProcessing;
+#endif
 
 namespace TaleUtil
 {
     public static class Props
     {
         public static Props.Camera camera;
-        public static Props.PostProcessing postProcessing;
         public static Props.Dialog dialog;
         public static Props.Audio audio;
         public static Props.Cinematic cinematic;
+
+#if UNITY_POST_PROCESSING_STACK_V2
+        public static Props.PostProcessing postProcessing;
+#endif
 
         public static Dictionary<string, TransitionData> transitions;
         public static Dictionary<string, Texture> cameraEffects;
@@ -48,6 +54,7 @@ namespace TaleUtil
             if (transitionArray.Length != transitions.Count)
                 Warning("Two or more transitions with same name exist; in these cases, the last one is kept");
 
+#if UNITY_POST_PROCESSING_STACK_V2
             cameraEffects = new Dictionary<string, Texture>();
 
             for(int i = 0; i < cameraEffectArray.Length; ++i)
@@ -59,6 +66,12 @@ namespace TaleUtil
 
             if(cameraEffectArray.Length != cameraEffects.Count)
                 Warning("Two or more camera effects with same name exist (case insensitive); in these cases, the last one is kept");
+#else
+            if (cameraEffectArray.Length > 0)
+            {
+                Warning("Camera effects require PostProcessing V2 to be installed; ignoring effects registered in TaleMaster");
+            }
+#endif
         }
 
         public static void Warning(string msg) =>
@@ -71,13 +84,15 @@ namespace TaleUtil
         {
             // It's important to keep the reference, because the camera actions which use Transformable need a reliable reference,
             // which doesn't change with the scene.
-            if(camera == null)
+            if (camera == null)
                 camera = new Props.Camera(UnityEngine.Camera.main);
             else camera.Reinit(UnityEngine.Camera.main);
 
+#if UNITY_POST_PROCESSING_STACK_V2
             postProcessing = new Props.PostProcessing(camera.obj);
+#endif
 
-            if(camera == null)
+            if (camera == null)
                 Error("Could not retrieve main camera");
         }
 
@@ -376,6 +391,7 @@ namespace TaleUtil
             }
         }
 
+#if UNITY_POST_PROCESSING_STACK_V2
         public class PostProcessing
         {
             public Vignette vignette;
@@ -396,6 +412,7 @@ namespace TaleUtil
                 }
             }
         }
+#endif
 
         [System.Serializable]
         public class Transition

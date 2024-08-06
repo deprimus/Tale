@@ -28,7 +28,11 @@ namespace TaleUtil
 
                 if (GUILayout.Button("OK") || Event.current.keyCode == KeyCode.Return)
                 {
-                    CreateTaleTransition(FindTaleMaster(), name);
+                    using (var scope = new PrefabUtility.EditPrefabContentsScope(TALE_PREFAB_PATH))
+                    {
+                        CreateTaleTransition(scope.prefabContentsRoot, name);
+                    }
+
                     Close();
                 }
             }

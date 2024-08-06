@@ -199,6 +199,7 @@ public static class Tale
         public static TaleUtil.Action ShakeY(float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.TransformShakeAction(TaleUtil.Props.camera, new Vector2(Default.FLOAT, magnitude), duration, interpolation));
 
+#if UNITY_POST_PROCESSING_STACK_V2
         public static TaleUtil.Action Effect(string name = null, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.CameraEffectAction(name, transitionDuration, interpolation));
 
@@ -207,6 +208,7 @@ public static class Tale
 
         public static TaleUtil.Action Bloom(float intensity, float transitionDuration = 1f, UnityEngine.Color? color = null, float threshold = Default.FLOAT, float diffusion = Default.FLOAT, float anamorphicRatio = Default.FLOAT, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.BloomAction(intensity, transitionDuration, color, threshold, diffusion, anamorphicRatio, interpolation));
+#endif
     }
 
     public static class Transform

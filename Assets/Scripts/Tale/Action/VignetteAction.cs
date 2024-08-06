@@ -1,3 +1,4 @@
+#if UNITY_POST_PROCESSING_STACK_V2
 using UnityEngine;
 
 namespace TaleUtil
@@ -131,3 +132,4 @@ namespace TaleUtil
         }
     }
 }
+#endif

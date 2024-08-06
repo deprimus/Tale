@@ -44,20 +44,29 @@ You can easily extend Tale by creating your own actions.
 
 # Getting started
 
-1. In your project, open `Window -> Package Manager`
-2. Choose `Packages: In Unity Registry`
-3. Search `Post Processing` and install it
-4. Copy this repo's `Assets` folder into your project's `Assets` folder
-5. In the toolbar, click `Tale -> Setup -> Install Dependencies`
-6. Click `Import` if a window pops up (Tale needs the TextMeshPro Essentials package)
-7. In the toolbar, click `Tale -> Setup -> Run Full Setup`
-8. All done. Tale is now fully operational.
+1. Copy the files from this repo's `Assets` folder into your project's `Assets` folder
+2. In the toolbar, click `Tale -> Setup -> Run Full Setup`. If you don't see this, reload via `CTRL + R`
+3. Click `Import` if a window pops up (Tale needs the TextMeshPro Essentials package)
+4. All done. Tale is now fully operational.
 
 The Tale source code is located in `Assets/Scripts/Tale`. The `Assets/Resources` dir contains additional resources, such as the Tale logo (which is used in the splash scene).
 
-Here's the old setup in case you want to manually set up Tale, or want to see how it works: [setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md).
-
 There is currently no documentation; there will be one someday.
+
+## Extra (not required)
+
+Here's the old setup in case you want to manually set up Tale, or want to see how it works: [old setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md).
+
+Tale has support for the old Post Processing V2 stack for effects like Bloom.
+
+If you want those:
+
+1. In your project, open `Window -> Package Manager`
+2. Choose `Packages: In Unity Registry`
+3. Search `Post Processing` and install it
+4. Reload via `CTRL + R`
+
+You will have to *manually* set up post processing. For this, check out the post processing section in the [old setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md).
 
 # Story scripts
 

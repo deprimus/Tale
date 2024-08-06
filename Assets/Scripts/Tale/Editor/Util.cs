@@ -15,6 +15,13 @@ namespace TaleUtil
 {
     public partial class Editor
     {
+        const string TALE_PREFAB_PATH = "Assets/Prefabs/TaleMaster.prefab";
+
+        static bool TaleWasSetUp()
+        {
+            return File.Exists(TALE_PREFAB_PATH);
+        }
+
         static GameObject FindTaleMaster()
         {
             if (!TagExists("TaleMaster"))
@@ -23,6 +30,23 @@ namespace TaleUtil
             }
 
             return GameObject.FindGameObjectWithTag("TaleMaster");
+        }
+
+        static GameObject GetTaleMasterPrefab()
+        {
+            if (!TaleWasSetUp())
+            {
+                return null;
+            }
+
+            return AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH);
+        }
+
+        static void CreateTaleMasterPrefab(GameObject obj)
+        {
+            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(TALE_PREFAB_PATH));
+
+            PrefabUtility.SaveAsPrefabAssetAndConnect(obj, TALE_PREFAB_PATH, InteractionMode.UserAction);
         }
 
         static bool TagExists(string name)
@@ -44,6 +68,11 @@ namespace TaleUtil
 
                 tagManager.ApplyModifiedPropertiesWithoutUndo();
             }
+        }
+
+        static void InstantiateTaleMasterPrefab()
+        {
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH));
         }
 
         static TextMeshProUGUI CreateDebugInfoText(string name, GameObject parent, TextAlignmentOptions alignment, Vector2 anchor, Vector2 size, Vector2 pos)
@@ -204,6 +233,12 @@ namespace TaleUtil
 
         static void CreateTaleTransition(GameObject master, string name)
         {
+            if (master == null)
+            {
+                EditorUtility.DisplayDialog("Tale not set up", "Please set up Tale before creating transitions:\n\nTale -> Setup -> Run Full Setup", "Ok");
+                return;
+            }
+
             TaleMaster tale = master.GetComponent<TaleMaster>();
 
             // Fade
