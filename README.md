@@ -49,11 +49,11 @@ You can easily extend Tale by creating your own actions.
 3. Click `Import` if a window pops up (Tale needs the TextMeshPro Essentials package)
 4. All done. Tale is now fully operational.
 
+## Extra (not required)
+
 The Tale source code is located in `Assets/Scripts/Tale`. The `Assets/Resources` dir contains additional resources, such as the Tale logo (which is used in the splash scene).
 
 There is currently no documentation; there will be one someday.
-
-## Extra (not required)
 
 Here's the old setup in case you want to manually set up Tale, or want to see how it works: [old setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md).
 
