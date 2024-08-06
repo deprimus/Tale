@@ -64,9 +64,8 @@ If you want those:
 1. In your project, open `Window -> Package Manager`
 2. Choose `Packages: In Unity Registry`
 3. Search `Post Processing` and install it
-4. Reload via `CTRL + R`
 
-You will have to *manually* set up post processing. For this, check out the post processing section in the [old setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md).
+You will have to *manually* set up post processing. For this, check out the post processing section in the [old setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md#post-processing).
 
 # Story scripts
 
