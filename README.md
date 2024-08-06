@@ -62,11 +62,7 @@ There is currently no documentation; there will be one someday.
 # Story scripts
 
 ## Compiling
-If you have a story script, you can compile it to Tale code. Simply navigate to `Assets/Scripts` and run:
-
-```sh
-python tsc.py <your_story_file>.md
-```
+If you have a story script, you can compile it to Tale code. Simply open the menu `Tale -> Compile Story` and select the file.
 
 The Tale scripts will be generated under `Assets/Scripts/Scenes`, and you will also see `Dialog.cs` and `Transition.cs` which contain helper methods.
 
@@ -74,7 +70,7 @@ The Tale scripts will be generated under `Assets/Scripts/Scenes`, and you will a
 Story scripts are basically markdown files in a specific format. When you develop a game, you usually write a script for the game story.
 
 The script describes the scenes and dialog. If you write this script in the format shown below, Tale will be able to compile it to C# code
-which makes use of Tale actions.
+which is compatible with Tale.
 
 ```md
 ...

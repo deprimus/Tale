@@ -13,6 +13,14 @@ namespace TaleUtil
 
             void OnGUI()
             {
+                float logoWidth = position.width - 2 * 50f;
+                float logoHeight = logoWidth / 2.31f; // Tale logo aspect ratio: 2.31
+
+                EditorGUI.DrawRect(new Rect(0f, 0f, position.width, logoHeight + 5f), Color.black);
+                GUI.DrawTexture(new Rect(50f, 0f, logoWidth, logoHeight), AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/Tale/Logo.png"), ScaleMode.ScaleToFit);
+
+                GUILayout.Space(logoHeight + 10f);
+
                 EditorGUILayout.LabelField("Enter the transition name:");
                 name = EditorGUILayout.TextField(name);
 
@@ -34,6 +42,14 @@ namespace TaleUtil
 
             void OnGUI()
             {
+                float logoWidth = position.width - 2 * 50f;
+                float logoHeight = logoWidth / 2.31f; // Tale logo aspect ratio: 2.31
+
+                EditorGUI.DrawRect(new Rect(0f, 0f, position.width, logoHeight + 5f), Color.black);
+                GUI.DrawTexture(new Rect(50f, 0f, logoWidth, logoHeight), AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/Tale/Logo.png"), ScaleMode.ScaleToFit);
+
+                GUILayout.Space(logoHeight + 10f);
+
                 EditorGUILayout.LabelField("Enter the splash scene name:");
                 name = EditorGUILayout.TextField(name);
 
@@ -66,7 +82,7 @@ namespace TaleUtil
                     soundVariants.Add(null);
                 }
 
-                EditorGUILayout.Space(20);
+                EditorGUILayout.Space(5);
 
                 if (GUILayout.Button("OK") || Event.current.keyCode == KeyCode.Return)
                 {

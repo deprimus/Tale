@@ -62,7 +62,9 @@ namespace TaleUtil
             else
             {
                 CreateTransitionDialog dialog = EditorWindow.GetWindow<CreateTransitionDialog>();
-                dialog.titleContent = new GUIContent("Create Transition");
+                dialog.titleContent = new GUIContent("Tale - Create Transition");
+                dialog.minSize = new Vector2(400f, 210f);
+                dialog.maxSize = dialog.minSize;
                 dialog.ShowPopup();
             }
         }
@@ -71,7 +73,9 @@ namespace TaleUtil
         static void CreateSplashScene()
         {
             CreateSplashSceneDialog dialog = EditorWindow.GetWindow<CreateSplashSceneDialog>();
-            dialog.titleContent = new GUIContent("Create Splash Scene");
+            dialog.titleContent = new GUIContent("Tale - Create Splash Scene");
+            dialog.minSize = new Vector2(400f, 350f);
+            dialog.maxSize = new Vector2(400f, 16384f);
             dialog.ShowPopup();
         }
     }
