@@ -17,7 +17,8 @@ namespace TaleUtil
         public const KeyCode DIALOG_KEY_SKIP = KeyCode.LeftControl; // Hold this key -> skip through the dialog
         public const KeyCode DEBUG_INFO_KEY  = KeyCode.F3;          // Press this to show/hide Tale debug info
 
-        public const bool SHOW_DEBUG_INFO_BY_DEFAULT = false; // Show/hide by default, but can still toggle by using DEBUG_INFO_KEY
+        public const bool APPLICATION_RUN_IN_BACKGROUND = true; // If true, will set Application.runInBackground to true. Otherwise, the field is untouched.
+        public const bool SHOW_DEBUG_INFO_BY_DEFAULT = false;   // Show/hide by default, but can still toggle by using DEBUG_INFO_KEY
 
         public const string DIALOG_ADDITIVE_SEPARATOR = " "; // When there is additive dialog, append this after the first string.
 

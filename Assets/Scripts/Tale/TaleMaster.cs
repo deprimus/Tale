@@ -16,6 +16,11 @@ public class TaleMaster : MonoBehaviour
             return;
         }
 
+        if (TaleUtil.Config.APPLICATION_RUN_IN_BACKGROUND)
+        {
+            Application.runInBackground = true;
+        }
+
         if (TaleUtil.Config.SHOW_DEBUG_INFO_BY_DEFAULT)
         {
             if (TaleUtil.SoftAssert.Condition(debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object"))
