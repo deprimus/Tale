@@ -224,6 +224,7 @@ namespace TaleUtil
             // Background
             GameObject group = new GameObject("Background Group");
             GameObjectUtility.SetParentAndAlign(group, canvas);
+            StretchTransform(group.AddComponent<RectTransform>());
             AddAnimator(group);
 
             tale.cinematicBackgroundGroupAnimator = group.GetComponent<Animator>();
