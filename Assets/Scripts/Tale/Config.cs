@@ -12,7 +12,7 @@ namespace TaleUtil
         public const uint CINEMATIC_SUBTITLE_CPS = 50;
 
         // Mouse left click or one of these keys -> advance the dialog
-        public static readonly KeyCode[] DIALOG_KEY_NEXT = new KeyCode[] { KeyCode.Return, KeyCode.KeypadEnter };
+        public static readonly KeyCode[] DIALOG_KEY_NEXT = new KeyCode[] { KeyCode.Return, KeyCode.KeypadEnter, KeyCode.RightArrow, KeyCode.Space };
 
         public const KeyCode DIALOG_KEY_SKIP = KeyCode.LeftControl; // Hold this key -> skip through the dialog
         public const KeyCode DEBUG_INFO_KEY  = KeyCode.F3;          // Press this to show/hide Tale debug info
