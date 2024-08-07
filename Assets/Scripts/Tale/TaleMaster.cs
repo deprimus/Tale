@@ -39,7 +39,7 @@ public class TaleMaster : MonoBehaviour
                             cinematicCanvas, cinematicSubtitles, cinematicSubtitlesBackground, cinematicSubtitlesGroup,
                             cinematicBackgroundGroupAnimator, cinematicBackground, cinematicBackgroundAlt,
                             cinematicVideoGroup, cinematicVideoPlayer, cinematicVideoAudioSource,
-                            transitions, cameraEffects);
+                            advanceCanvas, transitions, cameraEffects);
 
         // Events
         SceneManager.sceneLoaded += TaleUtil.Events.OnSceneLoaded; // This is used to re-assign the camera when the scene changes
@@ -185,6 +185,11 @@ public class TaleMaster : MonoBehaviour
     [Rename("Audio Source")]
 #endif
     public AudioSource cinematicVideoAudioSource;
+
+#if UNITY_EDITOR
+    [Space(20)]
+#endif
+    public GameObject advanceCanvas;
 
 
 #if UNITY_EDITOR

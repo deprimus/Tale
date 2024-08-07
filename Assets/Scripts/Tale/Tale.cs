@@ -94,6 +94,9 @@ public static class Tale
     public static TaleUtil.Action Delayed(float amount, TaleUtil.Action action) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.DelayedAction(amount, action));
 
+    public static TaleUtil.Action Advance() =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.AdvanceAction());
+
     public static TaleUtil.Action Exec(TaleUtil.Delegates.ShallowDelegate action) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.ExecAction(action));
 

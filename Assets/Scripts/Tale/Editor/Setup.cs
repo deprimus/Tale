@@ -202,6 +202,18 @@ namespace TaleUtil
             tale.audioVoice = voice.GetComponent<AudioSource>();
         }
 
+        static void SetupAdvance(GameObject master)
+        {
+            TaleMaster tale = master.GetComponent<TaleMaster>();
+
+            GameObject canvas = CreateCanvas("Advance Canvas", Config.ADVANCE_SORT_ORDER);
+            GameObjectUtility.SetParentAndAlign(canvas, master);
+
+            canvas.SetActive(false);
+
+            tale.advanceCanvas = canvas;
+        }
+
         static void SetupTransitions(GameObject master)
         {
             CreateTaleTransition(master, "Fade");

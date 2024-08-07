@@ -131,18 +131,6 @@ namespace TaleUtil
             hasAvatarAnimation = HasAnimateableAvatar();
         }
 
-        bool Advance()
-        {
-            if(Input.GetMouseButtonUp(0) || Input.GetKey(Config.DIALOG_KEY_SKIP))
-                return true;
-
-            for(int i = 0; i < Config.DIALOG_KEY_NEXT.Length; ++i)
-                if(Input.GetKeyDown(Config.DIALOG_KEY_NEXT[i]))
-                    return true;
-
-            return false;
-        }
-
         // Moves the CTC object to the end of the text.
         void RepositionCTC(TMP_TextInfo textInfo, RectTransform ctcTransform, float xOffset, float yOffset, Config.CTCAlignment alignment)
         {
@@ -479,7 +467,7 @@ namespace TaleUtil
                 }
                 case State.TRANSITION_IN:
                 {
-                    if (Advance())
+                    if (Input.Advance())
                     {
                         Props.dialog.animator.speed = Config.TRANSITION_SKIP_SPEED;
                     }
@@ -538,7 +526,7 @@ namespace TaleUtil
                 }
                 case State.AVATAR_TRANSITION_IN:
                 {
-                    if (Advance())
+                    if (Input.Advance())
                     {
                         Props.dialog.avatarAnimator.speed = Config.TRANSITION_SKIP_SPEED;
                     }
@@ -612,7 +600,7 @@ namespace TaleUtil
 
                         int numChars;
 
-                        if (Advance())
+                        if (Input.Advance())
                         {
                             numChars = content.Length - index;
                         }
@@ -674,7 +662,7 @@ namespace TaleUtil
                 }
                 case State.WAIT_FOR_INPUT_OVERRIDE:
                 {
-                    if(Advance())
+                    if(Input.Advance())
                     {
                         if (Props.dialog.ctc != null)
                         {
@@ -692,7 +680,7 @@ namespace TaleUtil
                 }
                 case State.WAIT_FOR_INPUT_ADDITIVE:
                 {
-                    if(Advance())
+                    if(Input.Advance())
                     {
                         if (Props.dialog.actc != null)
                         {
@@ -830,7 +818,7 @@ namespace TaleUtil
                 }
                 case State.TRANSITION_OUT:
                 {
-                    if (Advance())
+                    if (Input.Advance())
                     {
                         Props.dialog.animator.speed = Config.TRANSITION_SKIP_SPEED;
                     }
@@ -883,7 +871,7 @@ namespace TaleUtil
                 }
                 case State.AVATAR_TRANSITION_OUT:
                 {
-                    if (Advance())
+                    if (Input.Advance())
                     {
                         Props.dialog.avatarAnimator.speed = Config.TRANSITION_SKIP_SPEED;
                     }

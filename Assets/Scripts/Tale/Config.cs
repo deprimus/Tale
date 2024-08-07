@@ -92,6 +92,7 @@ namespace TaleUtil
         public const string CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER = "Transition";
 
         public const int DEBUG_SORT_ORDER = 1000;
+        public const int ADVANCE_SORT_ORDER = 400;
         public const int DIALOG_SORT_ORDER = 300;
         public const int TRANSITION_SORT_ORDER = 200;
         public const int CINEMATIC_SORT_ORDER = 100;

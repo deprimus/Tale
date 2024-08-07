@@ -23,6 +23,8 @@ namespace TaleUtil
         public static Props.PostProcessing postProcessing;
 #endif
 
+        public static GameObject advanceCanvas;
+
         public static Dictionary<string, TransitionData> transitions;
         public static Dictionary<string, Texture> cameraEffects;
 
@@ -32,7 +34,7 @@ namespace TaleUtil
                                 GameObject cinematicCanvas, GameObject cinematicSubtitles, GameObject cinematicSubtitlesBackground, GameObject cinematicSubtitlesGroup,
                                 Animator cinematicBackgroundGroupAnimator, GameObject cinematicBackground, GameObject cinematicBackgroundAlt,
                                 GameObject cinematicVideoGroup, VideoPlayer cinematicVideoPlayer, AudioSource cinematicVideoAudioSource,
-                                Transition[] transitionArray, CameraEffect[] cameraEffectArray)
+                                GameObject advanceCanvas, Transition[] transitionArray, CameraEffect[] cameraEffectArray)
         {
             ReinitCamera();
 
@@ -41,6 +43,8 @@ namespace TaleUtil
             cinematic            = new Cinematic(cinematicCanvas, cinematicSubtitles, cinematicSubtitlesBackground, cinematicSubtitlesGroup);
             cinematic.background = new CinematicBackground(cinematicBackgroundGroupAnimator, cinematicBackground, cinematicBackgroundAlt);
             cinematic.video      = new CinematicVideo(cinematicVideoGroup, cinematicVideoPlayer, cinematicVideoAudioSource);
+
+            Props.advanceCanvas = advanceCanvas;
 
             transitions = new Dictionary<string, TransitionData>();
 

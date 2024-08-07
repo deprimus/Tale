@@ -43,6 +43,7 @@ namespace TaleUtil
 
             SetupDialog(master);
             SetupAudio(master);
+            SetupAdvance(master);
             SetupTransitions(master);
             SetupCinematic(master);
             SetupDebug(master);
