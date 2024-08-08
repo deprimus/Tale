@@ -28,50 +28,44 @@ namespace TaleUtil
         public static Dictionary<string, TransitionData> transitions;
         public static Dictionary<string, Texture> cameraEffects;
 
-        // TODO: This is messy, fix it.
-        public static void Init(GameObject dialogCanvas, GameObject dialogActor, GameObject dialogContent, GameObject dialogAvatar, Animator dialogAnimator, GameObject dialogCtc, GameObject dialogActc,
-                                GameObject audioGroup, GameObject audioSoundGroup, AudioSource[] audioSound, AudioSource audioMusic, AudioSource audioVoice,
-                                GameObject cinematicCanvas, GameObject cinematicSubtitles, GameObject cinematicSubtitlesBackground, GameObject cinematicSubtitlesGroup,
-                                Animator cinematicBackgroundGroupAnimator, GameObject cinematicBackground, GameObject cinematicBackgroundAlt,
-                                GameObject cinematicVideoGroup, VideoPlayer cinematicVideoPlayer, AudioSource cinematicVideoAudioSource,
-                                GameObject advanceCanvas, Transition[] transitionArray, CameraEffect[] cameraEffectArray)
+        public static void Init(TaleMaster.InspectorProps props)
         {
             ReinitCamera();
 
-            dialog               = new Dialog(dialogCanvas, dialogActor, dialogContent, dialogAvatar, dialogAnimator, dialogCtc, dialogActc);
-            audio                = new Audio(audioGroup, audioSoundGroup, audioSound, audioMusic, audioVoice);
-            cinematic            = new Cinematic(cinematicCanvas, cinematicSubtitles, cinematicSubtitlesBackground, cinematicSubtitlesGroup);
-            cinematic.background = new CinematicBackground(cinematicBackgroundGroupAnimator, cinematicBackground, cinematicBackgroundAlt);
-            cinematic.video      = new CinematicVideo(cinematicVideoGroup, cinematicVideoPlayer, cinematicVideoAudioSource);
+            dialog               = new Dialog(props.dialogCanvas, props.dialogActor, props.dialogContent, props.dialogAvatar, props.dialogAnimator, props.dialogCtc, props.dialogActc);
+            audio                = new Audio(props.audioGroup, props.audioSoundGroup, props.audioSound, props.audioMusic, props.audioVoice);
+            cinematic            = new Cinematic(props.cinematicCanvas, props.cinematicSubtitles, props.cinematicSubtitlesBackground, props.cinematicSubtitlesGroup);
+            cinematic.background = new CinematicBackground(props.cinematicBackgroundGroupAnimator, props.cinematicBackground, props.cinematicBackgroundAlt);
+            cinematic.video      = new CinematicVideo(props.cinematicVideoGroup, props.cinematicVideoPlayer, props.cinematicVideoAudioSource);
 
-            Props.advanceCanvas = advanceCanvas;
+            advanceCanvas = props.advanceCanvas;
 
             transitions = new Dictionary<string, TransitionData>();
 
-            for(int i = 0; i < transitionArray.Length; ++i)
+            for (int i = 0; i < props.transitions.Length; ++i)
             {
-                if(transitionArray[i].data.canvas == null || transitionArray[i].data.animator == null)
-                    Warning(string.Format("Canvas or animator is null for transition '{0}'; the entry will be ignored", transitionArray[i].name));
-                else transitions[transitionArray[i].name.ToLowerInvariant()] = new TransitionData(transitionArray[i].data.canvas, transitionArray[i].data.animator);
+                if (props.transitions[i].data.canvas == null || props.transitions[i].data.animator == null)
+                    Warning(string.Format("Canvas or animator is null for transition '{0}'; the entry will be ignored", props.transitions[i].name));
+                else transitions[props.transitions[i].name.ToLowerInvariant()] = new TransitionData(props.transitions[i].data.canvas, props.transitions[i].data.animator);
             }
 
-            if (transitionArray.Length != transitions.Count)
+            if (props.transitions.Length != transitions.Count)
                 Warning("Two or more transitions with same name exist; in these cases, the last one is kept");
 
 #if UNITY_POST_PROCESSING_STACK_V2
             cameraEffects = new Dictionary<string, Texture>();
 
-            for(int i = 0; i < cameraEffectArray.Length; ++i)
+            for(int i = 0; i < props.cameraEffects.Length; ++i)
             {
-                if(cameraEffectArray[i].texture == null)
-                    Warning(string.Format("Texture is null for camera effect '{0}'; the entry will be ignored", cameraEffectArray[i].name));
-                else cameraEffects[cameraEffectArray[i].name.ToLower()] = cameraEffectArray[i].texture;
+                if(props.cameraEffects[i].texture == null)
+                    Warning(string.Format("Texture is null for camera effect '{0}'; the entry will be ignored", props.cameraEffects[i].name));
+                else cameraEffects[props.cameraEffects[i].name.ToLower()] = props.cameraEffects[i].texture;
             }
 
-            if(cameraEffectArray.Length != cameraEffects.Count)
+            if(props.cameraEffects.Length != cameraEffects.Count)
                 Warning("Two or more camera effects with same name exist (case insensitive); in these cases, the last one is kept");
 #else
-            if (cameraEffectArray.Length > 0)
+            if (props.cameraEffects.Length > 0)
             {
                 Warning("Camera effects require PostProcessing V2 to be installed; ignoring effects registered in TaleMaster");
             }
@@ -157,9 +151,6 @@ namespace TaleUtil
                 {
                     this.canvas = canvas;
 
-                    // You could argue that the user should directly pass a TextMeshProUGUI component, and you would be right.
-                    // However, due to the fact that Tale was originally written like this, it hasn't been changed for compatibility reasons.
-                    // This should be changed in the future. Some day.
                     if (actor != null)
                     {
                         this.actor = actor.GetComponent<TextMeshProUGUI>();

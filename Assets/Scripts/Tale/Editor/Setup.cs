@@ -34,8 +34,8 @@ namespace TaleUtil
             
             canvas.SetActive(false);
 
-            tale.dialogCanvas = canvas;
-            tale.dialogAnimator = anim;
+            tale.props.dialogCanvas = canvas;
+            tale.props.dialogAnimator = anim;
 
             // Panel
             GameObject panel = new GameObject("Panel");
@@ -68,7 +68,7 @@ namespace TaleUtil
             tform.sizeDelta = new Vector2(1496f - 192f - 30f, 64f);
             tform.anchoredPosition = new Vector2(81f, -56f);
 
-            tale.dialogActor = actor;
+            tale.props.dialogActor = actor;
 
             // Content
             GameObject content = new GameObject("Content");
@@ -86,7 +86,7 @@ namespace TaleUtil
             tform.sizeDelta = new Vector2(1496f - 192f - 30f, 212f);
             tform.anchoredPosition = new Vector2(81f, -42f);
 
-            tale.dialogContent = content;
+            tale.props.dialogContent = content;
 
             // Avatar
             GameObject avatar = new GameObject("Avatar");
@@ -114,7 +114,7 @@ namespace TaleUtil
                 AnimationCurve.Linear(0f, 0f, 0.5f, 1f),
                 AnimationCurve.Linear(0f, 1f, 0.5f, 0f));
 
-            tale.dialogAvatar = avatar;
+            tale.props.dialogAvatar = avatar;
 
             // CTC
             GameObject ctc = new GameObject("CTC");
@@ -135,7 +135,7 @@ namespace TaleUtil
                 "", typeof(RectTransform), "m_LocalEulerAngles.z",
                 AnimationCurve.Linear(0f, 0f, 1.5f, -360f));
 
-            tale.dialogCtc = ctc;
+            tale.props.dialogCtc = ctc;
 
             // ACTC
             GameObject actc = new GameObject("ACTC");
@@ -157,7 +157,7 @@ namespace TaleUtil
                 "", typeof(RectTransform), "m_LocalEulerAngles.z",
                 AnimationCurve.Linear(0f, 0f, 1.5f, -360f));
 
-            tale.dialogActc = actc;
+            tale.props.dialogActc = actc;
         }
 
         static void SetupAudio(GameObject master)
@@ -168,22 +168,22 @@ namespace TaleUtil
             GameObjectUtility.SetParentAndAlign(group, master);
             group.SetActive(false);
 
-            tale.audioGroup = group;
+            tale.props.audioGroup = group;
 
             // Music
             GameObject music = CreateAudioSource("Music");
             GameObjectUtility.SetParentAndAlign(music, group);
             music.SetActive(false);
 
-            tale.audioMusic = music.GetComponent<AudioSource>();
+            tale.props.audioMusic = music.GetComponent<AudioSource>();
 
             // 4 Sound Channels
             GameObject sound = new GameObject("Sound");
             GameObjectUtility.SetParentAndAlign(sound, group);
             sound.SetActive(false);
 
-            tale.audioSoundGroup = sound;
-            tale.audioSound = new AudioSource[4];
+            tale.props.audioSoundGroup = sound;
+            tale.props.audioSound = new AudioSource[4];
 
             for (int i = 0; i < 4; ++i)
             {
@@ -191,7 +191,7 @@ namespace TaleUtil
                 GameObjectUtility.SetParentAndAlign(channel, sound);
                 channel.SetActive(false);
 
-                tale.audioSound[i] = channel.GetComponent<AudioSource>();
+                tale.props.audioSound[i] = channel.GetComponent<AudioSource>();
             }
 
             // Voice
@@ -199,7 +199,7 @@ namespace TaleUtil
             GameObjectUtility.SetParentAndAlign(voice, group);
             AddAudioReverbFilter(voice);
 
-            tale.audioVoice = voice.GetComponent<AudioSource>();
+            tale.props.audioVoice = voice.GetComponent<AudioSource>();
         }
 
         static void SetupAdvance(GameObject master)
@@ -211,7 +211,7 @@ namespace TaleUtil
 
             canvas.SetActive(false);
 
-            tale.advanceCanvas = canvas;
+            tale.props.advanceCanvas = canvas;
         }
 
         static void SetupTransitions(GameObject master)
@@ -227,7 +227,7 @@ namespace TaleUtil
             GameObjectUtility.SetParentAndAlign(canvas, master);
             canvas.SetActive(false);
 
-            tale.cinematicCanvas = canvas;
+            tale.props.cinematicCanvas = canvas;
 
             // Darkness
             GameObject darkness = CreateDarkness("Darkness");
@@ -239,18 +239,18 @@ namespace TaleUtil
             StretchTransform(group.AddComponent<RectTransform>());
             AddAnimator(group);
 
-            tale.cinematicBackgroundGroupAnimator = group.GetComponent<Animator>();
+            tale.props.cinematicBackgroundGroupAnimator = group.GetComponent<Animator>();
 
             GameObject bg2 = CreateDarkness("Background 2");
             GameObjectUtility.SetParentAndAlign(bg2, group);
             bg2.SetActive(false);
 
-            tale.cinematicBackgroundAlt = bg2;
+            tale.props.cinematicBackgroundAlt = bg2;
 
             GameObject bg1 = CreateDarkness("Background 1");
             GameObjectUtility.SetParentAndAlign(bg1, group);
 
-            tale.cinematicBackground = bg1;
+            tale.props.cinematicBackground = bg1;
 
             // Video
             group = new GameObject("Video Group");
@@ -258,7 +258,7 @@ namespace TaleUtil
             StretchTransform(group.AddComponent<RectTransform>());
             group.SetActive(false);
 
-            tale.cinematicVideoGroup = group;
+            tale.props.cinematicVideoGroup = group;
 
             RenderTexture texture = new RenderTexture(Config.REFERENCE_WIDTH, Config.REFERENCE_HEIGHT, 24, RenderTextureFormat.Default);
             texture.Create();
@@ -278,7 +278,7 @@ namespace TaleUtil
             player.targetTexture = texture;
             player.audioOutputMode = VideoAudioOutputMode.AudioSource;
 
-            tale.cinematicVideoPlayer = player;
+            tale.props.cinematicVideoPlayer = player;
 
             GameObject img = new GameObject("Raw Image");
             GameObjectUtility.SetParentAndAlign(img, group);
@@ -290,7 +290,7 @@ namespace TaleUtil
             GameObject src = CreateAudioSource("Audio Source");
             GameObjectUtility.SetParentAndAlign(src, group);
 
-            tale.cinematicVideoAudioSource = src.GetComponent<AudioSource>();
+            tale.props.cinematicVideoAudioSource = src.GetComponent<AudioSource>();
 
             // Subtitles
             group = new GameObject("Subtitle Group");
@@ -298,12 +298,12 @@ namespace TaleUtil
             StretchTransform(group.AddComponent<RectTransform>());
             group.SetActive(false);
 
-            tale.cinematicSubtitlesGroup = group;
+            tale.props.cinematicSubtitlesGroup = group;
 
             GameObject subtitles = new GameObject("Subtitle Text");
             GameObjectUtility.SetParentAndAlign(subtitles, group);
 
-            tale.cinematicSubtitles = subtitles;
+            tale.props.cinematicSubtitles = subtitles;
 
             TextMeshProUGUI text = subtitles.AddComponent<TextMeshProUGUI>();
             text.alignment = TextAlignmentOptions.Center;
@@ -315,7 +315,7 @@ namespace TaleUtil
             GameObject bg = new GameObject("Subtitle Background");
             GameObjectUtility.SetParentAndAlign(bg, group);
 
-            tale.cinematicSubtitlesBackground = bg;
+            tale.props.cinematicSubtitlesBackground = bg;
 
             Image i = bg.AddComponent<Image>();
             i.color = Color.black;
@@ -346,7 +346,7 @@ namespace TaleUtil
 
             debugMaster.debugInfo = canvas;
 
-            tale.debugMaster = debugMaster;
+            tale.props.debugMaster = debugMaster;
         }
 
         static void SetupTaleSplashScene()

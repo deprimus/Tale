@@ -23,23 +23,16 @@ public class TaleMaster : MonoBehaviour
 
         if (TaleUtil.Config.SHOW_DEBUG_INFO_BY_DEFAULT)
         {
-            if (TaleUtil.SoftAssert.Condition(debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object"))
+            if (TaleUtil.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object"))
             {
-                debugMaster.ShowDebugInfo();
+                props.debugMaster.ShowDebugInfo();
             }
         }
 
         TaleUtil.Queue.Init();
         TaleUtil.Parallel.Init();
         TaleUtil.Triggers.Init();
-
-        // TODO: This is messy, fix it.
-        TaleUtil.Props.Init(dialogCanvas, dialogActor, dialogContent, dialogAvatar, dialogAnimator, dialogCtc, dialogActc,
-                            audioGroup, audioSoundGroup, audioSound, audioMusic, audioVoice,
-                            cinematicCanvas, cinematicSubtitles, cinematicSubtitlesBackground, cinematicSubtitlesGroup,
-                            cinematicBackgroundGroupAnimator, cinematicBackground, cinematicBackgroundAlt,
-                            cinematicVideoGroup, cinematicVideoPlayer, cinematicVideoAudioSource,
-                            advanceCanvas, transitions, cameraEffects);
+        TaleUtil.Props.Init(props);
 
         // Events
         SceneManager.sceneLoaded += TaleUtil.Events.OnSceneLoaded; // This is used to re-assign the camera when the scene changes
@@ -48,10 +41,10 @@ public class TaleMaster : MonoBehaviour
         Tale.alive = true;
     }
 
-    // The heart of Tale ;)
+    // The heart of Tale
     void Update()
     {
-        // That's it. That's literally it. No fancy or complex stuff. Just Run().
+        // That's it.
         TaleUtil.Queue.Run();
         TaleUtil.Parallel.Run();
     }
@@ -61,150 +54,155 @@ public class TaleMaster : MonoBehaviour
         TaleUtil.Triggers.Update();
     }
 
-    // TODO: Add brackets to all switch cases in the project.
+    public InspectorProps props;
+
+    [System.Serializable]
+    public class InspectorProps
+    {
 #if UNITY_EDITOR
-    [Header("Dialog")]
-    [Rename("Canvas")]
+        [Header("Dialog")]
+        [Rename("Canvas")]
 #endif
-    public GameObject dialogCanvas;
+        public GameObject dialogCanvas;
 
 #if UNITY_EDITOR
-    [Rename("Actor")]
+        [Rename("Actor")]
 #endif
-    public GameObject dialogActor;
+        public GameObject dialogActor;
 
 #if UNITY_EDITOR
-    [Rename("Content")]
+        [Rename("Content")]
 #endif
-    public GameObject dialogContent;
+        public GameObject dialogContent;
 
 #if UNITY_EDITOR
-    [Rename("Avatar")]
+        [Rename("Avatar")]
 #endif
-    public GameObject dialogAvatar;
+        public GameObject dialogAvatar;
 
 #if UNITY_EDITOR
-    [Rename("Animator")]
+        [Rename("Animator")]
 #endif
-    public Animator dialogAnimator;
+        public Animator dialogAnimator;
 
 #if UNITY_EDITOR
-    [Space(10)]
-    [Rename("CTC")]
+        [Space(10)]
+        [Rename("CTC")]
 #endif
-    public GameObject dialogCtc;
+        public GameObject dialogCtc;
 
 #if UNITY_EDITOR
-    [Rename("CTC (Additive)")]
+        [Rename("CTC (Additive)")]
 #endif
-    public GameObject dialogActc;
-
-
-#if UNITY_EDITOR
-    [Header("Audio")]
-    [Rename("Group")]
-#endif
-    public GameObject audioGroup;
-
-#if UNITY_EDITOR
-    [Rename("Music")]
-#endif
-    public AudioSource audioMusic;
-
-#if UNITY_EDITOR
-    [Rename("Voice")]
-#endif
-    public AudioSource audioVoice;
-
-#if UNITY_EDITOR
-    [Rename("Sound Group")]
-#endif
-    public GameObject audioSoundGroup;
-
-#if UNITY_EDITOR
-    [Rename("Sound")]
-#endif
-    public AudioSource[] audioSound;
+        public GameObject dialogActc;
 
 
 #if UNITY_EDITOR
-    [Header("Cinematic")]
-    [Rename("Canvas")]
+        [Header("Audio")]
+        [Rename("Group")]
 #endif
-    public GameObject cinematicCanvas;
+        public GameObject audioGroup;
 
 #if UNITY_EDITOR
-    [Rename("Subtitle Group")]
+        [Rename("Music")]
 #endif
-    public GameObject cinematicSubtitlesGroup;
+        public AudioSource audioMusic;
 
 #if UNITY_EDITOR
-    [Rename("Subtitles")]
+        [Rename("Voice")]
 #endif
-    public GameObject cinematicSubtitles;
+        public AudioSource audioVoice;
 
 #if UNITY_EDITOR
-    [Rename("Subtitle Background")]
+        [Rename("Sound Group")]
 #endif
-    public GameObject cinematicSubtitlesBackground;
-
+        public GameObject audioSoundGroup;
 
 #if UNITY_EDITOR
-    [Header("Cinematic Background")]
-    [Rename("Group Animator")]
+        [Rename("Sound")]
 #endif
-    public Animator cinematicBackgroundGroupAnimator;
+        public AudioSource[] audioSound;
 
 
 #if UNITY_EDITOR
-    [Space(10)]
-    [Rename("Background")]
+        [Header("Cinematic")]
+        [Rename("Canvas")]
 #endif
-    public GameObject cinematicBackground;
+        public GameObject cinematicCanvas;
 
 #if UNITY_EDITOR
-    [Rename("Background (alternative)")]
+        [Rename("Subtitle Group")]
 #endif
-    public GameObject cinematicBackgroundAlt;
-
+        public GameObject cinematicSubtitlesGroup;
 
 #if UNITY_EDITOR
-    [Header("Cinematic Video")]
-    [Rename("Video Group")]
+        [Rename("Subtitles")]
 #endif
-    public GameObject cinematicVideoGroup;
-
+        public GameObject cinematicSubtitles;
 
 #if UNITY_EDITOR
-    [Space(10)]
-    [Rename("Video Player")]
+        [Rename("Subtitle Background")]
 #endif
-    public VideoPlayer cinematicVideoPlayer;
-
-#if UNITY_EDITOR
-    [Rename("Audio Source")]
-#endif
-    public AudioSource cinematicVideoAudioSource;
-
-#if UNITY_EDITOR
-    [Space(20)]
-#endif
-    public GameObject advanceCanvas;
+        public GameObject cinematicSubtitlesBackground;
 
 
 #if UNITY_EDITOR
-    [Space(20)]
+        [Header("Cinematic Background")]
+        [Rename("Group Animator")]
 #endif
-    public TaleUtil.Props.Transition[] transitions;
+        public Animator cinematicBackgroundGroupAnimator;
 
 
 #if UNITY_EDITOR
-    [Space(20)]
+        [Space(10)]
+        [Rename("Background")]
 #endif
-    public TaleUtil.Props.CameraEffect[] cameraEffects;
+        public GameObject cinematicBackground;
 
 #if UNITY_EDITOR
-    [Space(20)]
+        [Rename("Background (alternative)")]
 #endif
-    public DebugMaster debugMaster;
+        public GameObject cinematicBackgroundAlt;
+
+
+#if UNITY_EDITOR
+        [Header("Cinematic Video")]
+        [Rename("Video Group")]
+#endif
+        public GameObject cinematicVideoGroup;
+
+
+#if UNITY_EDITOR
+        [Space(10)]
+        [Rename("Video Player")]
+#endif
+        public VideoPlayer cinematicVideoPlayer;
+
+#if UNITY_EDITOR
+        [Rename("Audio Source")]
+#endif
+        public AudioSource cinematicVideoAudioSource;
+
+#if UNITY_EDITOR
+        [Space(20)]
+#endif
+        public GameObject advanceCanvas;
+
+
+#if UNITY_EDITOR
+        [Space(20)]
+#endif
+        public TaleUtil.Props.Transition[] transitions;
+
+
+#if UNITY_EDITOR
+        [Space(20)]
+#endif
+        public TaleUtil.Props.CameraEffect[] cameraEffects;
+
+#if UNITY_EDITOR
+        [Space(20)]
+#endif
+        public DebugMaster debugMaster;
+    }
 }

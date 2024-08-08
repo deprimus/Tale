@@ -263,23 +263,23 @@ namespace TaleUtil
                 AnimationCurve.Linear(0f, 1f, 1f, 0f),
                 AnimationCurve.Linear(0f, 0f, 1f, 1f));
 
-            if (tale.transitions == null)
+            if (tale.props.transitions == null)
             {
-                tale.transitions = new Props.Transition[1];
+                tale.props.transitions = new Props.Transition[1];
             }
             else
             {
-                Props.Transition[] transitions = new Props.Transition[tale.transitions.Length + 1];
-                System.Array.Copy(tale.transitions, transitions, tale.transitions.Length);
+                Props.Transition[] transitions = new Props.Transition[tale.props.transitions.Length + 1];
+                System.Array.Copy(tale.props.transitions, transitions, tale.props.transitions.Length);
 
-                tale.transitions = transitions;
+                tale.props.transitions = transitions;
             }
 
-            int index = tale.transitions.Length - 1;
+            int index = tale.props.transitions.Length - 1;
 
-            tale.transitions[index] = new Props.Transition();
-            tale.transitions[index].name = name;
-            tale.transitions[index].data = new Props.TransitionData(canvas, canvas.GetComponent<Animator>());
+            tale.props.transitions[index] = new Props.Transition();
+            tale.props.transitions[index].name = name;
+            tale.props.transitions[index].data = new Props.TransitionData(canvas, canvas.GetComponent<Animator>());
         }
 
         // Generates the states, triggers and clips for an Animator which are required by Tale

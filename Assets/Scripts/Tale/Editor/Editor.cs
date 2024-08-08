@@ -41,6 +41,8 @@ namespace TaleUtil
 
             GameObject master = new GameObject("Tale Master", typeof(TaleMaster));
 
+            master.GetComponent<TaleMaster>().props = new TaleMaster.InspectorProps();
+
             SetupDialog(master);
             SetupAudio(master);
             SetupAdvance(master);
