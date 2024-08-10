@@ -117,6 +117,9 @@ namespace TaleUtil
             GameObject obj = new GameObject("Logo");
             GameObjectUtility.SetParentAndAlign(obj, canvas);
 
+            GameObject curtain = CreateDarkness("Curtain");
+            GameObjectUtility.SetParentAndAlign(curtain, canvas);
+
             Image img = obj.AddComponent<Image>();
             img.color = Color.white;
             img.preserveAspect = true;
@@ -153,6 +156,9 @@ namespace TaleUtil
 
             Splash splash = obj.AddComponent<Splash>();
             splash.soundVariants = variants;
+            splash.curtain = curtain;
+
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH));
 
             AddSceneToBuild(scenePath, buildIndex);
 

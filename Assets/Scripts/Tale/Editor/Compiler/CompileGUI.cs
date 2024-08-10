@@ -23,6 +23,8 @@ namespace TaleUtil
         {
             public string file = null;
 
+            GUIStyle labelStyle = null;
+
             void OnGUI()
             {
                 float logoWidth = position.width - 2 * 50f;
@@ -33,11 +35,16 @@ namespace TaleUtil
 
                 GUILayout.Space(logoHeight + 10f);
 
-                EditorGUILayout.LabelField(file ?? "<Select story file>", new GUIStyle(EditorStyles.boldLabel)
+                if (labelStyle == null)
                 {
-                    alignment = TextAnchor.MiddleCenter,
-                    wordWrap = false
-                });
+                    labelStyle = new GUIStyle(EditorStyles.boldLabel)
+                    {
+                        alignment = TextAnchor.MiddleCenter,
+                        wordWrap = false
+                    };
+                }
+
+                EditorGUILayout.LabelField(file ?? "<Select story file>", labelStyle);
 
                 if (GUILayout.Button("Browse"))
                 {

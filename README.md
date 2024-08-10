@@ -44,10 +44,19 @@ You can easily extend Tale by creating your own actions.
 
 # Getting started
 
-1. Copy the files from this repo's `Assets` folder into your project's `Assets` folder
-2. In the toolbar, click `Tale -> Setup -> Run Full Setup`. If you don't see this, reload via `CTRL + R`
-3. Click `Import` if a window pops up (Tale needs the TextMeshPro Essentials package)
-4. All done. Tale is now fully operational.
+1. **Copy** the files from this **repo's** `Assets` folder into your **project's** `Assets` folder
+2. In the **toolbar**, click `Tale -> Setup -> Run Setup`. If you don't see this, reload via `CTRL + R`
+3. **Click** `Run Setup`
+4. **Click** `Import TMP Essentials` **if** a window pops up (Tale needs the TextMeshPro Essentials package)
+5. All done. Tale is now fully operational.
+
+<p align="center">
+  <img src="public/setup/new_setup.png" alt="Setup">
+</p>
+
+<p align="center">
+  <img src="public/setup/new_dependencies.png" alt="Setup">
+</p>
 
 ## Extra (not required)
 

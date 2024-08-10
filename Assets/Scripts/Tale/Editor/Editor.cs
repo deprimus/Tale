@@ -9,11 +9,18 @@ namespace TaleUtil
 {
     public partial class Editor
     {
-        [MenuItem("Tale/Setup/Run Full Setup", priority = 1)]
-        static void FullSetup()
+        [MenuItem("Tale/Setup/Run Setup", priority = 1)]
+        static void RunSetup()
         {
-            SetupCreateMasterObject();
-            SetupCreateSplashScene();
+            if (File.Exists(TALE_PREFAB_PATH))
+            {
+                EditorUtility.DisplayDialog("Tale Master already created", "Tale Master prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_PREFAB_PATH, "Ok");
+                return;
+            }
+
+            RunSetupDialog dialog = EditorWindow.GetWindow<RunSetupDialog>();
+            dialog.titleContent = new GUIContent("Tale - Setup");
+            dialog.ShowPopup();
         }
 
         [MenuItem("Tale/Setup/Manual Setup", priority = 12)]
@@ -25,11 +32,19 @@ namespace TaleUtil
         [MenuItem("Tale/Setup/1. Install Dependencies", priority = 13)]
         static void SetupInstallDependencies()
         {
-            EditorApplication.ExecuteMenuItem("Window/TextMeshPro/Import TMP Essential Resources");
+            //if (!File.Exists("Assets/TextMeshPro/Resources/TMP Settings.asset"))
+            //{
+            //    EditorApplication.ExecuteMenuItem("Window/TextMeshPro/Import TMP Essential Resources");
+            //}
         }
 
         [MenuItem("Tale/Setup/2. Create Master Object", priority = 14)]
-        static void SetupCreateMasterObject()
+        static void SetupCreateMasterObjectMenu()
+        {
+            SetupCreateMasterObject();
+        }
+
+        static void SetupCreateMasterObject(bool dialog = true, bool audio = true, bool transitions = true, bool cinematic = true, bool debug = true)
         {
             if (File.Exists(TALE_PREFAB_PATH))
             {
@@ -43,12 +58,32 @@ namespace TaleUtil
 
             master.GetComponent<TaleMaster>().props = new TaleMaster.InspectorProps();
 
-            SetupDialog(master);
-            SetupAudio(master);
+            if (dialog)
+            {
+                SetupDialog(master);
+            }
+
+            if (audio)
+            {
+                SetupAudio(master);
+            }
+
             SetupAdvance(master);
-            SetupTransitions(master);
-            SetupCinematic(master);
-            SetupDebug(master);
+
+            if (transitions)
+            {
+                SetupTransitions(master);
+            }
+
+            if (cinematic)
+            {
+                SetupCinematic(master);
+            }
+
+            if (debug)
+            {
+                SetupDebug(master);
+            }
 
             CreateTag("TaleMaster");
             master.tag = "TaleMaster";
