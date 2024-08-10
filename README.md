@@ -51,6 +51,10 @@ You can easily extend Tale by creating your own actions.
 5. All done. Tale is now fully operational.
 
 <p align="center">
+  <img src="public/setup/new_menu.png" alt="Setup">
+</p>
+
+<p align="center">
   <img src="public/setup/new_setup.png" alt="Setup">
 </p>
 
