@@ -1,29 +1,18 @@
 #if UNITY_EDITOR
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 
 namespace TaleUtil
 {
     public partial class Editor
     {
-        [MenuItem("Tale/Compile Story", priority = 3)]
-        static void CompileStory()
-        {
-            CompileStoryDialog dialog = EditorWindow.GetWindow<CompileStoryDialog>();
-            dialog.titleContent = new GUIContent("Tale - Compile Story");
-            dialog.minSize = new Vector2(400f, 210f);
-            dialog.maxSize = dialog.minSize;
-            dialog.ShowPopup();
-        }
-
         public class CompileStoryDialog : EditorWindow
         {
             public string file = null;
-
             GUIStyle labelStyle = null;
+            GUIStyle browseButtonStyle = null;
+            GUIStyle compileButtonStyle = null;
 
             void OnGUI()
             {
@@ -46,7 +35,18 @@ namespace TaleUtil
 
                 EditorGUILayout.LabelField(file ?? "<Select story file>", labelStyle);
 
-                if (GUILayout.Button("Browse"))
+                GUILayout.Space(5f);
+
+                if (browseButtonStyle == null)
+                {
+                    browseButtonStyle = new GUIStyle(GUI.skin.button)
+                    {
+                        fontSize = 14,
+                        fixedHeight = 23,
+                    };
+                }
+
+                if (GUILayout.Button("Browse", browseButtonStyle))
                 {
                     string path = EditorUtility.OpenFilePanelWithFilters("Select Story File", System.IO.Path.Combine(Application.dataPath, "Scripts"), new string[] { "Tale story files", "md" });
                     
@@ -58,25 +58,35 @@ namespace TaleUtil
 
                 EditorGUILayout.Space(5);
 
-                if (!string.IsNullOrEmpty(file))
+                if (compileButtonStyle == null)
                 {
-                    if (GUILayout.Button("Compile Selected") || Event.current.keyCode == KeyCode.Return)
+                    compileButtonStyle = new GUIStyle(GUI.skin.button)
                     {
-                        try
-                        {
-                            if (!StoryCompiler.Compile(file, System.IO.Path.Combine(Application.dataPath, "Scripts")))
-                            {
-                                EditorUtility.DisplayDialog("Compilation failed", "An error occurred during compilation. Please check the logs.", "Ok");
-                            }
-                        }
-                        catch(Exception ex)
-                        {
-                            Log.Error("Compiler", ex.ToString());
-                            EditorUtility.DisplayDialog("Compilation failed", "An exception occurred during compilation. Please check the logs.", "Ok");
-                        }
-                        Close();
-                    }
+                        fontSize = 16,
+                        fixedHeight = 30,
+                    };
                 }
+
+                GUI.enabled = !string.IsNullOrEmpty(file);
+
+                if (GUILayout.Button("Compile Story", compileButtonStyle) || (Event.current.keyCode == KeyCode.Return && GUI.enabled))
+                {
+                    try
+                    {
+                        if (!StoryCompiler.Compile(file, System.IO.Path.Combine(Application.dataPath, "Scripts")))
+                        {
+                            EditorUtility.DisplayDialog("Compilation failed", "An error occurred during compilation. Please check the logs.", "Ok");
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Log.Error("Compiler", ex.ToString());
+                        EditorUtility.DisplayDialog("Compilation failed", "An exception occurred during compilation. Please check the logs.", "Ok");
+                    }
+                    Close();
+                }
+
+                GUI.enabled = true;
             }
         }
     }

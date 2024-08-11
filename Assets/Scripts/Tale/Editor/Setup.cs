@@ -4,13 +4,70 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using UnityEngine.SceneManagement;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using TMPro;
 
 namespace TaleUtil
 {
     public partial class Editor
     {
+        static void SetupCreateMasterObject(bool dialog = true, bool audio = true, bool transitions = true, bool cinematic = true, bool debug = true)
+        {
+            if (File.Exists(TALE_PREFAB_PATH))
+            {
+                EditorUtility.DisplayDialog("Tale Master already created", "Tale Master prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_PREFAB_PATH, "Ok");
+                return;
+            }
+
+            Scene s = EditorSceneManager.GetActiveScene();
+
+            GameObject master = new GameObject("Tale Master", typeof(TaleMaster));
+
+            master.GetComponent<TaleMaster>().props = new TaleMaster.InspectorProps();
+
+            if (dialog)
+            {
+                SetupDialog(master);
+            }
+
+            if (audio)
+            {
+                SetupAudio(master);
+            }
+
+            SetupAdvance(master);
+
+            if (transitions)
+            {
+                SetupTransitions(master);
+            }
+
+            if (cinematic)
+            {
+                SetupCinematic(master);
+            }
+
+            if (debug)
+            {
+                SetupDebug(master);
+            }
+
+            CreateTag("TaleMaster");
+            master.tag = "TaleMaster";
+
+            Undo.RegisterCreatedObjectUndo(master, "Create " + master.name);
+            Selection.activeGameObject = master;
+
+            CreateTaleMasterPrefab(master);
+
+            if (s.path != null && s.path.Length > 0)
+            {
+                EditorSceneManager.SaveScene(s, s.path);
+            }
+        }
+
         static void SetupDialog(GameObject master)
         {
             TaleMaster tale = master.GetComponent<TaleMaster>();

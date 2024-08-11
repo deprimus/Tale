@@ -139,8 +139,6 @@ namespace TaleUtil
                 {
                     if (GUILayout.Button("Run Setup", setupButtonStyle) || Event.current.keyCode == KeyCode.Return)
                     {
-                        SetupInstallDependencies();
-
                         if (advancedMode)
                         {
                             SetupCreateMasterObject(setupDialog, setupAudio, setupTransitions, setupCinematic, setupDebug);
@@ -176,6 +174,7 @@ namespace TaleUtil
         public class CreateTransitionDialog : EditorWindow
         {
             public new string name;
+            GUIStyle createButtonStyle = null;
 
             void OnGUI()
             {
@@ -185,14 +184,24 @@ namespace TaleUtil
                 EditorGUI.DrawRect(new Rect(0f, 0f, position.width, logoHeight + 5f), Color.black);
                 GUI.DrawTexture(new Rect(50f, 0f, logoWidth, logoHeight), AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/Tale/Logo.png"), ScaleMode.ScaleToFit);
 
-                GUILayout.Space(logoHeight + 10f);
+                GUILayout.Space(logoHeight + 15f);
 
-                EditorGUILayout.LabelField("Enter the transition name:");
-                name = EditorGUILayout.TextField(name);
+                name = EditorGUILayout.TextField("Transition Name:", name);
 
-                EditorGUILayout.Space(10);
+                EditorGUILayout.Space(8);
 
-                if (GUILayout.Button("OK") || Event.current.keyCode == KeyCode.Return)
+                if (createButtonStyle == null)
+                {
+                    createButtonStyle = new GUIStyle(GUI.skin.button)
+                    {
+                        fontSize = 16,
+                        fixedHeight = 30,
+                    };
+                }
+
+                GUI.enabled = !string.IsNullOrEmpty(name);
+
+                if (GUILayout.Button("Create Transition", createButtonStyle) || (Event.current.keyCode == KeyCode.Return && GUI.enabled))
                 {
                     using (var scope = new PrefabUtility.EditPrefabContentsScope(TALE_PREFAB_PATH))
                     {
@@ -201,12 +210,15 @@ namespace TaleUtil
 
                     Close();
                 }
+
+                GUI.enabled = true;
             }
         }
 
         public class CreateSplashSceneDialog : EditorWindow
         {
             public new string name;
+            GUIStyle createButtonStyle = null;
             public Sprite logo;
             public List<AudioClip> soundVariants;
 
@@ -220,45 +232,75 @@ namespace TaleUtil
 
                 GUILayout.Space(logoHeight + 10f);
 
-                EditorGUILayout.LabelField("Enter the splash scene name:");
-                name = EditorGUILayout.TextField(name);
+                name = EditorGUILayout.TextField("Splash Scene name:", name);
 
                 EditorGUILayout.Space(20);
 
-                logo = (Sprite) EditorGUILayout.ObjectField("Splash logo", logo, typeof(Sprite), false);
+                logo = (Sprite) EditorGUILayout.ObjectField("Splash logo:", logo, typeof(Sprite), false);
 
                 EditorGUILayout.Space(10);
 
-                EditorGUILayout.LabelField("Splash Sound Variants", EditorStyles.boldLabel);
+                EditorGUILayout.BeginHorizontal();
+                {
+                    EditorGUILayout.LabelField("Splash Sound Variants", EditorStyles.boldLabel);
+                    if (GUILayout.Button("Add Splash Sound", GUILayout.Width(130f)))
+                    {
+                        if (soundVariants == null)
+                        {
+                            soundVariants = new List<AudioClip>();
+                        }
+
+                        soundVariants.Add(null);
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+
                 EditorGUI.indentLevel++;
 
                 if (soundVariants != null)
                 {
-                    for (int i = 0; i < soundVariants.Count; i++)
+                    for (int i = 0; i < soundVariants.Count;)
                     {
-                        soundVariants[i] = (AudioClip) EditorGUILayout.ObjectField("Sound " + i, soundVariants[i], typeof(AudioClip), false);
+                        EditorGUILayout.BeginHorizontal();
+                        {
+                            soundVariants[i] = (AudioClip)EditorGUILayout.ObjectField("Sound " + i, soundVariants[i], typeof(AudioClip), false);
+
+                            if (GUILayout.Button("Remove", GUILayout.Width(65f)))
+                            {
+                                soundVariants.RemoveAt(i);
+                                continue;
+                            }
+                        }
+                        EditorGUILayout.EndHorizontal();
+
+                        ++i;
                     }
                 }
 
                 EditorGUI.indentLevel--;
 
-                if (GUILayout.Button("Add Splash Sound"))
-                {
-                    if (soundVariants == null)
-                    {
-                        soundVariants = new List<AudioClip>();
-                    }
-
-                    soundVariants.Add(null);
-                }
+                minSize = new Vector2(minSize.x, 315f + 21 * (soundVariants != null ? soundVariants.Count : 0));
 
                 EditorGUILayout.Space(5);
 
-                if (GUILayout.Button("OK") || Event.current.keyCode == KeyCode.Return)
+                if (createButtonStyle == null)
+                {
+                    createButtonStyle = new GUIStyle(GUI.skin.button)
+                    {
+                        fontSize = 16,
+                        fixedHeight = 30,
+                    };
+                }
+
+                GUI.enabled = !string.IsNullOrEmpty(name);
+
+                if (GUILayout.Button("Create Splash Scene", createButtonStyle) || (Event.current.keyCode == KeyCode.Return && GUI.enabled))
                 {
                     CreateSplashScene(name, logo, soundVariants);
                     Close();
                 }
+
+                GUI.enabled = true;
             }
         }
     }
