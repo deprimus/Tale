@@ -42,8 +42,8 @@ namespace TaleUtil
             this.type = type;
             this.duration = duration;
 
-            animatorState = string.Format(Config.TRANSITION_ANIMATOR_STATE_FORMAT, type == Type.IN ? "In" : "Out");
-            trigger = string.Format(Config.TRANSITION_ANIMATOR_TRIGGER_FORMAT, type == Type.IN ? "In" : "Out");
+            animatorState = string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_STATE_FORMAT, type == Type.IN ? "In" : "Out");
+            trigger = string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_TRIGGER_FORMAT, type == Type.IN ? "In" : "Out");
 
             state = State.SETUP;
         }
@@ -72,7 +72,7 @@ namespace TaleUtil
                         data.canvas.SetActive(true);
 
                     if(duration == 0)
-                        data.animator.speed = Config.TRANSITION_INSTANT_SPEED;
+                        data.animator.speed = Tale.config.TRANSITION_INSTANT_SPEED;
                     else data.animator.speed = 1f / duration;
 
                     data.animator.SetTrigger(trigger);
@@ -89,7 +89,7 @@ namespace TaleUtil
                         break;
 
                     data.animator.speed = 1f;
-                    data.animator.SetTrigger(Config.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL);
+                    data.animator.SetTrigger(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL);
 
                     if(type ==  Type.IN)
                         data.canvas.SetActive(false);

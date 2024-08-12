@@ -131,9 +131,9 @@ namespace TaleUtil
                     };
                 }
 
-                if (advancedMode && setupSplashScene && !setupTransitions)
+                if (advancedMode && setupSplashScene && (!setupTransitions || !setupAudio))
                 {
-                    EditorGUILayout.HelpBox("Splash Scene requires the Transitions module", MessageType.Warning);
+                    EditorGUILayout.HelpBox("Splash Scene requires the Transitions and Audio modules", MessageType.Warning);
                 }
                 else
                 {

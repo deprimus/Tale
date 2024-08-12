@@ -16,6 +16,7 @@ namespace TaleUtil
     public partial class Editor
     {
         const string TALE_PREFAB_PATH = "Assets/Prefabs/TaleMaster.prefab";
+        const string TALE_CONFIG_PATH = "Assets/TaleConfig.asset";
 
         static bool TaleWasSetUp()
         {
@@ -133,13 +134,13 @@ namespace TaleUtil
             {
                 // width > height
                 // resize based on width
-                factor = (0.6f * Config.REFERENCE_WIDTH) / logo.bounds.size.x;
+                factor = (0.6f * TaleUtil.Config.Setup.REFERENCE_WIDTH) / logo.bounds.size.x;
             }
             else
             {
                 // height > width
                 // resize based on height
-                factor = (0.6f * Config.REFERENCE_HEIGHT) / logo.bounds.size.y;
+                factor = (0.6f * TaleUtil.Config.Setup.REFERENCE_HEIGHT) / logo.bounds.size.y;
             }
 
             tform.sizeDelta = new Vector2(factor * logo.bounds.size.x, factor * logo.bounds.size.y);
@@ -248,7 +249,7 @@ namespace TaleUtil
             TaleMaster tale = master.GetComponent<TaleMaster>();
 
             // Fade
-            GameObject canvas = CreateCanvas(string.Format("Transition {0} Canvas", name), Config.TRANSITION_SORT_ORDER);
+            GameObject canvas = CreateCanvas(string.Format("Transition {0} Canvas", name), TaleUtil.Config.Setup.TRANSITION_SORT_ORDER);
             GameObjectUtility.SetParentAndAlign(canvas, master);
 
             Animator anim = AddAnimator(canvas);
@@ -260,11 +261,11 @@ namespace TaleUtil
             GameObjectUtility.SetParentAndAlign(darkness, canvas);
 
             CreateCompleteTriangleAnimator(anim, string.Format("Transition{0}", name),
-                string.Format(Config.TRANSITION_ANIMATOR_STATE_FORMAT, "In"),
-                string.Format(Config.TRANSITION_ANIMATOR_STATE_FORMAT, "Out"),
-                string.Format(Config.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "In"),
-                string.Format(Config.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "Out"),
-                Config.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL,
+                string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_STATE_FORMAT, "In"),
+                string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_STATE_FORMAT, "Out"),
+                string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "In"),
+                string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "Out"),
+                TaleUtil.Config.Setup.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL,
                 "Darkness", typeof(Image), "m_Color.a",
                 AnimationCurve.Linear(0f, 1f, 1f, 0f),
                 AnimationCurve.Linear(0f, 0f, 1f, 1f));
@@ -443,7 +444,7 @@ namespace TaleUtil
 
             CanvasScaler scaler = obj.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(Config.REFERENCE_WIDTH, Config.REFERENCE_HEIGHT);
+            scaler.referenceResolution = new Vector2(TaleUtil.Config.Setup.REFERENCE_WIDTH, TaleUtil.Config.Setup.REFERENCE_HEIGHT);
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             scaler.referencePixelsPerUnit = 100;
 

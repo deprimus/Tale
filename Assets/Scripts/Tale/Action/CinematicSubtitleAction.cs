@@ -107,10 +107,10 @@ namespace TaleUtil
                                 }
                             }
 
-                            bounds.left   -= Config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING_X;
-                            bounds.right  += Config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING_X;
-                            bounds.top    += Config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING_Y;
-                            bounds.bottom -= Config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING_Y;
+                            bounds.left   -= Tale.config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.x;
+                            bounds.right  += Tale.config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.x;
+                            bounds.top    += Tale.config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.y;
+                            bounds.bottom -= Tale.config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.y;
 
                             float width = Mathf.Abs(bounds.right - bounds.left);
                             float height = Mathf.Abs(bounds.top - bounds.bottom);

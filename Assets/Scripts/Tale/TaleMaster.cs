@@ -15,13 +15,15 @@ public class TaleMaster : MonoBehaviour
             Destroy(gameObject); // Prevent multiple master objects from existing at the same time.
             return;
         }
+        Tale.alive = true;
+        Tale.config = config;
 
-        if (TaleUtil.Config.APPLICATION_RUN_IN_BACKGROUND)
+        if (Tale.config.APPLICATION_RUN_IN_BACKGROUND)
         {
             Application.runInBackground = true;
         }
 
-        if (TaleUtil.Config.SHOW_DEBUG_INFO_BY_DEFAULT)
+        if (Tale.config.SHOW_DEBUG_INFO_BY_DEFAULT)
         {
             if (TaleUtil.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object"))
             {
@@ -38,7 +40,6 @@ public class TaleMaster : MonoBehaviour
         SceneManager.sceneLoaded += TaleUtil.Events.OnSceneLoaded; // This is used to re-assign the camera when the scene changes
 
         DontDestroyOnLoad(gameObject);
-        Tale.alive = true;
     }
 
     // The heart of Tale
@@ -53,6 +54,11 @@ public class TaleMaster : MonoBehaviour
     {
         TaleUtil.Triggers.Update();
     }
+
+#if UNITY_EDITOR
+    [Space(10)]
+#endif
+    public TaleUtil.Config config;
 
     public InspectorProps props;
 

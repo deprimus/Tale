@@ -25,7 +25,14 @@ namespace TaleUtil
 
             GameObject master = new GameObject("Tale Master", typeof(TaleMaster));
 
-            master.GetComponent<TaleMaster>().props = new TaleMaster.InspectorProps();
+            if (!File.Exists(TALE_CONFIG_PATH))
+            {
+                AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<TaleUtil.Config>(), TALE_CONFIG_PATH);
+            }
+
+            var script = master.GetComponent<TaleMaster>();
+            script.props = new TaleMaster.InspectorProps();
+            script.config = AssetDatabase.LoadAssetAtPath<TaleUtil.Config>(TALE_CONFIG_PATH);
 
             if (dialog)
             {
@@ -73,18 +80,18 @@ namespace TaleUtil
             TaleMaster tale = master.GetComponent<TaleMaster>();
 
             // Canvas
-            GameObject canvas = CreateCanvas("Dialog Canvas", Config.DIALOG_SORT_ORDER);
+            GameObject canvas = CreateCanvas("Dialog Canvas", TaleUtil.Config.Setup.DIALOG_SORT_ORDER);
             GameObjectUtility.SetParentAndAlign(canvas, master);
 
             // Animations
             Animator anim = AddAnimator(canvas);
 
             CreateCompleteTriangleAnimator(anim, "Dialog",
-                Config.DIALOG_CANVAS_ANIMATOR_STATE_IN,
-                Config.DIALOG_CANVAS_ANIMATOR_STATE_OUT,
-                Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN,
-                Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT,
-                Config.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL,
+                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_STATE_IN,
+                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_STATE_OUT,
+                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN,
+                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT,
+                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL,
                 "Panel", typeof(Image), "m_Color.a",
                 AnimationCurve.Linear(0f, 0f, 0.5f, 0.5f),
                 AnimationCurve.Linear(0f, 0.5f, 0.5f, 0f));
@@ -162,11 +169,11 @@ namespace TaleUtil
             anim = AddAnimator(avatar);
 
             CreateCompleteTriangleAnimator(anim, "DialogAvatar",
-                Config.DIALOG_AVATAR_ANIMATOR_STATE_IN,
-                Config.DIALOG_AVATAR_ANIMATOR_STATE_OUT,
-                Config.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN,
-                Config.DIALOG_AVATAR_ANIMATOR_TRIGGER_OUT,
-                Config.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL,
+                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_STATE_IN,
+                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_STATE_OUT,
+                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN,
+                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_OUT,
+                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL,
                 "", typeof(Image), "m_Color.a",
                 AnimationCurve.Linear(0f, 0f, 0.5f, 1f),
                 AnimationCurve.Linear(0f, 1f, 0.5f, 0f));
@@ -263,7 +270,7 @@ namespace TaleUtil
         {
             TaleMaster tale = master.GetComponent<TaleMaster>();
 
-            GameObject canvas = CreateCanvas("Advance Canvas", Config.ADVANCE_SORT_ORDER);
+            GameObject canvas = CreateCanvas("Advance Canvas", TaleUtil.Config.Setup.ADVANCE_SORT_ORDER);
             GameObjectUtility.SetParentAndAlign(canvas, master);
 
             canvas.SetActive(false);
@@ -280,7 +287,7 @@ namespace TaleUtil
         {
             TaleMaster tale = master.GetComponent<TaleMaster>();
 
-            GameObject canvas = CreateCanvas("Cinematic Canvas", Config.CINEMATIC_SORT_ORDER);
+            GameObject canvas = CreateCanvas("Cinematic Canvas", TaleUtil.Config.Setup.CINEMATIC_SORT_ORDER);
             GameObjectUtility.SetParentAndAlign(canvas, master);
             canvas.SetActive(false);
 
@@ -317,7 +324,7 @@ namespace TaleUtil
 
             tale.props.cinematicVideoGroup = group;
 
-            RenderTexture texture = new RenderTexture(Config.REFERENCE_WIDTH, Config.REFERENCE_HEIGHT, 24, RenderTextureFormat.Default);
+            RenderTexture texture = new RenderTexture(TaleUtil.Config.Setup.REFERENCE_WIDTH, TaleUtil.Config.Setup.REFERENCE_HEIGHT, 24, RenderTextureFormat.Default);
             texture.Create();
 
             string dir = "Assets/RenderTextures/Tale";
@@ -391,7 +398,7 @@ namespace TaleUtil
             DebugMaster debugMaster = obj.AddComponent<DebugMaster>();
             obj.SetActive(true);
 
-            GameObject canvas = CreateCanvas("DebugInfo", Config.DEBUG_SORT_ORDER);
+            GameObject canvas = CreateCanvas("DebugInfo", TaleUtil.Config.Setup.DEBUG_SORT_ORDER);
             GameObjectUtility.SetParentAndAlign(canvas, obj);
 
             DebugInfo debugInfo = canvas.AddComponent<DebugInfo>();

@@ -8,7 +8,7 @@ public class DebugMaster : MonoBehaviour
 
     void Update()
     {
-        if (GetKeyDownNoMod(TaleUtil.Config.DEBUG_INFO_KEY))
+        if (GetKeyDownNoMod(Tale.config.DEBUG_INFO_KEY))
         {
             debugInfo.SetActive(!debugInfo.activeSelf);
         }
