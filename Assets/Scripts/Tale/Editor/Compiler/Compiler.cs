@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using UnityEditor.Compilation;
 
 namespace TaleUtil
 {
@@ -34,7 +35,7 @@ namespace TaleUtil
                 PARSING_SCRIPT
             };
 
-            public static bool Compile(string source, string workingDir)
+            public static HashSet<string> Compile(string sourceFile, string workingDir)
             {
                 var state = State.SEARCHING_FOR_ENTRY_POINT;
 
@@ -55,9 +56,9 @@ namespace TaleUtil
                 var regexSceneNameMapping = new Regex(@"^(scen[ae])_.*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 var sceneNameMapping = "Story";
 
-                Log.Info("Compiler", "Compiling " + source);
+                Log.Info("Compiler", "Compiling " + sourceFile);
 
-                using (StreamReader sr = new StreamReader(source))
+                using (StreamReader sr = new StreamReader(sourceFile))
                 {
                     string line;
 
@@ -66,84 +67,85 @@ namespace TaleUtil
                         switch (state)
                         {
                             case State.SEARCHING_FOR_ENTRY_POINT:
+                            {
+                                if (LineIsH1(line) && LineToH1(line).ToLowerInvariant() == "script")
                                 {
-                                    if (LineIsH1(line) && LineToH1(line).ToLowerInvariant() == "script")
-                                    {
-                                        Log.Info("Compiler", "Found script entry point\n");
-                                        state = State.PARSING_SCRIPT;
-                                    }
-
-                                    break;
+                                    Log.Info("Compiler", "Found script entry point\n");
+                                    state = State.PARSING_SCRIPT;
                                 }
+
+                                break;
+                            }
                             case State.PARSING_SCRIPT:
+                            {
+                                if (LineIsH2(line))
                                 {
-                                    if (LineIsH2(line))
+                                    // Found scene
+                                    var text = LineToH2(line);
+
+                                    Log.Info("Compiler", "[SCENE] " + text);
+
+                                    if (sceneFile != null)
                                     {
-                                        // Found scene
-                                        var text = LineToH2(line);
-
-                                        Log.Info("Compiler", "[SCENE] " + text);
-
-                                        if (sceneFile != null)
-                                        {
-                                            WriteSceneScriptEnd(sceneFile);
-                                            sceneFile.Close();
-                                            sceneFile = null;
-                                        }
-
-                                        // Normalize
-                                        scene = regexSceneSpecialCharacters.Replace(text, "_");
-                                        scene = regexSceneExtraUnderscores.Replace(scene, "_").Trim('_');
-
-                                        // 'Scene_X' or 'Scena_X' ---> 'Story_X'
-                                        scene = regexSceneNameMapping.Replace(scene, new MatchEvaluator(
-                                            (match) => match.Value.Replace(match.Groups[1].Value, sceneNameMapping)));
-
-                                        Log.Info("Compiler", "Renamed to ---> " + scene);
-
-                                        if (scenes.Contains(scene))
-                                        {
-                                            Log.Warning("Compiler", "Scene " + scene + " already exists, this will overwrite the old one");
-                                        }
-                                        else
-                                        {
-                                            scenes.Add(scene);
-                                        }
-
-                                        Directory.CreateDirectory(System.IO.Path.Combine(workingDir, "Scenes"));
-
-                                        sceneFile = new StreamWriter(System.IO.Path.Combine(workingDir, string.Format("Scenes/{0}.cs", scene)));
-
-                                        WriteSceneScriptStart(sceneFile, scene);
-                                    }
-                                    else if (LineIsH1(line))
-                                    {
-                                        // Reached the end of # Story because another H1 starts here
-                                        done = true;
-                                    }
-                                    else if (scene != null)
-                                    {
-                                        // Scene content
-                                        var dialog = ParseDialog(line, regexDialog);
-
-                                        if (dialog != null)
-                                        {
-                                            characters.Add(dialog.who);
-
-                                            WriteSceneScriptDialog(sceneFile, dialog.who, dialog.what);
-                                        }
-                                        else if (line.Trim() == "---")
-                                        {
-                                            WriteSceneScriptWait(sceneFile);
-                                        }
-                                        else if (line.Trim().Length > 0)
-                                        {
-                                            WriteSceneScriptComment(sceneFile, line.Trim());
-                                        }
+                                        // Finish writing old scene
+                                        WriteSceneScriptEnd(sceneFile);
+                                        sceneFile.Close();
+                                        sceneFile = null;
                                     }
 
-                                    break;
+                                    // Normalize
+                                    scene = regexSceneSpecialCharacters.Replace(text, "_");
+                                    scene = regexSceneExtraUnderscores.Replace(scene, "_").Trim('_');
+
+                                    // 'Scene_X' or 'Scena_X' ---> 'Story_X'
+                                    scene = regexSceneNameMapping.Replace(scene, new MatchEvaluator(
+                                        (match) => match.Value.Replace(match.Groups[1].Value, sceneNameMapping)));
+
+                                    Log.Info("Compiler", "Renamed to ---> " + scene);
+
+                                    if (scenes.Contains(scene))
+                                    {
+                                        Log.Warning("Compiler", "Scene " + scene + " already exists, this will overwrite the old one");
+                                    }
+                                    else
+                                    {
+                                        scenes.Add(scene);
+                                    }
+
+                                    Directory.CreateDirectory(System.IO.Path.Combine(workingDir, "Scenes"));
+
+                                    sceneFile = new StreamWriter(System.IO.Path.Combine(workingDir, string.Format("Scenes/{0}.cs", scene)));
+
+                                    WriteSceneScriptStart(sceneFile, scene);
                                 }
+                                else if (LineIsH1(line))
+                                {
+                                    // Reached the end of # Story because another H1 starts here
+                                    done = true;
+                                }
+                                else if (scene != null)
+                                {
+                                    // Scene content
+                                    var dialog = ParseDialog(line, regexDialog);
+
+                                    if (dialog != null)
+                                    {
+                                        characters.Add(dialog.who);
+
+                                        WriteSceneScriptDialog(sceneFile, dialog.who, dialog.what);
+                                    }
+                                    else if (line.Trim() == "---")
+                                    {
+                                        WriteSceneScriptWait(sceneFile);
+                                    }
+                                    else if (line.Trim().Length > 0)
+                                    {
+                                        WriteSceneScriptComment(sceneFile, line.Trim());
+                                    }
+                                }
+
+                                break;
+                            }
                         }
                     }
                 }
@@ -151,7 +153,7 @@ namespace TaleUtil
                 if (state == State.SEARCHING_FOR_ENTRY_POINT)
                 {
                     Log.Error("Compiler", "Failed to find entry point; make sure a '# Script' heading exists");
-                    return false;
+                    return null;
                 }
 
                 if (sceneFile != null)
@@ -191,7 +193,7 @@ public static class Dialog {");
                     {
                         sw.Write(string.Format(@"
     public static TaleUtil.Action {0}(string what, string voice = null, bool additive = false, bool reverb = false) =>
-        Tale.Dialog(""{0}"", what, null, voice, voice.ToLower().EndsWith(""Loop""), additive, reverb);
+        Tale.Dialog(""{0}"", what, null, voice, voice != null && voice.ToLower().EndsWith(""Loop""), additive, reverb);
 ", character));
                     }
 
@@ -199,9 +201,13 @@ public static class Dialog {");
 ");
                 }
 
-                Log.Info("Compiler", "Compiled successfully");
+                Log.Info("Compiler", "Refreshing asset database");
 
-                return true;
+                UnityEditor.AssetDatabase.Refresh(UnityEditor.ImportAssetOptions.ForceSynchronousImport | UnityEditor.ImportAssetOptions.ForceUpdate);
+
+                Log.Info("Compiler", "Script compiled successfully");
+
+                return scenes;
             }
 
             static void WriteSceneScriptStart(StreamWriter sw, string scene)

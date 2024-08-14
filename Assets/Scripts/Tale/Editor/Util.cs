@@ -172,6 +172,36 @@ namespace TaleUtil
             }
         }
 
+        static void CreateStoryScene(string name, string script, int buildIndex = -1)
+        {
+            string currentScenePath = EditorSceneManager.GetActiveScene().path;
+
+            string root = "Assets/Scenes";
+            string scenePath = string.Format("{0}/{1}.unity", root, name);
+
+            Directory.CreateDirectory(root);
+
+            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            EditorSceneManager.SaveScene(scene, scenePath);
+
+            scene = EditorSceneManager.OpenScene(scene.path, OpenSceneMode.Single);
+
+            GameObject story = new GameObject("Story Master");
+            story.AddComponent(AssetDatabase.LoadAssetAtPath<MonoScript>(script).GetClass());
+
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH));
+
+            AddSceneToBuild(scenePath, buildIndex);
+
+            EditorSceneManager.SaveScene(scene, scenePath);
+            EditorSceneManager.SaveOpenScenes();
+
+            if (currentScenePath != null && currentScenePath.Length > 0)
+            {
+                EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+            }
+        }
+
         static void AddSceneToBuild(string scenePath, int index)
         {
             EditorBuildSettingsScene[] buildScenes = EditorBuildSettings.scenes;
