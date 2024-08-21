@@ -60,6 +60,12 @@ namespace TaleUtil
 #endif
         public uint DIALOG_CPS = 50; // Characters per second, aka how fast to type the text.
 
+#if UNITY_EDITOR
+        [Header("Dialog")]
+        [Rename("Character Fade Factor")]
+#endif
+        public uint DIALOG_FADE_FACTOR = 5; // How pronounced should the trailing character fade effect be.
+
         // Mouse left click or one of these keys -> advance the dialog
 #if UNITY_EDITOR
         [Rename("Next Keys")]

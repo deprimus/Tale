@@ -283,6 +283,44 @@ namespace TaleUtil
             }
         }
 
+        void OnPreRenderContentAlpha(TMP_TextInfo textInfo)
+        {
+            // TODO: When the text is done writing, continue with the fade effect.
+            // Currently, it cuts off because of this check.
+            if (Props.dialog.content.maxVisibleCharacters == textInfo.characterCount)
+            {
+                return;
+            }
+
+            // For some reason, changing ANY character also changes the first rendered character.
+            // I guess this is because they have the same material index? No clue.
+            // This is a hack that works.
+
+            int m = textInfo.characterInfo[0].materialReferenceIndex;
+            int v = textInfo.characterInfo[0].vertexIndex;
+
+            Color originalFirst = textInfo.meshInfo[m].colors32[v];
+
+            for (int i = System.Math.Max(Props.dialog.content.maxVisibleCharacters - (int) Tale.config.DIALOG_FADE_FACTOR, 0); i < Props.dialog.content.maxVisibleCharacters; ++i)
+            {
+                int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
+                int vertexIndex = textInfo.characterInfo[i].vertexIndex;
+
+                Color color = textInfo.meshInfo[materialIndex].colors32[vertexIndex];
+                color.a = Mathf.Clamp01((1f / Tale.config.DIALOG_FADE_FACTOR) * (Props.dialog.content.maxVisibleCharacters - i));
+
+                textInfo.meshInfo[materialIndex].colors32[vertexIndex + 0] = color;
+                textInfo.meshInfo[materialIndex].colors32[vertexIndex + 1] = color;
+                textInfo.meshInfo[materialIndex].colors32[vertexIndex + 2] = color;
+                textInfo.meshInfo[materialIndex].colors32[vertexIndex + 3] = color;
+            }
+
+            for (int i = 0; i < 4; ++i)
+            {
+                textInfo.meshInfo[m].colors32[v + i] = originalFirst;
+            }
+        }
+
         public override Action Clone()
         {
             DialogAction clone = new DialogAction();
@@ -462,6 +500,8 @@ namespace TaleUtil
 
                         SoftAssert.Condition(Props.dialog.avatar.sprite != null, "The avatar '" + avatar + "' is missing");
                     }
+
+                    Props.dialog.content.OnPreRenderText += OnPreRenderContentAlpha;
 
                     break;
                 }
@@ -747,6 +787,7 @@ namespace TaleUtil
                             Props.dialog.content.text = "";
                         }
 
+                        Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                         return true;
                     }
 
@@ -811,6 +852,7 @@ namespace TaleUtil
                         }
                         default:
                             Props.dialog.canvas.SetActive(false);
+                            Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                             return true;
                     }
 
@@ -834,6 +876,7 @@ namespace TaleUtil
                     if(Props.dialog.avatarAnimator == null)
                     {
                         Props.dialog.canvas.SetActive(false);
+                        Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                         return true;
                     }
 
@@ -864,6 +907,7 @@ namespace TaleUtil
                             // Fallthrough
                         default:
                             Props.dialog.canvas.SetActive(false);
+                            Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                             return true;
                     }
 
@@ -903,6 +947,7 @@ namespace TaleUtil
                             // Fallthrough
                         default:
                             Props.dialog.canvas.SetActive(false);
+                            Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                             return true;
                     }
 
