@@ -602,6 +602,9 @@ namespace TaleUtil
                             ActivateCanvasAnimationIn();
                             state = State.BEGIN_WRITE;
                             break;
+                        case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_THEN_TEXT:
+                            state = State.BEGIN_WRITE;
+                            break;
                         default:
                             Log.Warning("Dialog", "Unreachable block reached: default case in AVATAR_TRANSITION_IN (report this to the devs)");
                             state = State.BEGIN_WRITE;
