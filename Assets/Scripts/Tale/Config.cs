@@ -46,8 +46,8 @@ namespace TaleUtil
 #if UNITY_EDITOR
         [Header("Debug")]
         [Rename("Toggle Key")]
-        public KeyCode DEBUG_INFO_KEY = KeyCode.F3; // Press this to show/hide Tale debug info
 #endif
+        public KeyCode DEBUG_INFO_KEY = KeyCode.F3; // Press this to show/hide Tale debug info
 
 #if UNITY_EDITOR
         [Rename("Show by Default")]
