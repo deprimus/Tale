@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using TMPro;
+using UnityEditor;
 
 namespace TaleUtil
 {
@@ -13,7 +14,7 @@ namespace TaleUtil
             ADDITIVE
         }
 
-        enum State
+        public enum State
         {
             SETUP,
             TRANSITION_IN,
@@ -26,19 +27,21 @@ namespace TaleUtil
             END_WRITE,
 
             AVATAR_TRANSITION_OUT,
-            TRANSITION_OUT
+            TRANSITION_OUT,
+
+            END
         }
 
-        string actor;
-        string content;
-        string avatar;
-        string voice;
+        public string actor;
+        public string content;
+        public string avatar;
+        public string voice;
 
         bool loopVoice;
         bool reverb;
 
         public Type type;
-        State state;
+        public State state;
         int index;
 
         TMP_TextInfo contentInfo;
@@ -117,7 +120,7 @@ namespace TaleUtil
             this.reverb = reverb;
 
             type = additive ? Type.ADDITIVE : Type.OVERRIDE;
-            state = State.SETUP;
+            ChangeState(State.SETUP);
 
             if(Tale.config.DIALOG_CPS > 0)
                 timePerChar = 1f / Tale.config.DIALOG_CPS;
@@ -378,7 +381,7 @@ namespace TaleUtil
                             index += Props.dialog.content.text.Length + Tale.config.DIALOG_ADDITIVE_SEPARATOR.Length;
                         }
 
-                        state = State.BEGIN_WRITE;
+                        ChangeState(State.BEGIN_WRITE);
                     }
                     else
                     {
@@ -402,57 +405,57 @@ namespace TaleUtil
                             case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_THEN_TEXT:
                                 if(ActivateCanvasAnimationIn())
                                 {
-                                    state = State.TRANSITION_IN;
+                                    ChangeState(State.TRANSITION_IN);
                                 }
                                 else
                                 {
                                     if(ActivateAvatarAnimationIn())
                                     {
-                                        state = State.AVATAR_TRANSITION_IN;
+                                        ChangeState(State.AVATAR_TRANSITION_IN);
                                     }
                                     else
                                     {
-                                        state = State.BEGIN_WRITE;
+                                        ChangeState(State.BEGIN_WRITE);
                                     }
                                 }
                                 break;
                             case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_TEXT:
                                 if (ActivateCanvasAnimationIn())
                                 {
-                                    state = State.TRANSITION_IN;
+                                    ChangeState(State.TRANSITION_IN);
                                 }
                                 else
                                 {
                                     ActivateAvatarAnimationIn();
-                                    state = State.BEGIN_WRITE;
+                                    ChangeState(State.BEGIN_WRITE);
                                 }
                                 break;
                             case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_THEN_TEXT:
                                 if (ActivateAvatarAnimationIn())
                                 {
-                                    state = State.AVATAR_TRANSITION_IN;
+                                    ChangeState(State.AVATAR_TRANSITION_IN);
                                 }
                                 else
                                 {
                                     if (ActivateCanvasAnimationIn())
                                     {
-                                        state = State.TRANSITION_IN;
+                                        ChangeState(State.TRANSITION_IN);
                                     }
                                     else
                                     {
-                                        state = State.BEGIN_WRITE;
+                                        ChangeState(State.BEGIN_WRITE);
                                     }
                                 }
                                 break;
                             case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_TEXT:
                                 if (ActivateAvatarAnimationIn())
                                 {
-                                    state = State.AVATAR_TRANSITION_IN;
+                                    ChangeState(State.AVATAR_TRANSITION_IN);
                                 }
                                 else
                                 {
                                     ActivateCanvasAnimationIn();
-                                    state = State.BEGIN_WRITE;
+                                    ChangeState(State.BEGIN_WRITE);
                                 }
                                 break;
                             case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_THEN_TEXT:
@@ -463,27 +466,27 @@ namespace TaleUtil
                                     // The avatar may or may not be animated, so try to activate its animation too
                                     ActivateCanvasAnimationIn();
                                     ActivateAvatarAnimationIn();
-                                    state = State.TRANSITION_IN;
+                                    ChangeState(State.TRANSITION_IN);
                                 }
                                 else if (hasAvatarAnimation)
                                 {
                                     ActivateAvatarAnimationIn();
-                                    state = State.AVATAR_TRANSITION_IN;
+                                    ChangeState(State.AVATAR_TRANSITION_IN);
                                 }
                                 else
                                 {
-                                    state = State.BEGIN_WRITE;
+                                    ChangeState(State.BEGIN_WRITE);
                                 }
                             }
                             break;
                             case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_TEXT:
                                 ActivateCanvasAnimationIn();
                                 ActivateAvatarAnimationIn();
-                                state = State.BEGIN_WRITE;
+                                ChangeState(State.BEGIN_WRITE);
                                 break;
                             default:
                                 Log.Warning("Dialog", "Unreachable block reached: default case in SETUP (report this to the devs)");
-                                state = State.BEGIN_WRITE;
+                                ChangeState(State.BEGIN_WRITE);
                                 break;
                         }
                     }
@@ -522,43 +525,43 @@ namespace TaleUtil
 
                     if (Props.dialog.avatarAnimator == null)
                     {
-                        state = State.BEGIN_WRITE;
+                        ChangeState(State.BEGIN_WRITE);
                         break;
                     }
 
                     switch (Tale.config.DIALOG_ANIMATION_IN_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_THEN_TEXT:
-                            state = State.BEGIN_WRITE;
+                            ChangeState(State.BEGIN_WRITE);
                             break;
                         case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_THEN_TEXT:
                             if (ActivateAvatarAnimationIn())
                             {
-                                state = State.AVATAR_TRANSITION_IN;
+                                ChangeState(State.AVATAR_TRANSITION_IN);
                             }
                             else
                             {
-                                state = State.BEGIN_WRITE;
+                                ChangeState(State.BEGIN_WRITE);
                             }
                             break;
                         case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_TEXT:
                             ActivateAvatarAnimationIn();
-                            state = State.BEGIN_WRITE;
+                            ChangeState(State.BEGIN_WRITE);
                             break;
                         case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_THEN_TEXT:
                             // Canvas animation done, now wait for the avatar animation
                             if (hasAvatarAnimation)
                             {
-                                state = State.AVATAR_TRANSITION_IN;
+                                ChangeState(State.AVATAR_TRANSITION_IN);
                             }
                             else
                             {
-                                state = State.BEGIN_WRITE;
+                                ChangeState(State.BEGIN_WRITE);
                             }
                             break;
                         default:
                             Log.Warning("Dialog", "Unreachable block reached: default case in TRANSITION_IN (report this to the devs)");
-                            state = State.BEGIN_WRITE;
+                            ChangeState(State.BEGIN_WRITE);
                             break;
                     }
 
@@ -579,35 +582,35 @@ namespace TaleUtil
 
                     if(Props.dialog.animator == null)
                     {
-                        state = State.BEGIN_WRITE;
+                        ChangeState(State.BEGIN_WRITE);
                         break;
                     }
 
                     switch(Tale.config.DIALOG_ANIMATION_IN_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_THEN_TEXT:
-                            state = State.BEGIN_WRITE;
+                            ChangeState(State.BEGIN_WRITE);
                             break;
                         case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_THEN_TEXT:
                             if (ActivateCanvasAnimationIn())
                             {
-                                state = State.TRANSITION_IN;
+                                ChangeState(State.TRANSITION_IN);
                             }
                             else
                             {
-                                state = State.BEGIN_WRITE;
+                                ChangeState(State.BEGIN_WRITE);
                             }
                             break;
                         case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_TEXT:
                             ActivateCanvasAnimationIn();
-                            state = State.BEGIN_WRITE;
+                            ChangeState(State.BEGIN_WRITE);
                             break;
                         case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_THEN_TEXT:
-                            state = State.BEGIN_WRITE;
+                            ChangeState(State.BEGIN_WRITE);
                             break;
                         default:
                             Log.Warning("Dialog", "Unreachable block reached: default case in AVATAR_TRANSITION_IN (report this to the devs)");
-                            state = State.BEGIN_WRITE;
+                            ChangeState(State.BEGIN_WRITE);
                             break;
                     }
 
@@ -631,7 +634,7 @@ namespace TaleUtil
                         Props.audio.voice.Play();
                     }
 
-                    state = State.WRITE;
+                    ChangeState(State.WRITE);
 
                     break;
                 }
@@ -667,6 +670,7 @@ namespace TaleUtil
                             Props.audio.voice.loop = false;
                         }
 
+                        // TODO: Fix for Bind(Dialog())
                         if((Queue.FetchNext() is DialogAction) && ((DialogAction) Queue.FetchNext()).type == Type.ADDITIVE)
                         {
                             if (Props.dialog.actc != null)
@@ -681,7 +685,7 @@ namespace TaleUtil
                                 Props.dialog.actc.SetActive(true);
                             }
 
-                            state = State.WAIT_FOR_INPUT_ADDITIVE;
+                            ChangeState(State.WAIT_FOR_INPUT_ADDITIVE);
                         }
                         else
                         {
@@ -697,7 +701,7 @@ namespace TaleUtil
                                 Props.dialog.ctc.SetActive(true);
                             }
 
-                            state = State.WAIT_FOR_INPUT_OVERRIDE;
+                            ChangeState(State.WAIT_FOR_INPUT_OVERRIDE);
                         }
                     }
 
@@ -711,7 +715,7 @@ namespace TaleUtil
                         {
                             Props.dialog.ctc.SetActive(false);
                         }
-                        state = State.END_WRITE;
+                        ChangeState(State.END_WRITE);
 
                         // If the animations were playing while the text was written,
                         // set the neutral trigger so that the animators return to the idle state.
@@ -729,7 +733,7 @@ namespace TaleUtil
                         {
                             Props.dialog.actc.SetActive(false);
                         }
-                        state = State.END_WRITE;
+                        ChangeState(State.END_WRITE);
 
                         // If the animations were playing while the text was written,
                         // set the neutral trigger so that the animators return to the idle state.
@@ -777,11 +781,23 @@ namespace TaleUtil
                         }
                     }
 
+                    // If the next action is a dialog, don't play Transition Out.
                     Action next = Queue.FetchNext();
 
-                    if(next is DialogAction)
+                    DialogAction nextDialog = null;
+
+                    if (next is DialogAction)
                     {
-                        if(((DialogAction) next).type == Type.OVERRIDE)
+                        nextDialog = (DialogAction) next;
+                    }
+                    else if (next is BindAction && (next as BindAction).primary is DialogAction)
+                    {
+                        nextDialog = (DialogAction) ((BindAction)next).primary;
+                    }
+
+                    if (nextDialog != null)
+                    {
+                        if(nextDialog.type == Type.OVERRIDE)
                         {
                             if (actor != null)
                             {
@@ -791,6 +807,7 @@ namespace TaleUtil
                         }
 
                         Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
+                        ChangeState(State.END);
                         return true;
                     }
 
@@ -806,11 +823,11 @@ namespace TaleUtil
                         case TaleUtil.Config.DialogAnimationOutMode.CANVAS_THEN_AVATAR:
                             if(ActivateCanvasAnimationOut())
                             {
-                                state = State.TRANSITION_OUT;
+                                ChangeState(State.TRANSITION_OUT);
                             }
                             else if(ActivateAvatarAnimationOut())
                             {
-                                state = State.AVATAR_TRANSITION_OUT;
+                                ChangeState(State.AVATAR_TRANSITION_OUT);
                             }
                             else
                             {
@@ -820,11 +837,11 @@ namespace TaleUtil
                         case TaleUtil.Config.DialogAnimationOutMode.AVATAR_THEN_CANVAS:
                             if (ActivateAvatarAnimationOut())
                             {
-                                state = State.AVATAR_TRANSITION_OUT;
+                                ChangeState(State.AVATAR_TRANSITION_OUT);
                             }
                             else if (ActivateCanvasAnimationOut())
                             {
-                                state = State.TRANSITION_OUT;
+                                ChangeState(State.TRANSITION_OUT);
                             }
                             else
                             {
@@ -840,22 +857,23 @@ namespace TaleUtil
                             {
                                 ActivateCanvasAnimationOut();
                                 ActivateAvatarAnimationOut();
-                                state = State.TRANSITION_OUT;
+                                ChangeState(State.TRANSITION_OUT);
                             }
                             else if(hasAvatarAnimation)
                             {
                                 ActivateAvatarAnimationOut();
-                                state = State.AVATAR_TRANSITION_OUT;
+                                ChangeState(State.AVATAR_TRANSITION_OUT);
                             }
                             else
                             {
-                                state = State.BEGIN_WRITE;
+                                ChangeState(State.BEGIN_WRITE);
                             }
                             break;
                         }
                         default:
                             Props.dialog.canvas.SetActive(false);
                             Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
+                            ChangeState(State.END);
                             return true;
                     }
 
@@ -880,6 +898,7 @@ namespace TaleUtil
                     {
                         Props.dialog.canvas.SetActive(false);
                         Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
+                        ChangeState(State.END);
                         return true;
                     }
 
@@ -888,7 +907,7 @@ namespace TaleUtil
                         case TaleUtil.Config.DialogAnimationOutMode.CANVAS_THEN_AVATAR:
                             if (ActivateAvatarAnimationOut())
                             {
-                                state = State.AVATAR_TRANSITION_OUT;
+                                ChangeState(State.AVATAR_TRANSITION_OUT);
                             }
                             else
                             {
@@ -899,7 +918,7 @@ namespace TaleUtil
                             // Canvas animation finished, now wait for the avatar animation
                             if(hasAvatarAnimation)
                             {
-                                state = State.AVATAR_TRANSITION_OUT;
+                                ChangeState(State.AVATAR_TRANSITION_OUT);
                             }
                             else
                             {
@@ -911,6 +930,7 @@ namespace TaleUtil
                         default:
                             Props.dialog.canvas.SetActive(false);
                             Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
+                            ChangeState(State.END);
                             return true;
                     }
 
@@ -936,7 +956,7 @@ namespace TaleUtil
                         case TaleUtil.Config.DialogAnimationOutMode.AVATAR_THEN_CANVAS:
                             if (ActivateCanvasAnimationOut())
                             {
-                                state = State.TRANSITION_OUT;
+                                ChangeState(State.TRANSITION_OUT);
                             }
                             else
                             {
@@ -951,10 +971,16 @@ namespace TaleUtil
                         default:
                             Props.dialog.canvas.SetActive(false);
                             Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
+                            ChangeState(State.END);
                             return true;
                     }
 
                     break;
+                }
+                case State.END:
+                {
+                    TaleUtil.Log.Warning("DialogAction.Run() called when action was already done");
+                    return true;
                 }
             }
 
@@ -964,6 +990,16 @@ namespace TaleUtil
         public override string ToString()
         {
             return string.Format("DialogAction ({0})", state.ToString());
+        }
+
+        void ChangeState(State state)
+        {
+            this.state = state;
+
+            if (TaleUtil.Hooks.OnDialogUpdate != null)
+            {
+                TaleUtil.Hooks.OnDialogUpdate(this);
+            }
         }
     }
 }

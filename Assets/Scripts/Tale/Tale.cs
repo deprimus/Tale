@@ -55,6 +55,9 @@ public static class Tale
     public static TaleUtil.Action ParallelQueue(params TaleUtil.Action[] actions) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.ParallelAction(new TaleUtil.Action[] { new TaleUtil.QueueAction(actions) }));
 
+    public static TaleUtil.Action Bind(TaleUtil.Action primary, TaleUtil.Action secondary) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.BindAction(primary, secondary));
+
     public static TaleUtil.Action Repeat(ulong count, TaleUtil.Action action) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.RepeatAction(count, action));
 
