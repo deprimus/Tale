@@ -193,7 +193,7 @@ public static class Dialog {");
                     {
                         sw.Write(string.Format(@"
     public static TaleUtil.Action {0}(string what, string voice = null, bool additive = false, bool reverb = false) =>
-        Tale.Dialog(""{0}"", what, null, voice, voice != null && voice.ToLower().EndsWith(""Loop""), additive, reverb);
+        Tale.Dialog(""{0}"", what, null, voice != null ? Path.Combine(""{0}"", voice) : null, voice != null && voice.ToLower().EndsWith(""Loop""), additive, reverb);
 ", character));
                     }
 
