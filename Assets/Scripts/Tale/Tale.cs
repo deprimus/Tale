@@ -315,16 +315,22 @@ public static class Tale
         public static TaleUtil.Action Set(SpriteRenderer img, string path) =>
             Tale.Exec(() => img.sprite = Resources.Load<Sprite>(TaleUtil.Path.NormalizeAssetPath(path)));
 
+        public static TaleUtil.Action Fade(UnityEngine.UI.Image img, float from, float to, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Tale.Interpolate(from, to, (value) => img.color = new UnityEngine.Color(img.color.r, img.color.g, img.color.b, value), transitionDuration, interpolation);
+
+        public static TaleUtil.Action Fade(SpriteRenderer img, float from, float to, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Tale.Interpolate(from, to, (value) => img.color = new UnityEngine.Color(img.color.r, img.color.g, img.color.b, value), transitionDuration, interpolation);
+
         public static TaleUtil.Action FadeIn(UnityEngine.UI.Image img, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Tale.Interpolate(0f, 1f, (value) => img.color = new UnityEngine.Color(img.color.r, img.color.g, img.color.b, value), transitionDuration, interpolation);
+            Fade(img, 0f, 1f, transitionDuration, interpolation);
 
         public static TaleUtil.Action FadeIn(SpriteRenderer img, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Tale.Interpolate(0f, 1f, (value) => img.color = new UnityEngine.Color(img.color.r, img.color.g, img.color.b, value), transitionDuration, interpolation);
+            Fade(img, 0f, 1f, transitionDuration, interpolation);
 
         public static TaleUtil.Action FadeOut(UnityEngine.UI.Image img, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-             Tale.Interpolate(1f, 0f, (value) => img.color = new UnityEngine.Color(img.color.r, img.color.g, img.color.b, value), transitionDuration, interpolation);
+             Fade(img, 1f, 0f, transitionDuration, interpolation);
 
         public static TaleUtil.Action FadeOut(SpriteRenderer img, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Tale.Interpolate(1f, 0f, (value) => img.color = new UnityEngine.Color(img.color.r, img.color.g, img.color.b, value), transitionDuration, interpolation);
+            Fade(img, 1f, 0f, transitionDuration, interpolation);
     }
 }

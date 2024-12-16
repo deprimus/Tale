@@ -504,7 +504,10 @@ namespace TaleUtil
                         SoftAssert.Condition(Props.dialog.avatar.sprite != null, "The avatar '" + avatar + "' is missing");
                     }
 
-                    Props.dialog.content.OnPreRenderText += OnPreRenderContentAlpha;
+                    if (Tale.config.DIALOG_FADE_FACTOR > 0)
+                    {
+                        Props.dialog.content.OnPreRenderText += OnPreRenderContentAlpha;
+                    }
 
                     break;
                 }
@@ -806,7 +809,6 @@ namespace TaleUtil
                             Props.dialog.content.text = "";
                         }
 
-                        Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                         ChangeState(State.END);
                         return true;
                     }
@@ -872,7 +874,6 @@ namespace TaleUtil
                         }
                         default:
                             Props.dialog.canvas.SetActive(false);
-                            Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                             ChangeState(State.END);
                             return true;
                     }
@@ -897,7 +898,6 @@ namespace TaleUtil
                     if(Props.dialog.avatarAnimator == null)
                     {
                         Props.dialog.canvas.SetActive(false);
-                        Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                         ChangeState(State.END);
                         return true;
                     }
@@ -929,7 +929,6 @@ namespace TaleUtil
                             // Fallthrough
                         default:
                             Props.dialog.canvas.SetActive(false);
-                            Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                             ChangeState(State.END);
                             return true;
                     }
@@ -970,7 +969,6 @@ namespace TaleUtil
                             // Fallthrough
                         default:
                             Props.dialog.canvas.SetActive(false);
-                            Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                             ChangeState(State.END);
                             return true;
                     }
@@ -995,6 +993,14 @@ namespace TaleUtil
         void ChangeState(State state)
         {
             this.state = state;
+
+            if (state == State.END)
+            {
+                if (Tale.config.DIALOG_FADE_FACTOR > 0)
+                {
+                    Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
+                }
+            }
 
             if (TaleUtil.Hooks.OnDialogUpdate != null)
             {
