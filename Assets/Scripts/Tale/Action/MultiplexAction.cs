@@ -90,6 +90,18 @@ namespace TaleUtil
             return (actions.Count == 0); // Finish when all actions are done.
         }
 
+        public override void OnInterrupt()
+        {
+            LinkedListNode<Action> node = actions.First;
+
+            while (node != null)
+            {
+                node.Value.OnInterrupt();
+                actions.RemoveFirst();
+                node = actions.First;
+            }
+        }
+
         public override string ToString()
         {
             return "MultiplexAction";

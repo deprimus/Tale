@@ -134,6 +134,16 @@ namespace TaleUtil
             return false;
         }
 
+        public override void OnInterrupt()
+        {
+            if (state != State.SETUP)
+            {
+                // Move the transform to its final position
+                clock = transitionDuration;
+                Run();
+            }
+        }
+
         public override string ToString()
         {
             return string.Format("TransformPositionAction ({0})", state.ToString());

@@ -10,6 +10,11 @@ namespace TaleUtil
 {
     public static class Extensions
     {
+        public static void Toggle(this ref bool value)
+        {
+            value = !value;
+        }
+
         public static void Set<T>(this List<T> list, int index, T value)
         {
             if(index < 0 || index > list.Count)

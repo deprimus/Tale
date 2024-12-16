@@ -168,6 +168,16 @@ namespace TaleUtil
             return false;
         }
 
+        public override void OnInterrupt()
+        {
+            if (state != State.SETUP)
+            {
+                // Rotate the transform to its final rotation
+                clock = transitionDuration;
+                Run();
+            }
+        }
+
         public override string ToString()
         {
             return string.Format("TransformRotateAction ({0})", state.ToString());
