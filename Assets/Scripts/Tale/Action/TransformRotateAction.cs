@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace TaleUtil
@@ -170,12 +171,15 @@ namespace TaleUtil
 
         public override void OnInterrupt()
         {
-            if (state != State.SETUP)
+            if (state == State.SETUP)
             {
-                // Rotate the transform to its final rotation
-                clock = transitionDuration;
+                // Initialize member fields
                 Run();
             }
+
+            // Rotate the transform to its final rotation
+            clock = transitionDuration;
+            Run();
         }
 
         public override string ToString()

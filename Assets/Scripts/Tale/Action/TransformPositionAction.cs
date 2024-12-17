@@ -136,12 +136,15 @@ namespace TaleUtil
 
         public override void OnInterrupt()
         {
-            if (state != State.SETUP)
+            if (state == State.SETUP)
             {
-                // Move the transform to its final position
-                clock = transitionDuration;
+                // Initialize member fields
                 Run();
             }
+
+            // Move the transform to its final position
+            clock = transitionDuration;
+            Run();
         }
 
         public override string ToString()
