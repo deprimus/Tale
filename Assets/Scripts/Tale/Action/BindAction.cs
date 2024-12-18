@@ -62,7 +62,10 @@ namespace TaleUtil
         {
             if (primary.Run())
             {
-                secondary.OnInterrupt();
+                if (!secondaryDone)
+                {
+                    secondary.OnInterrupt();
+                }
                 return true;
             }
 
