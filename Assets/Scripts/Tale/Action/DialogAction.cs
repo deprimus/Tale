@@ -373,7 +373,7 @@ namespace TaleUtil
                     }
 
                     // Dialog canvas is active; previous action was a Dialog action
-                    if (Props.dialog.canvas.activeSelf)
+                    if (Props.dialog.canvas.enabled)
                     {
                         if(type == Type.ADDITIVE)
                         {
@@ -397,7 +397,7 @@ namespace TaleUtil
                         }
 
                         Props.dialog.content.text = "";
-                        Props.dialog.canvas.SetActive(true);
+                        Props.dialog.canvas.enabled = true;
 
                         // Activate the animations, in the order specified in the Tale.config.
                         switch(Tale.config.DIALOG_ANIMATION_IN_MODE)
@@ -873,7 +873,7 @@ namespace TaleUtil
                             break;
                         }
                         default:
-                            Props.dialog.canvas.SetActive(false);
+                            Props.dialog.canvas.enabled = false;
                             ChangeState(State.END);
                             return true;
                     }
@@ -897,7 +897,7 @@ namespace TaleUtil
 
                     if(Props.dialog.avatarAnimator == null)
                     {
-                        Props.dialog.canvas.SetActive(false);
+                        Props.dialog.canvas.enabled = false;
                         ChangeState(State.END);
                         return true;
                     }
@@ -928,7 +928,7 @@ namespace TaleUtil
                         case TaleUtil.Config.DialogAnimationOutMode.AVATAR_THEN_CANVAS:
                             // Fallthrough
                         default:
-                            Props.dialog.canvas.SetActive(false);
+                            Props.dialog.canvas.enabled = false;
                             ChangeState(State.END);
                             return true;
                     }
@@ -968,7 +968,7 @@ namespace TaleUtil
                         case TaleUtil.Config.DialogAnimationOutMode.CANVAS_THEN_AVATAR:
                             // Fallthrough
                         default:
-                            Props.dialog.canvas.SetActive(false);
+                            Props.dialog.canvas.enabled = false;
                             ChangeState(State.END);
                             return true;
                     }

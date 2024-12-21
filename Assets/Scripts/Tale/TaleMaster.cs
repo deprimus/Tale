@@ -69,7 +69,7 @@ public class TaleMaster : MonoBehaviour
         [Header("Dialog")]
         [Rename("Canvas")]
 #endif
-        public GameObject dialogCanvas;
+        public Canvas dialogCanvas;
 
 #if UNITY_EDITOR
         [Rename("Actor")]

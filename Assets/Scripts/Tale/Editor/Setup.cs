@@ -95,10 +95,10 @@ namespace TaleUtil
                 "Panel", typeof(Image), "m_Color.a",
                 AnimationCurve.Linear(0f, 0f, 0.5f, 0.5f),
                 AnimationCurve.Linear(0f, 0.5f, 0.5f, 0f));
-            
-            canvas.SetActive(false);
 
-            tale.props.dialogCanvas = canvas;
+            tale.props.dialogCanvas = canvas.GetComponent<Canvas>();
+            tale.props.dialogCanvas.enabled = false;
+
             tale.props.dialogAnimator = anim;
 
             // Panel
