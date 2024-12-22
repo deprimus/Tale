@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public static class Tale
 {
@@ -332,5 +333,20 @@ public static class Tale
 
         public static TaleUtil.Action FadeOut(SpriteRenderer img, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             Fade(img, 1f, 0f, transitionDuration, interpolation);
+    }
+
+    public static class Text
+    {
+        public static TaleUtil.Action Set(TextMeshProUGUI text, string content) =>
+            Tale.Exec(() => text.text = content);
+
+        public static TaleUtil.Action Fade(TextMeshProUGUI text, float from, float to, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Tale.Interpolate(from, to, (value) => text.color = new UnityEngine.Color(text.color.r, text.color.g, text.color.b, value), transitionDuration, interpolation);
+
+        public static TaleUtil.Action FadeIn(TextMeshProUGUI text, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Fade(text, 0f, 1f, transitionDuration, interpolation);
+
+        public static TaleUtil.Action FadeOut(TextMeshProUGUI text, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+             Fade(text, 1f, 0f, transitionDuration, interpolation);
     }
 }
