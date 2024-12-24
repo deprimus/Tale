@@ -78,6 +78,16 @@ namespace TaleUtil
         public KeyCode DIALOG_KEY_SKIP = KeyCode.LeftControl; // Hold this key -> skip through the dialog
 
 #if UNITY_EDITOR
+        [Rename("Auto Key")]
+#endif
+        public KeyCode DIALOG_KEY_AUTO = KeyCode.F2; // Press this key -> dialog auto-advances
+
+#if UNITY_EDITOR
+        [Rename("Auto Delay")]
+#endif
+        public float DIALOG_AUTO_DELAY = 3f; // How many seconds until dialog auto-advances in auto mode
+
+#if UNITY_EDITOR
         [Rename("Additive Separator")]
 #endif
         public string DIALOG_ADDITIVE_SEPARATOR = " "; // When there is additive dialog, append this after the first string.

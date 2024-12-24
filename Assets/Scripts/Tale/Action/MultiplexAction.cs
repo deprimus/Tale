@@ -4,7 +4,7 @@ namespace TaleUtil
 {
     public class MultiplexAction : Action
     {
-        LinkedList<Action> actions;
+        public LinkedList<Action> actions;
 
         MultiplexAction() { }
 

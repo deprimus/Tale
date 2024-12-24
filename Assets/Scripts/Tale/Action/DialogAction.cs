@@ -32,6 +32,8 @@ namespace TaleUtil
             END
         }
 
+        public static bool autoMode = false;
+
         public string actor;
         public string content;
         public string avatar;
@@ -132,6 +134,49 @@ namespace TaleUtil
 
             hasAnimation = HasAnimation();
             hasAvatarAnimation = HasAnimateableAvatar();
+        }
+
+        // After the dialog ends, we want to see if another dialog action
+        // will be executed immediately afterwards. If so, keep the dialog canvas active.
+        // This happens if the next action is dialog (standalone or inside Multiplex/Bind)
+        DialogAction GetNextDialogAction(Action next)
+        {
+            if (next is DialogAction)
+            {
+                return (DialogAction)next;
+            }
+            else if (next is MultiplexAction)
+            {
+                var multi = (MultiplexAction)next;
+
+                foreach (Action act in multi.actions)
+                {
+                    var dialog = GetNextDialogAction(act);
+
+                    if (dialog != null)
+                    {
+                        return dialog;
+                    }
+                }
+            }
+            else if (next is BindAction)
+            {
+                var bind = (BindAction)next;
+
+                var dialog = GetNextDialogAction(bind.primary);
+
+                if (dialog == null)
+                {
+                    dialog = GetNextDialogAction(bind.secondary);
+                }
+
+                if (dialog != null)
+                {
+                    return dialog;
+                }
+            }
+
+            return null;
         }
 
         // Moves the CTC object to the end of the text.
@@ -344,6 +389,22 @@ namespace TaleUtil
 
         public override bool Run()
         {
+            if (UnityEngine.Input.GetKeyDown(Tale.config.DIALOG_KEY_AUTO))
+            {
+                autoMode = !autoMode;
+
+                // Edge case; reset auto mode clock
+                if (state == State.WAIT_FOR_INPUT_ADDITIVE || state == State.WAIT_FOR_INPUT_OVERRIDE)
+                {
+                    clock = 0f;
+                }
+
+                if (Hooks.OnDialogAutoModeToggle != null)
+                {
+                    Hooks.OnDialogAutoModeToggle(autoMode);
+                }
+            }
+
             switch(state)
             {
                 case State.SETUP:
@@ -673,8 +734,11 @@ namespace TaleUtil
                             Props.audio.voice.loop = false;
                         }
 
-                        // TODO: Fix for Bind(Dialog())
-                        if((Queue.FetchNext() is DialogAction) && ((DialogAction) Queue.FetchNext()).type == Type.ADDITIVE)
+                        // If an additive dialog action follows this one,
+                        // use the additive CTC
+                        var nextDialog = GetNextDialogAction(Queue.FetchNext());
+
+                        if(nextDialog != null && nextDialog.type == Type.ADDITIVE)
                         {
                             if (Props.dialog.actc != null)
                             {
@@ -706,13 +770,20 @@ namespace TaleUtil
 
                             ChangeState(State.WAIT_FOR_INPUT_OVERRIDE);
                         }
+
+                        clock = 0f;
                     }
 
                     break;
                 }
                 case State.WAIT_FOR_INPUT_OVERRIDE:
                 {
-                    if(Input.Advance())
+                    if (autoMode)
+                    {
+                        clock += delta();
+                    }
+
+                    if(Input.Advance() || autoMode && clock >= Tale.config.DIALOG_AUTO_DELAY)
                     {
                         if (Props.dialog.ctc != null)
                         {
@@ -730,7 +801,12 @@ namespace TaleUtil
                 }
                 case State.WAIT_FOR_INPUT_ADDITIVE:
                 {
-                    if(Input.Advance())
+                    if (autoMode)
+                    {
+                        clock += delta();
+                    }
+
+                    if (Input.Advance() || autoMode && clock >= Tale.config.DIALOG_AUTO_DELAY)
                     {
                         if (Props.dialog.actc != null)
                         {
@@ -785,18 +861,7 @@ namespace TaleUtil
                     }
 
                     // If the next action is a dialog, don't play Transition Out.
-                    Action next = Queue.FetchNext();
-
-                    DialogAction nextDialog = null;
-
-                    if (next is DialogAction)
-                    {
-                        nextDialog = (DialogAction) next;
-                    }
-                    else if (next is BindAction && (next as BindAction).primary is DialogAction)
-                    {
-                        nextDialog = (DialogAction) ((BindAction)next).primary;
-                    }
+                    var nextDialog = GetNextDialogAction(Queue.FetchNext());
 
                     if (nextDialog != null)
                     {
@@ -1002,9 +1067,9 @@ namespace TaleUtil
                 }
             }
 
-            if (TaleUtil.Hooks.OnDialogUpdate != null)
+            if (Hooks.OnDialogUpdate != null)
             {
-                TaleUtil.Hooks.OnDialogUpdate(this);
+                Hooks.OnDialogUpdate(this);
             }
         }
     }
