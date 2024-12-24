@@ -345,6 +345,7 @@ namespace TaleUtil
             {
                 if (!textInfo.characterInfo[i].isVisible)
                 {
+                    // This check is very important; without it, characters will flicker randomly
                     continue;
                 }
 
