@@ -45,6 +45,8 @@ namespace TaleUtil
         public Type type;
         public State state;
         int index;
+        int fadeStartIndex;
+        int fadeEndIndex;
 
         TMP_TextInfo contentInfo;
 
@@ -333,39 +335,31 @@ namespace TaleUtil
 
         void OnPreRenderContentAlpha(TMP_TextInfo textInfo)
         {
-            // TODO: When the text is done writing, continue with the fade effect.
-            // Currently, it cuts off because of this check.
-            if (Props.dialog.content.maxVisibleCharacters == textInfo.characterCount)
+            // TODO: instead of using a hook, do this:
+            // - ForceMeshUpdate() in BEGIN_WRITE
+            // - get rid of maxVisibleCharacters
+            // - after the magic below: call Props.dialog.content.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32)
+            // That should be way more efficient, since it doesn't force a mesh update for every single character
+
+            for (int i = System.Math.Max(Props.dialog.content.maxVisibleCharacters - (int) Tale.config.DIALOG_FADE_FACTOR, fadeStartIndex); i < Props.dialog.content.maxVisibleCharacters; ++i)
             {
-                return;
-            }
+                if (!textInfo.characterInfo[i].isVisible)
+                {
+                    continue;
+                }
 
-            // For some reason, changing ANY character also changes the first rendered character.
-            // I guess this is because they have the same material index? No clue.
-            // This is a hack that works.
-
-            int m = textInfo.characterInfo[0].materialReferenceIndex;
-            int v = textInfo.characterInfo[0].vertexIndex;
-
-            Color originalFirst = textInfo.meshInfo[m].colors32[v];
-
-            for (int i = System.Math.Max(Props.dialog.content.maxVisibleCharacters - (int) Tale.config.DIALOG_FADE_FACTOR, 0); i < Props.dialog.content.maxVisibleCharacters; ++i)
-            {
                 int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
                 int vertexIndex = textInfo.characterInfo[i].vertexIndex;
 
                 Color color = textInfo.meshInfo[materialIndex].colors32[vertexIndex];
-                color.a = Mathf.Clamp01((1f / Tale.config.DIALOG_FADE_FACTOR) * (Props.dialog.content.maxVisibleCharacters - i));
+                color.a = Mathf.Clamp01((1f / Tale.config.DIALOG_FADE_FACTOR) * (fadeEndIndex - i));
 
                 textInfo.meshInfo[materialIndex].colors32[vertexIndex + 0] = color;
                 textInfo.meshInfo[materialIndex].colors32[vertexIndex + 1] = color;
                 textInfo.meshInfo[materialIndex].colors32[vertexIndex + 2] = color;
                 textInfo.meshInfo[materialIndex].colors32[vertexIndex + 3] = color;
-            }
 
-            for (int i = 0; i < 4; ++i)
-            {
-                textInfo.meshInfo[m].colors32[v + i] = originalFirst;
+                // TODO: add tint color support
             }
         }
 
@@ -692,6 +686,8 @@ namespace TaleUtil
                     contentInfo = Props.dialog.content.textInfo;
 
                     Props.dialog.content.maxVisibleCharacters = index;
+                    fadeStartIndex = index;
+                    fadeEndIndex = index;
 
                     if (voice != null)
                     {
@@ -704,7 +700,7 @@ namespace TaleUtil
                 }
                 case State.WRITE:
                 {
-                    if(index < contentInfo.characterCount)
+                    if(fadeEndIndex < contentInfo.characterCount + Tale.config.DIALOG_FADE_FACTOR)
                     {
                         clock += delta();
 
@@ -712,7 +708,7 @@ namespace TaleUtil
 
                         if (Input.Advance())
                         {
-                            numChars = content.Length - index;
+                            numChars = content.Length - index + (int) Tale.config.DIALOG_FADE_FACTOR;
                         }
                         else
                         {
@@ -722,9 +718,19 @@ namespace TaleUtil
                         if(numChars > 0)
                         {
                             clock = clock % timePerChar;
-                            index += numChars;
+                            index = Mathf.Min(index + numChars, contentInfo.characterCount);
 
-                            Props.dialog.content.maxVisibleCharacters = index;
+                            fadeEndIndex = System.Math.Min(fadeEndIndex + numChars, contentInfo.characterCount + (int) Tale.config.DIALOG_FADE_FACTOR);
+
+                            if (Props.dialog.content.maxVisibleCharacters == contentInfo.characterCount)
+                            {
+                                // Done writing; wait for the fade effect to finish
+                                Props.dialog.content.ForceMeshUpdate();
+                            }
+                            else
+                            {
+                                Props.dialog.content.maxVisibleCharacters = index;
+                            }
                         }
                     }
                     else
