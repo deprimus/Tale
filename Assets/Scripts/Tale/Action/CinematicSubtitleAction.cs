@@ -85,7 +85,7 @@ namespace TaleUtil
                     if (showBackground)
                     {
                         // Note: If the new text is shorter, characterInfo MAY not change size. This is why characterCount is used instead of info.Length
-                        //       This way of rescaling the background only works when the TextMeshProUGUI object has both the horizontal and vertical alignments set to "Middle".
+                        //       This way of rescaling the background only works when the TextMeshProUGUI object has the horizontal alignment set to "Middle" and the vertical one to "Top".
                         int length = Props.cinematic.subtitles.textInfo.characterCount;
                         TMP_CharacterInfo[] info = Props.cinematic.subtitles.textInfo.characterInfo;
 
@@ -117,8 +117,8 @@ namespace TaleUtil
 
                             Props.cinematic.subtitlesBackground.sizeDelta = new Vector2(width, height);
 
-                            // In case this is ever needed to dynamically center the background based on the bounds.
-                            //Props.cinematic.subtitlesBackground.anchoredPosition = new Vector2(Props.cinematic.subtitles.rectTransform.anchoredPosition.x + bounds.left + width / 2, Props.cinematic.subtitles.rectTransform.anchoredPosition.y + bounds.bottom + height / 2);
+                            // Dynamically center the background based on the bounds.
+                            Props.cinematic.subtitlesBackground.anchoredPosition = new Vector2(Props.cinematic.subtitles.rectTransform.anchoredPosition.x + bounds.left + width / 2, Props.cinematic.subtitles.rectTransform.anchoredPosition.y + bounds.bottom + height / 2);
                         }
                     }
 

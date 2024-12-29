@@ -112,6 +112,9 @@ public static class Tale
     public static TaleUtil.Action Animation(Animator animator, string trigger) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.ExecAction(() => animator.SetTrigger(trigger)));
 
+    public static TaleUtil.Action Particles(ParticleSystem particles) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.ExecAction(() => particles.Play()));
+
     public static TaleUtil.Action SetActive(GameObject obj, bool value) =>
         Tale.Exec(() => obj.SetActive(value));
 
