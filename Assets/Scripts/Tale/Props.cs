@@ -129,7 +129,7 @@ namespace TaleUtil
 
         public class Dialog
         {
-            public GameObject canvas;
+            public Canvas canvas;
 
             public TextMeshProUGUI actor;
             public TextMeshProUGUI content;
@@ -145,7 +145,7 @@ namespace TaleUtil
             public GameObject actc;
             public RectTransform actcTransform;
 
-            public Dialog(GameObject canvas, GameObject actor, GameObject content, GameObject avatar, Animator animator, GameObject ctc, GameObject actc)
+            public Dialog(Canvas canvas, GameObject actor, GameObject content, GameObject avatar, Animator animator, GameObject ctc, GameObject actc)
             {
                 if(canvas != null)
                 {

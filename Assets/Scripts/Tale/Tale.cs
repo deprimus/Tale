@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public static class Tale
 {
@@ -55,6 +56,9 @@ public static class Tale
     public static TaleUtil.Action ParallelQueue(params TaleUtil.Action[] actions) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.ParallelAction(new TaleUtil.Action[] { new TaleUtil.QueueAction(actions) }));
 
+    public static TaleUtil.Action Bind(TaleUtil.Action primary, TaleUtil.Action secondary) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.BindAction(primary, secondary));
+
     public static TaleUtil.Action Repeat(ulong count, TaleUtil.Action action) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.RepeatAction(count, action));
 
@@ -107,6 +111,12 @@ public static class Tale
 
     public static TaleUtil.Action Animation(Animator animator, string trigger) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.ExecAction(() => animator.SetTrigger(trigger)));
+
+    public static TaleUtil.Action Particles(ParticleSystem particles) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.ExecAction(() => particles.Play()));
+
+    public static TaleUtil.Action SetActive(GameObject obj, bool value) =>
+        Tale.Exec(() => obj.SetActive(value));
 
     public static class Sound
     {
@@ -299,5 +309,47 @@ public static class Tale
 
         public static TaleUtil.Action VideoResume(float detatchValue = 0f, VideoDetatchType detatchType = VideoDetatchType.BEFORE, float speed = 1f) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.CinematicVideoAction(null, detatchValue, (TaleUtil.CinematicVideoAction.DetatchType) (int) detatchType, speed));
+    }
+
+    public static class Image
+    {
+        public static TaleUtil.Action Set(UnityEngine.UI.Image img, string path) =>
+            Tale.Exec(() => img.sprite = Resources.Load<Sprite>(TaleUtil.Path.NormalizeAssetPath(path)));
+
+        public static TaleUtil.Action Set(SpriteRenderer img, string path) =>
+            Tale.Exec(() => img.sprite = Resources.Load<Sprite>(TaleUtil.Path.NormalizeAssetPath(path)));
+
+        public static TaleUtil.Action Fade(UnityEngine.UI.Image img, float from, float to, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Tale.Interpolate(from, to, (value) => img.color = new UnityEngine.Color(img.color.r, img.color.g, img.color.b, value), transitionDuration, interpolation);
+
+        public static TaleUtil.Action Fade(SpriteRenderer img, float from, float to, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Tale.Interpolate(from, to, (value) => img.color = new UnityEngine.Color(img.color.r, img.color.g, img.color.b, value), transitionDuration, interpolation);
+
+        public static TaleUtil.Action FadeIn(UnityEngine.UI.Image img, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Fade(img, 0f, 1f, transitionDuration, interpolation);
+
+        public static TaleUtil.Action FadeIn(SpriteRenderer img, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Fade(img, 0f, 1f, transitionDuration, interpolation);
+
+        public static TaleUtil.Action FadeOut(UnityEngine.UI.Image img, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+             Fade(img, 1f, 0f, transitionDuration, interpolation);
+
+        public static TaleUtil.Action FadeOut(SpriteRenderer img, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Fade(img, 1f, 0f, transitionDuration, interpolation);
+    }
+
+    public static class Text
+    {
+        public static TaleUtil.Action Set(TextMeshProUGUI text, string content) =>
+            Tale.Exec(() => text.text = content);
+
+        public static TaleUtil.Action Fade(TextMeshProUGUI text, float from, float to, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Tale.Interpolate(from, to, (value) => text.color = new UnityEngine.Color(text.color.r, text.color.g, text.color.b, value), transitionDuration, interpolation);
+
+        public static TaleUtil.Action FadeIn(TextMeshProUGUI text, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+            Fade(text, 0f, 1f, transitionDuration, interpolation);
+
+        public static TaleUtil.Action FadeOut(TextMeshProUGUI text, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
+             Fade(text, 1f, 0f, transitionDuration, interpolation);
     }
 }

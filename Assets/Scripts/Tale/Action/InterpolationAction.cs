@@ -103,6 +103,13 @@ namespace TaleUtil
             return clock == transitionDuration;
         }
 
+        public override void OnInterrupt()
+        {
+            // Rotate the transform to its final rotation
+            clock = transitionDuration;
+            Run();
+        }
+
         public override string ToString()
         {
             return string.Format("InterpolationAction ({0})", state.ToString());

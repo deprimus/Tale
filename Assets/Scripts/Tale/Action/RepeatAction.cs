@@ -2,6 +2,7 @@ namespace TaleUtil
 {
     public class RepeatAction : Action
     {
+        bool done;
         ulong count;
         Action action;
         Action originalAction;
@@ -10,6 +11,7 @@ namespace TaleUtil
 
         public RepeatAction(ulong count, Action action)
         {
+            done = true;
             this.count = count;
             originalAction = action;
 
@@ -36,7 +38,9 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            if(action.Run())
+            done = action.Run();
+
+            if (done)
             {
                 switch (count)
                 {
@@ -58,6 +62,14 @@ namespace TaleUtil
             }
 
             return false;
+        }
+
+        public override void OnInterrupt()
+        {
+            if (!done)
+            {
+                action.OnInterrupt();
+            }
         }
 
         public override string ToString()

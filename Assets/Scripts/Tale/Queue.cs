@@ -24,6 +24,9 @@ namespace TaleUtil
         public static int Count() =>
             data.Count;
 
+        public static void ForceClear() =>
+            data.Clear();
+
         public static void Remove(TaleUtil.Action action) =>
             data.Remove(action);
 

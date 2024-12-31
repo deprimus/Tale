@@ -95,10 +95,10 @@ namespace TaleUtil
                 "Panel", typeof(Image), "m_Color.a",
                 AnimationCurve.Linear(0f, 0f, 0.5f, 0.5f),
                 AnimationCurve.Linear(0f, 0.5f, 0.5f, 0f));
-            
-            canvas.SetActive(false);
 
-            tale.props.dialogCanvas = canvas;
+            tale.props.dialogCanvas = canvas.GetComponent<Canvas>();
+            tale.props.dialogCanvas.enabled = false;
+
             tale.props.dialogAnimator = anim;
 
             // Panel
@@ -364,18 +364,6 @@ namespace TaleUtil
 
             tale.props.cinematicSubtitlesGroup = group;
 
-            GameObject subtitles = new GameObject("Subtitle Text");
-            GameObjectUtility.SetParentAndAlign(subtitles, group);
-
-            tale.props.cinematicSubtitles = subtitles;
-
-            TextMeshProUGUI text = subtitles.AddComponent<TextMeshProUGUI>();
-            text.alignment = TextAlignmentOptions.Center;
-
-            RectTransform tform = subtitles.GetComponent<RectTransform>();
-            tform.sizeDelta = new Vector2(512, 60);
-            tform.anchoredPosition = new Vector2(0f, -300f);
-
             GameObject bg = new GameObject("Subtitle Background");
             GameObjectUtility.SetParentAndAlign(bg, group);
 
@@ -384,8 +372,20 @@ namespace TaleUtil
             Image i = bg.AddComponent<Image>();
             i.color = Color.black;
 
-            tform = bg.GetComponent<RectTransform>();
+            RectTransform tform = bg.GetComponent<RectTransform>();
             tform.sizeDelta = new Vector2(0f, 0f);
+            tform.anchoredPosition = new Vector2(0f, -300f);
+
+            GameObject subtitles = new GameObject("Subtitle Text");
+            GameObjectUtility.SetParentAndAlign(subtitles, group);
+
+            tale.props.cinematicSubtitles = subtitles;
+
+            TextMeshProUGUI text = subtitles.AddComponent<TextMeshProUGUI>();
+            text.alignment = TextAlignmentOptions.Top;
+
+            tform = subtitles.GetComponent<RectTransform>();
+            tform.sizeDelta = new Vector2(512, 60);
             tform.anchoredPosition = new Vector2(0f, -300f);
         }
 

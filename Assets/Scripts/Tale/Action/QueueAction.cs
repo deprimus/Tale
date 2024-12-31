@@ -65,6 +65,18 @@ namespace TaleUtil
             return actions.Count == 0;
         }
 
+        public override void OnInterrupt()
+        {
+            LinkedListNode<Action> node = actions.First;
+
+            while (node != null)
+            {
+                node.Value.OnInterrupt();
+                actions.RemoveFirst();
+                node = actions.First;
+            }
+        }
+
         public override string ToString()
         {
             return "QueueAction";

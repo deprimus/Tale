@@ -4,6 +4,11 @@ namespace TaleUtil
 {
     public static class Path
     {
+        public static string NormalizeAssetPath(string path)
+        {
+            return NormalizeAssetPath("", path);
+        }
+
         // Normalizes a path to a valid Asset path.
         // (removes extensions, removes prefixes such as Assets/Resources, etc).
         // Also adds a root to the path, only if the path is relative.
