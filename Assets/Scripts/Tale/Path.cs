@@ -22,26 +22,29 @@ namespace TaleUtil
                 relative = false;
             }
 
+            if (path.StartsWith("Assets/"))
+            {
+                path = path.Substring("Assets/".Length);
+                relative = false;
+            }
+
+            // Also handles Assets/Resources/
             if (path.StartsWith("Resources/"))
             {
                 path = path.Substring("Resources/".Length);
                 relative = false;
             }
-            else if (path.StartsWith("Assets/Resources/"))
-            {
-                path = path.Substring("Assets/Resources/".Length);
-                relative = false;
-            }
 
             if (System.IO.Path.HasExtension(path))
             {
-                path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), System.IO.Path.GetFileNameWithoutExtension(path));
+                path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), System.IO.Path.GetFileNameWithoutExtension(path)).Replace('\\', '/');
             }
 
             if (relative)
             {
                 return System.IO.Path.Combine(root, path);
             }
+
             return path;
         }
 

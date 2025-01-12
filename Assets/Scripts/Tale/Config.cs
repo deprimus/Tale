@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
@@ -5,7 +6,7 @@ namespace TaleUtil
     [CreateAssetMenu(fileName = "TaleConfig", menuName = "Tale/Config", order = 1)]
     public class Config : ScriptableObject
     {
-        // Used for setting up Tale props
+        // Used for Editor stuff, like setting up Tale props
         public static class Setup
         {
             // Default width and height used for creating canvases, render textures, etc
@@ -36,6 +37,12 @@ namespace TaleUtil
             public const int DIALOG_SORT_ORDER = 300;
             public const int TRANSITION_SORT_ORDER = 200;
             public const int CINEMATIC_SORT_ORDER = 100;
+
+            // Where to store scene thumbnails for the scene selector
+            public const string ASSET_ROOT_SCENE_THUMBNAIL = "Sprites/SceneThumbnails";
+
+            public const int SCENE_THUMBNAIL_WIDTH = REFERENCE_WIDTH / 10;
+            public const int SCENE_THUMBNAIL_HEIGHT = REFERENCE_HEIGHT / 10;
         }
 
 #if UNITY_EDITOR
@@ -61,15 +68,11 @@ namespace TaleUtil
         public uint DIALOG_CPS = 50; // Characters per second, aka how fast to type the text.
 
 #if UNITY_EDITOR
-        [Header("Dialog")]
         [Rename("Character Fade Factor")]
 #endif
         public uint DIALOG_FADE_FACTOR = 5; // How pronounced should the trailing character fade effect be.
 
         // Mouse left click or one of these keys -> advance the dialog
-#if UNITY_EDITOR
-        [Rename("Next Keys")]
-#endif
         public KeyCode[] DIALOG_KEY_NEXT = new KeyCode[] { KeyCode.Return, KeyCode.KeypadEnter, KeyCode.RightArrow, KeyCode.Space };
 
 #if UNITY_EDITOR
@@ -168,6 +171,11 @@ namespace TaleUtil
         [Rename("Cinematic Video Root")]
 #endif
         public string ASSET_ROOT_CINEMATIC_VIDEO = "Cinematic/Video";
+
+#if UNITY_EDITOR
+        [Header("Scene Selector")]
+        public List<string> SCENE_SELECTOR_BLACKLIST;
+#endif
 
         // In which order to animate the avatar and dialog canvas before the dialog text is shown
         public enum DialogAnimationInMode
