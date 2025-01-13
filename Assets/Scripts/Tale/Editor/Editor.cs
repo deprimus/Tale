@@ -73,10 +73,16 @@ namespace TaleUtil
             
         }
 
-        [MenuItem("Tale/Finalize/Scene Selector/Generate Scene Thumbnail _F11", priority = 31)]
+        [MenuItem("Tale/Finalize/Scene Selector/Auto-Generate Scene Thumbnails", priority = 31)]
+        static void AutoGenerateSceneThumbnails()
+        {
+            CaptureSceneThumbnails();
+        }
+
+        [MenuItem("Tale/Finalize/Scene Selector/Generate Current Scene Thumbnail _F11", priority = 32)]
         static void GenerateSceneThumbnail()
         {
-            ThumbnailGenerator.CaptureThumbnail();
+            SceneThumbnailGenerator.CaptureThumbnail();
         }
 
         [MenuItem("Tale/Debug/Create Full Master Object", priority = 50)]

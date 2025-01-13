@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using UnityEngine.Assertions;
 using TMPro;
 
 #if UNITY_POST_PROCESSING_STACK_V2
@@ -70,6 +68,34 @@ namespace TaleUtil
                 Warning("Camera effects require PostProcessing V2 to be installed; ignoring effects registered in TaleMaster");
             }
 #endif
+        }
+
+        public static void Reset()
+        {
+            if (dialog != null)
+            {
+                dialog.Reset();
+            }
+
+            if (audio != null)
+            {
+                audio.Reset();
+            }
+
+            if (cinematic != null)
+            {
+                cinematic.Reset();
+            }
+
+            foreach (var t in transitions)
+            {
+                if (t.Value.canvas.activeSelf)
+                {
+                    Tale.Parallel(
+                        Tale.Transition(t.Key, Tale.TransitionType.IN, 0f)
+                    );
+                }
+            }
         }
 
         public static void Warning(string msg) =>
@@ -212,6 +238,34 @@ namespace TaleUtil
                     }
                 }
             }
+
+            public void Reset()
+            {
+                if (dialog.canvas != null)
+                {
+                    if (actor != null)
+                    {
+                        actor.text = "";
+                    }
+
+                    if (content != null)
+                    {
+                        content.text = "";
+                    }
+
+                    if (ctc != null)
+                    {
+                        ctc.SetActive(false);
+                    }
+
+                    if (actc != null)
+                    {
+                        actc.SetActive(false);
+                    }
+
+                    dialog.canvas.enabled = false;
+                }
+            }
         }
 
         public class Audio
@@ -239,6 +293,32 @@ namespace TaleUtil
                 if (voice != null)
                 {
                     voiceReverb = voice.gameObject.GetComponent<AudioReverbFilter>();
+                }
+            }
+
+            public void Reset()
+            {
+                if (music != null)
+                {
+                    music.Stop();
+                }
+
+                if (sound != null)
+                {
+                    foreach (var s in sound)
+                    {
+                        s.Stop();
+                    }
+
+                    if (soundGroup != null)
+                    {
+                        soundGroup.SetActive(false);
+                    }
+                }
+
+                if (voice != null)
+                {
+                    voice.Stop();
                 }
             }
         }
@@ -287,6 +367,29 @@ namespace TaleUtil
                             Warning("Cinematic subtitles background object does not have a RectTransform component");
                         }
                     }
+                }
+            }
+
+            public void Reset()
+            {
+                if (canvas != null)
+                {
+                    if (subtitlesGroup != null)
+                    {
+                        subtitlesGroup.SetActive(false);
+                    }
+
+                    if (background != null)
+                    {
+                        background.Reset();
+                    }
+
+                    if (video != null)
+                    {
+                        video.Reset();
+                    }
+
+                    canvas.SetActive(false);
                 }
             }
         }
@@ -340,6 +443,19 @@ namespace TaleUtil
                 this.isOriginalActive = true;
             }
 
+            public void Reset()
+            {
+                if (image != null)
+                {
+                    image.sprite = null;
+                }
+
+                if (imageAlt != null)
+                {
+                    imageAlt.sprite = null;
+                }
+            }
+
             public void Swap()
             {
                 isOriginalActive = !isOriginalActive;
@@ -382,6 +498,21 @@ namespace TaleUtil
                 if(this.player != null)
                 {
                     this.player.loopPointReached += TaleUtil.Events.OnCinematicVideoEnd;
+                }
+            }
+
+            public void Reset()
+            {
+                if (player != null)
+                {
+                    player.Stop();
+                    
+                    if (audio)
+                    {
+                        audio.Stop();
+                    }
+
+                    group.SetActive(false);
                 }
             }
         }

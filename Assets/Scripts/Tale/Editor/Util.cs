@@ -76,6 +76,33 @@ namespace TaleUtil
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH));
         }
 
+        static async void CaptureSceneThumbnails()
+        {
+            string currentScenePath = EditorSceneManager.GetActiveScene().path;
+
+            var count = SceneManager.sceneCountInBuildSettings;
+
+            for (int i = 0; i < count; ++i)
+            {
+                var path = SceneUtility.GetScenePathByBuildIndex(i);
+                var name = System.IO.Path.GetFileNameWithoutExtension(path);
+
+                if (path == System.IO.Path.Combine("Assets/", Config.Setup.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/'))
+                {
+                    continue; // Ignore scene selector
+                }
+
+                var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+
+                await SceneThumbnailGenerator.CaptureThumbnail();
+            }
+
+            if (currentScenePath != null && currentScenePath.Length > 0)
+            {
+                EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+            }
+        }
+
         static TextMeshProUGUI CreateDebugInfoText(string name, GameObject parent, TextAlignmentOptions alignment, Vector2 anchor, Vector2 size, Vector2 pos)
         {
             GameObject obj = new GameObject(name);
@@ -101,7 +128,7 @@ namespace TaleUtil
         {
             string currentScenePath = EditorSceneManager.GetActiveScene().path;
 
-            string root = "Assets/Scenes/Splash";
+            string root = System.IO.Path.Combine("Assets/", Config.Setup.ASSET_ROOT_SCENE, "Splash").Replace('\\', '/');
             string scenePath = string.Format("{0}/{1}.unity", root, name);
 
             Directory.CreateDirectory(root);

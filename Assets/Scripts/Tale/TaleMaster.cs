@@ -45,6 +45,12 @@ public class TaleMaster : MonoBehaviour
     // The heart of Tale
     void Update()
     {
+        if (Tale.config.SCENE_SELECTOR_ENABLE && Input.GetKeyDown(Tale.config.SCENE_SELECTOR_KEY))
+        {
+            TriggerSceneSelector();
+            return;
+        }
+
         // That's it.
         TaleUtil.Queue.Run();
         TaleUtil.Parallel.Run();
@@ -53,6 +59,25 @@ public class TaleMaster : MonoBehaviour
     void LateUpdate()
     {
         TaleUtil.Triggers.Update();
+    }
+
+    void TriggerSceneSelector()
+    {
+        string path = "SceneSelector";
+
+        if (SceneManager.GetSceneByPath(TaleUtil.Path.NormalizeAssetPath(TaleUtil.Config.Setup.ASSET_ROOT_SCENE, path)) == null)
+        {
+            return;
+        }
+
+        TaleUtil.Queue.ForceClear();
+        TaleUtil.Parallel.ForceClear();
+
+        Tale.Scene(path);
+        TaleUtil.Props.Reset();
+
+        // Reset() places some transition cleaning actions on the parallel queue; execute all of them
+        TaleUtil.Parallel.Run();
     }
 
 #if UNITY_EDITOR

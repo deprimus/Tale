@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using TaleUtil;
 
 public static class Tale
 {
@@ -77,7 +78,7 @@ public static class Tale
     public static TaleUtil.Action Scene(int index = 1) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(index));
     public static TaleUtil.Action Scene(string path) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_SCENE, path)));
+        TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(TaleUtil.Path.NormalizeAssetPath(Config.Setup.ASSET_ROOT_SCENE, path)));
 
     public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb));

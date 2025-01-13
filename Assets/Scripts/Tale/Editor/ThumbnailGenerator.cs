@@ -1,5 +1,6 @@
 using System.IO;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -10,14 +11,14 @@ using UnityEditor;
 
 namespace TaleUtil
 {
-    public class ThumbnailGenerator : MonoBehaviour
+    public class SceneThumbnailGenerator : MonoBehaviour
     {
-        public static string GetThumbnailPathForScene(Scene scene)
+        public static string GetThumbnailPathForScenePath(string path)
         {
-            string filename = scene.path.Replace('/', '_').Replace('\\', '_');
-            filename = System.IO.Path.ChangeExtension(filename, ".png"); // scene.unity -> scene.png
+            string filename = path.Replace('/', '_');
+            filename = System.IO.Path.GetFileNameWithoutExtension(filename);
 
-            return System.IO.Path.Combine(Application.dataPath, "Resources", Config.Setup.ASSET_ROOT_SCENE_THUMBNAIL, filename);
+            return System.IO.Path.Combine("Assets/Resources", Config.Setup.ASSET_ROOT_SCENE_THUMBNAIL, filename).Replace('\\', '/');
         }
 
 #if UNITY_EDITOR
@@ -26,28 +27,32 @@ namespace TaleUtil
         // ScreenCapture.CaptureScreenshot doesn't support resolutions lower than the current game view.
         // Therefore, capture to a RenderTexture and resize.
         // However, this requires the current frame to be fully rendered.
-        // The only way to do this is (unfortunately) via WaitForEndOfFrame.
+        // The only way to do this is (unfortunately) via coroutines and WaitForEndOfFrame.
 
-        public static void CaptureThumbnail()
+        public static Task CaptureThumbnail()
         {
+            var task = new TaskCompletionSource<bool>();
+
             // Focus on Game View
             var assembly = typeof(EditorWindow).Assembly;
             var type = assembly.GetType("UnityEditor.GameView");
             EditorWindow.GetWindow(type);
 
             // Prepare to capture
-            temp = new GameObject("_TaleThumbnailGenerator");
-            temp.AddComponent<ThumbnailGenerator>().StartCoroutine(CaptureCoroutine());
+            temp = new GameObject("_TaleSceneThumbnailGenerator");
+            temp.AddComponent<SceneThumbnailGenerator>().StartCoroutine(CaptureCoroutine(task));
+
+            return task.Task;
         }
 
-        static IEnumerator CaptureCoroutine()
+        static IEnumerator CaptureCoroutine(TaskCompletionSource<bool> task)
         {
             // Wait until the frame is finished rendering.
             // Otherwise, the thumbnail will contain random stuff like the editor background.
             // Unfortunately, there isn't a better way to do this, so we must use coroutines
             yield return new WaitForEndOfFrame();
 
-            string path = GetThumbnailPathForScene(SceneManager.GetActiveScene());
+            string path = GetThumbnailPathForScenePath(SceneManager.GetActiveScene().path);
 
             int width = Config.Setup.SCENE_THUMBNAIL_WIDTH;
             int height = Config.Setup.SCENE_THUMBNAIL_HEIGHT;
@@ -91,7 +96,7 @@ namespace TaleUtil
 
             RenderTexture.active = backup;
 
-            File.WriteAllBytes(path, texture.EncodeToPNG());
+            File.WriteAllBytes(path + ".png", texture.EncodeToPNG());
 
             DestroyImmediate(texture);
             resized.Release();
@@ -103,6 +108,8 @@ namespace TaleUtil
             temp = null;
 
             Debug.Log("Generated thumbnail for scene " + SceneManager.GetActiveScene().path);
+
+            task.SetResult(true);
         }
 #endif
     }

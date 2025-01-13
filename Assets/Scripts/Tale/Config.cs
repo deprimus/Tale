@@ -38,6 +38,8 @@ namespace TaleUtil
             public const int TRANSITION_SORT_ORDER = 200;
             public const int CINEMATIC_SORT_ORDER = 100;
 
+            public const string ASSET_ROOT_SCENE = "Scenes/";
+
             // Where to store scene thumbnails for the scene selector
             public const string ASSET_ROOT_SCENE_THUMBNAIL = "Sprites/SceneThumbnails";
 
@@ -52,6 +54,11 @@ namespace TaleUtil
 
 #if UNITY_EDITOR
         [Header("Debug")]
+        [Rename("Enable Debug Info")]
+#endif
+        public bool DEBUG_INFO_ENABLE = true;
+
+#if UNITY_EDITOR
         [Rename("Toggle Key")]
 #endif
         public KeyCode DEBUG_INFO_KEY = KeyCode.F3; // Press this to show/hide Tale debug info
@@ -148,10 +155,6 @@ namespace TaleUtil
 
 #if UNITY_EDITOR
         [Header("Asset Roots")]
-        [Rename("Scene Root")]
-#endif
-        public string ASSET_ROOT_SCENE = "Scenes/";
-#if UNITY_EDITOR
         [Rename("Audio Sound Root")]
 #endif
         public string ASSET_ROOT_AUDIO_SOUND = "Audio/Sound/";
@@ -174,8 +177,16 @@ namespace TaleUtil
 
 #if UNITY_EDITOR
         [Header("Scene Selector")]
-        public List<string> SCENE_SELECTOR_BLACKLIST;
+        [Rename("Enable Scene Selector")]
 #endif
+        public bool SCENE_SELECTOR_ENABLE = true;
+
+#if UNITY_EDITOR
+        [Rename("Trigger Key")]
+#endif
+        public KeyCode SCENE_SELECTOR_KEY = KeyCode.F12; // Press this to go to the scene selector
+
+        public List<string> SCENE_SELECTOR_BLACKLIST;
 
         // In which order to animate the avatar and dialog canvas before the dialog text is shown
         public enum DialogAnimationInMode
