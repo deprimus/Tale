@@ -331,7 +331,7 @@ namespace TaleUtil
             string file = "VideoRenderTexture.renderTexture";
 
             Directory.CreateDirectory(dir);
-            AssetDatabase.CreateAsset(texture, Path.NormalizeAssetPath(dir, file));
+            AssetDatabase.CreateAsset(texture, Path.NormalizeAssetPath(dir, file, true));
 
             GameObject video = new GameObject("Video Player");
             GameObjectUtility.SetParentAndAlign(video, group);
