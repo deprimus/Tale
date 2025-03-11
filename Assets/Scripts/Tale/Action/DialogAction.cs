@@ -924,11 +924,13 @@ namespace TaleUtil
                             break;
                         case TaleUtil.Config.DialogAnimationOutMode.CANVAS_AVATAR:
                         {
-                            bool hasAnimation = ActivateCanvasAnimationOut();
-                            hasAnimation = ActivateAvatarAnimationOut() || hasAnimation;
+                            //bool hasAnimation = ActivateCanvasAnimationOut();
+                            //hasAnimation = ActivateAvatarAnimationOut() || hasAnimation;
 
                             if (hasAnimation)
                             {
+                                // The canvas is animated;
+                                // The avatar may or may not be animated, so try to activate its animation too
                                 ActivateCanvasAnimationOut();
                                 ActivateAvatarAnimationOut();
                                 ChangeState(State.TRANSITION_OUT);
