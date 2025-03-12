@@ -185,7 +185,8 @@ public static class Transition {
 
                 using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(workingDir, "Dialog.cs")))
                 {
-                    sw.Write(@"using UnityEngine;
+                    sw.Write(@"using System.IO;
+using UnityEngine;
             
 public static class Dialog {");
 
