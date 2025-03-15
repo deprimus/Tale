@@ -91,7 +91,7 @@ namespace TaleUtil
                     data.animator.speed = 1f;
                     data.animator.SetTrigger(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL);
 
-                    if(type ==  Type.IN)
+                    if(type == Type.IN)
                         data.canvas.SetActive(false);
 
                     return true;

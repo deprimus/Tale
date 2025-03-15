@@ -76,6 +76,33 @@ namespace TaleUtil
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH));
         }
 
+        static async void CaptureSceneThumbnails()
+        {
+            string currentScenePath = EditorSceneManager.GetActiveScene().path;
+
+            var count = SceneManager.sceneCountInBuildSettings;
+
+            for (int i = 0; i < count; ++i)
+            {
+                var path = SceneUtility.GetScenePathByBuildIndex(i);
+                var name = System.IO.Path.GetFileNameWithoutExtension(path);
+
+                if (path == System.IO.Path.Combine("Assets/", Config.Setup.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/'))
+                {
+                    continue; // Ignore scene selector
+                }
+
+                var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+
+                await SceneThumbnailGenerator.CaptureThumbnail();
+            }
+
+            if (currentScenePath != null && currentScenePath.Length > 0)
+            {
+                EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+            }
+        }
+
         static TextMeshProUGUI CreateDebugInfoText(string name, GameObject parent, TextAlignmentOptions alignment, Vector2 anchor, Vector2 size, Vector2 pos)
         {
             GameObject obj = new GameObject(name);
@@ -101,7 +128,7 @@ namespace TaleUtil
         {
             string currentScenePath = EditorSceneManager.GetActiveScene().path;
 
-            string root = "Assets/Scenes/Splash";
+            string root = System.IO.Path.Combine("Assets/", Config.Setup.ASSET_ROOT_SCENE, "Splash").Replace('\\', '/');
             string scenePath = string.Format("{0}/{1}.unity", root, name);
 
             Directory.CreateDirectory(root);
@@ -147,16 +174,19 @@ namespace TaleUtil
             tform.anchoredPosition = new Vector2(0f, 0f);
 
             obj = new GameObject("Splash Master");
+            Splash splash = obj.AddComponent<Splash>();
 
-            List<string> variants = new List<string>();
+            if (soundVariants != null) {
+                List<string> variants = new List<string>();
 
-            foreach (AudioClip clip in soundVariants)
-            {
-                variants.Add(AssetDatabase.GetAssetPath(clip));
+                foreach (AudioClip clip in soundVariants)
+                {
+                    variants.Add(AssetDatabase.GetAssetPath(clip));
+                }
+
+                splash.soundVariants = variants;
             }
 
-            Splash splash = obj.AddComponent<Splash>();
-            splash.soundVariants = variants;
             splash.curtain = curtain;
 
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH));

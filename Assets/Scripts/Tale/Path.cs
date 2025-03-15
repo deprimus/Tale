@@ -4,15 +4,15 @@ namespace TaleUtil
 {
     public static class Path
     {
-        public static string NormalizeAssetPath(string path)
+        public static string NormalizeAssetPath(string path, bool keepExtension = false)
         {
-            return NormalizeAssetPath("", path);
+            return NormalizeAssetPath("", path, keepExtension);
         }
 
         // Normalizes a path to a valid Asset path.
         // (removes extensions, removes prefixes such as Assets/Resources, etc).
         // Also adds a root to the path, only if the path is relative.
-        public static string NormalizeAssetPath(string root, string path)
+        public static string NormalizeAssetPath(string root, string path, bool keepExtension = false)
         {
             bool relative = true;
 
@@ -22,26 +22,29 @@ namespace TaleUtil
                 relative = false;
             }
 
+            if (path.StartsWith("Assets/"))
+            {
+                path = path.Substring("Assets/".Length);
+                relative = false;
+            }
+
+            // Also handles Assets/Resources/
             if (path.StartsWith("Resources/"))
             {
                 path = path.Substring("Resources/".Length);
                 relative = false;
             }
-            else if (path.StartsWith("Assets/Resources/"))
-            {
-                path = path.Substring("Assets/Resources/".Length);
-                relative = false;
-            }
 
-            if (System.IO.Path.HasExtension(path))
+            if (System.IO.Path.HasExtension(path) && !keepExtension)
             {
-                path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), System.IO.Path.GetFileNameWithoutExtension(path));
+                path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), System.IO.Path.GetFileNameWithoutExtension(path)).Replace('\\', '/');
             }
 
             if (relative)
             {
                 return System.IO.Path.Combine(root, path);
             }
+
             return path;
         }
 

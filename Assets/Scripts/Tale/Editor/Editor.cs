@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine.Rendering;
+using System.Collections;
 
 namespace TaleUtil
 {
@@ -65,13 +67,31 @@ namespace TaleUtil
             dialog.ShowPopup();
         }
 
-        [MenuItem("Tale/Debug/Create Full Master Object", priority = 40)]
+        [MenuItem("Tale/Finalize/Scene Selector/Create Scene Selector", priority = 30)]
+        static void CreateSceneSelector()
+        {
+            
+        }
+
+        [MenuItem("Tale/Finalize/Scene Selector/Auto-Generate Scene Thumbnails", priority = 31)]
+        static void AutoGenerateSceneThumbnails()
+        {
+            CaptureSceneThumbnails();
+        }
+
+        [MenuItem("Tale/Finalize/Scene Selector/Generate Current Scene Thumbnail _F11", priority = 32)]
+        static void GenerateSceneThumbnail()
+        {
+            SceneThumbnailGenerator.CaptureThumbnail();
+        }
+
+        [MenuItem("Tale/Debug/Create Full Master Object", priority = 50)]
         static void SetupCreateMasterObjectMenu()
         {
             SetupCreateMasterObject();
         }
 
-        [MenuItem("Tale/Debug/Create Splash Scene", priority = 41)]
+        [MenuItem("Tale/Debug/Create Tale Splash Scene", priority = 51)]
         static void SetupCreateSplashScene()
         {
             SetupTaleSplashScene();

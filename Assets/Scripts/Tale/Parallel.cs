@@ -58,6 +58,9 @@ namespace TaleUtil
             }
         }
 
+        public static void ForceClear() =>
+            data.Clear();
+
         public static void Init() => data = new LinkedList<TaleUtil.Action>();
 
         public static void Run()
