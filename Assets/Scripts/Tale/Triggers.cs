@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace TaleUtil
 {
+    // Triggers can be set from any script, and scripts can be executed in any order.
+    // Therefore, for consistency, triggers will take effect during the next frame after they are set.
+    // This ensures that all scripts will get the same result when checking for a trigger.
     public static class Triggers
     {
         private static HashSet<string> current;     // Triggers for the current frame.
@@ -28,6 +31,11 @@ namespace TaleUtil
         {
             current = accumulator;
             accumulator = new HashSet<string>();
+
+            if (current.Count > 0 && Hooks.OnTriggerUpdate != null)
+            {
+                Hooks.OnTriggerUpdate(current);
+            }
         }
     }
 }
