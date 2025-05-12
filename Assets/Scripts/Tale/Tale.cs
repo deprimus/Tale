@@ -98,8 +98,14 @@ public static class Tale
     public static TaleUtil.Action Wait(float amount = 1f) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.WaitAction(amount));
 
+    public static TaleUtil.Action WaitFor(string trigger) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.WaitForAction(trigger));
+
     public static TaleUtil.Action Delayed(float amount, TaleUtil.Action action) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.DelayedAction(amount, action));
+
+    public static TaleUtil.Action DelayedBy(string trigger, TaleUtil.Action action) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.DelayedByAction(trigger, action));
 
     public static TaleUtil.Action Advance() =>
         TaleUtil.Queue.Enqueue(new TaleUtil.AdvanceAction());
