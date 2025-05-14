@@ -13,5 +13,12 @@ namespace TaleUtil
 
         // Called when triggers are updated. Won't be called if there are no triggers set
         public static Delegates.CallbackDelegate<HashSet<string>> OnTriggerUpdate;
+
+        public static void Init()
+        {
+            OnDialogUpdate = null;
+            OnDialogAutoModeToggle = null;
+            OnTriggerUpdate = null;
+        }
     }
 }
