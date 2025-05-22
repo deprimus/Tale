@@ -4,6 +4,8 @@ namespace TaleUtil
     {
         public ulong id;
 
+        public System.Threading.Tasks.TaskCompletionSource<bool> task;
+
         public abstract bool Run();
         public abstract Action Clone();
 
