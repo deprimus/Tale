@@ -91,6 +91,19 @@ public static class Tale
         return action;
     }
 
+    public static TaleUtil.Action[] Map<T>(IReadOnlyList<T> arr, TaleUtil.Delegates.MapDelegate<T, TaleUtil.Action> callback)
+    {
+        var actions = new TaleUtil.Action[arr.Count];
+        uint i = 0;
+
+        foreach (var obj in arr)
+        {
+            actions[i++] = callback(obj);
+        }
+
+        return actions;
+    }
+
     public static TaleUtil.Action Scene(int index = 1) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(index));
     public static TaleUtil.Action Scene(string path) =>
