@@ -64,6 +64,9 @@ public static class Tale
     public static TaleUtil.Action Multiplex(params TaleUtil.Action[] actions) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.MultiplexAction(actions));
 
+    public static TaleUtil.Action Any(params TaleUtil.Action[] actions) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.AnyAction(actions));
+
     public static TaleUtil.Action Queue(params TaleUtil.Action[] actions) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.QueueAction(actions));
 
