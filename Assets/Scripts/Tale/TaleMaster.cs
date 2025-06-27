@@ -3,6 +3,9 @@
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [DefaultExecutionOrder(-1000)]
 public class TaleMaster : MonoBehaviour
@@ -34,12 +37,17 @@ public class TaleMaster : MonoBehaviour
         TaleUtil.Queue.Init();
         TaleUtil.Parallel.Init();
         TaleUtil.Triggers.Init();
+        TaleUtil.Hooks.Init();
         TaleUtil.Props.Init(props);
 
         // Events
         SceneManager.sceneLoaded += TaleUtil.Events.OnSceneLoaded; // This is used to re-assign the camera when the scene changes
 
         DontDestroyOnLoad(gameObject);
+
+#if UNITY_EDITOR
+        EditorApplication.playModeStateChanged += OnExitPlayMode;
+#endif
     }
 
     // The heart of Tale
@@ -79,6 +87,19 @@ public class TaleMaster : MonoBehaviour
         // Reset() places some transition cleaning actions on the parallel queue; execute all of them
         TaleUtil.Parallel.Run();
     }
+
+#if UNITY_EDITOR
+    // This ensures that Tale works even without domain reloads
+    static void OnExitPlayMode(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.ExitingPlayMode)
+        {
+            EditorApplication.playModeStateChanged -= OnExitPlayMode;
+            SceneManager.sceneLoaded -= TaleUtil.Events.OnSceneLoaded;
+            Tale.alive = false;
+        }
+    }
+#endif
 
 #if UNITY_EDITOR
     [Space(10)]
