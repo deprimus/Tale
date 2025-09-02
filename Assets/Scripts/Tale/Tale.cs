@@ -58,9 +58,6 @@ public static class Tale
         return task.Task;
     }
     
-    public static TaleUtil.Action MagicFix() =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.WaitAction(0.001f));
-
     public static TaleUtil.Action Multiplex(params TaleUtil.Action[] actions) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.MultiplexAction(actions));
 
@@ -72,9 +69,6 @@ public static class Tale
 
     public static TaleUtil.Action Parallel(params TaleUtil.Action[] actions) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.ParallelAction(actions));
-
-    public static TaleUtil.Action ParallelQueue(params TaleUtil.Action[] actions) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.ParallelAction(new TaleUtil.Action[] { new TaleUtil.QueueAction(actions) }));
 
     public static TaleUtil.Action Bind(TaleUtil.Action primary, TaleUtil.Action secondary) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.BindAction(primary, secondary));
@@ -115,8 +109,11 @@ public static class Tale
     public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb));
 
-    public static TaleUtil.Action Transition(string name, TransitionType type, float duration = 1f) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.TransitionAction(name, (TaleUtil.TransitionAction.Type) (int) type, duration));
+    public static TaleUtil.Action TransitionIn(float duration = Tale.Default.FLOAT) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.TransitionAction(null, TransitionAction.Type.IN, duration));
+
+    public static TaleUtil.Action TransitionOut(string name, float duration = 1f) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.TransitionAction(name, TransitionAction.Type.OUT, duration));
 
     public static  TaleUtil.Action Interpolate(float value, float target, TaleUtil.Delegates.CallbackDelegate<float> callback, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.InterpolationAction<float>(value, target, callback, duration, interpolation));
@@ -185,8 +182,11 @@ public static class Tale
     public static Task DialogAsync(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false) =>
         Async(Dialog(actor, content, avatar, voice, loopVoice, additive, reverb));
 
-    public static Task TransitionAsync(string name, TransitionType type, float duration = 1f) =>
-        Async(Transition(name, type, duration));
+    public static Task TransitionInAsync(float duration = Tale.Default.FLOAT) =>
+        Async(TransitionIn(duration));
+
+    public static Task TransitionOutAsync(string name, float duration = 1f) =>
+        Async(TransitionOut(name, duration));
 
     public static Task InterpolateAsync(float value, float target, TaleUtil.Delegates.CallbackDelegate<float> callback, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
         Async(Interpolate(value, target, callback, duration, interpolation));

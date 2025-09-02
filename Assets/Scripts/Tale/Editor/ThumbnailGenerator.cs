@@ -71,7 +71,9 @@ namespace TaleUtil
             switch (SystemInfo.graphicsDeviceType)
             {
                 case GraphicsDeviceType.OpenGLCore:
+#if !UNITY_2023_1_OR_NEWER
                 case GraphicsDeviceType.OpenGLES2:
+#endif
                 case GraphicsDeviceType.OpenGLES3:
                 case GraphicsDeviceType.Vulkan:
                     break;
@@ -112,5 +114,5 @@ namespace TaleUtil
             task.SetResult(true);
         }
 #endif
-    }
+            }
 }

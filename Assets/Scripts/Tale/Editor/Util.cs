@@ -489,7 +489,7 @@ namespace TaleUtil
 
         static GameObject CreateCanvas(string name, int sortOrder)
         {
-            if (!Object.FindObjectOfType<EventSystem>())
+            if (!Object.FindFirstObjectByType<EventSystem>())
             {
                 GameObject system = new GameObject("EventSystem", typeof(EventSystem));
                 system.AddComponent<StandaloneInputModule>();
