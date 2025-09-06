@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using TMPro;
+using TaleUtil.Scripts;
 
 namespace TaleUtil
 {
@@ -15,9 +16,9 @@ namespace TaleUtil
     {
         static void SetupCreateMasterObject(bool dialog = true, bool audio = true, bool transitions = true, bool cinematic = true, bool debug = true)
         {
-            if (File.Exists(TALE_PREFAB_PATH))
+            if (File.Exists(TALE_MASTER_PREFAB_PATH))
             {
-                EditorUtility.DisplayDialog("Tale Master already created", "Tale Master prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_PREFAB_PATH, "Ok");
+                EditorUtility.DisplayDialog("Tale Master already created", "Tale Master prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_MASTER_PREFAB_PATH, "Ok");
                 return;
             }
 
@@ -67,7 +68,7 @@ namespace TaleUtil
             Undo.RegisterCreatedObjectUndo(master, "Create " + master.name);
             Selection.activeGameObject = master;
 
-            CreateTaleMasterPrefab(master);
+            CreatePrefab(master, TALE_MASTER_PREFAB_PATH);
 
             if (s.path != null && s.path.Length > 0)
             {
@@ -416,6 +417,283 @@ namespace TaleUtil
         static void SetupTaleSplashScene()
         {
             CreateSplashScene("Tale", Resources.Load<Sprite>("Tale/Logo"), new List<AudioClip> { Resources.Load<AudioClip>("Tale/Splash") }, 0);
+        }
+
+        static void SetupSceneSelectorItemPrefab()
+        {
+            GameObject obj = new GameObject("TaleSceneSelectorItem");
+
+            var tform = obj.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0f, 0f);
+            tform.anchorMax = new Vector2(0f, 0f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 0f);
+            tform.sizeDelta = new Vector2(240f, 180f);
+
+            var script = obj.AddComponent<SceneSelectorItem>();
+
+            var preview = new GameObject("Preview");
+            GameObjectUtility.SetParentAndAlign(preview, obj);
+
+            tform = preview.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0f, 1f);
+            tform.anchorMax = new Vector2(1f, 1f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, -67.5f);
+            tform.sizeDelta = new Vector2(0f, 135f);
+
+            var outline = new GameObject("Outline");
+            GameObjectUtility.SetParentAndAlign(outline, preview);
+
+            tform = outline.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0f, 0f);
+            tform.anchorMax = new Vector2(1f, 1f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 0f);
+            tform.sizeDelta = new Vector2(-6f, -6f);
+
+            script.outlineTform = tform;
+
+            var img = outline.AddComponent<Image>();
+            img.color = Color.white;
+
+            script.outline = img;
+
+            var thumbnail = new GameObject("Thumbnail");
+            GameObjectUtility.SetParentAndAlign(thumbnail, preview);
+
+            tform = thumbnail.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0f, 0f);
+            tform.anchorMax = new Vector2(1f, 1f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 0f);
+            tform.sizeDelta = new Vector2(-10f, -10f);
+
+            img = thumbnail.AddComponent<Image>();
+            img.color = Color.black;
+
+            script.thumbnail = img;
+
+            var name = new GameObject("Name");
+            GameObjectUtility.SetParentAndAlign(name, obj);
+
+            tform = name.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0f, 0f);
+            tform.anchorMax = new Vector2(1f, 0f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 25f);
+            tform.sizeDelta = new Vector2(0f, 50f);
+
+            var text = name.AddComponent<TextMeshProUGUI>();
+            text.text = "???";
+            text.fontSize = 36;
+            text.enableAutoSizing = true;
+            text.fontSizeMin = 20;
+            text.fontSizeMax = 36;
+            text.color = Color.white;
+            text.alignment = TextAlignmentOptions.Bottom;
+            text.textWrappingMode = TextWrappingModes.Normal;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+
+            script.name = text;
+
+            CreatePrefab(obj, TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH);
+        }
+
+        static void SetupSceneSelector(string scenePath, int buildIndex = -1)
+        {
+            var currentScenePath = EditorSceneManager.GetActiveScene().path;
+
+            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(scenePath));
+
+            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            EditorSceneManager.SaveScene(scene, scenePath);
+
+            scene = EditorSceneManager.OpenScene(scene.path, OpenSceneMode.Single);
+
+            SetupSceneSelectorItemPrefab();
+
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH));
+
+            var canvas = CreateCanvas("Canvas", 0, true);
+
+            var selector = canvas.AddComponent<SceneSelectorMaster>();
+            selector.sceneItemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH);
+
+            var bg = CreateDarkness("Background");
+            GameObjectUtility.SetParentAndAlign(bg, canvas);
+
+            var title = new GameObject("Title");
+            GameObjectUtility.SetParentAndAlign(title, canvas);
+
+            TextMeshProUGUI text = title.AddComponent<TextMeshProUGUI>();
+            text.text = "Scenes";
+            text.fontSize = 96;
+            text.alignment = TextAlignmentOptions.Center;
+            text.color = Color.white;
+
+            var tform = title.GetComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0.5f, 0.5f);
+            tform.anchorMax = new Vector2(0.5f, 0.5f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 426f);
+            tform.sizeDelta = new Vector2(350f, 110f);
+
+            var group = new GameObject("Scenes Group");
+            GameObjectUtility.SetParentAndAlign(group, canvas);
+
+            var scroll = new GameObject("Scroll");
+            GameObjectUtility.SetParentAndAlign(scroll, group);
+
+            tform = scroll.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0f, 0f);
+            tform.anchorMax = new Vector2(1f, 0f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 50f);
+            tform.sizeDelta = new Vector2(1420f, 574f);
+
+            var rect = scroll.AddComponent<ScrollRect>();
+            rect.horizontal = false;
+            rect.vertical = true;
+            rect.movementType = ScrollRect.MovementType.Elastic;
+            rect.elasticity = 0.05f;
+            rect.inertia = true;
+            rect.decelerationRate = 0.135f;
+            rect.scrollSensitivity = 32f;
+            rect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+
+            var mask = scroll.AddComponent<RectMask2D>();
+            mask.padding = new Vector4(0f, 0f, 0f, -25f);
+            mask.softness = new Vector2Int(0, 50);
+
+            var viewport = new GameObject("Viewport");
+            GameObjectUtility.SetParentAndAlign(viewport, scroll);
+
+            tform = viewport.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0f, 0f);
+            tform.anchorMax = new Vector2(1f, 1f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 0f);
+            tform.sizeDelta = new Vector2(0f, 0f);
+
+            rect.viewport = tform;
+
+            var scenes = new GameObject("Scenes");
+            GameObjectUtility.SetParentAndAlign(scenes, viewport);
+
+            tform = scenes.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0.5f, 0.5f);
+            tform.anchorMax = new Vector2(0.5f, 0.5f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 0f);
+            tform.sizeDelta = new Vector2(1520f, 0f);
+
+            rect.content = tform;
+            selector.sceneItemParent = tform;
+
+            var layout = scenes.AddComponent<GridLayoutGroup>();
+            layout.padding = new RectOffset(0, 0, 0, 0);
+            layout.cellSize = new Vector2(240f, 180f);
+            layout.spacing = new Vector2(50f, 17f);
+            layout.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            layout.startAxis = GridLayoutGroup.Axis.Horizontal;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.constraint = GridLayoutGroup.Constraint.Flexible;
+
+            var fitter = scenes.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            // TODO: Add canvas renderer?
+
+            var img = scenes.AddComponent<Image>();
+            img.color = Color.black;
+
+            var scrollbar = new GameObject("Scrollbar");
+            GameObjectUtility.SetParentAndAlign(scrollbar, group);
+
+            tform = scrollbar.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0.5f, 0.5f);
+            tform.anchorMax = new Vector2(0.5f, 0.5f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(756f, 0f);
+            tform.sizeDelta = new Vector2(5f, 574f);
+
+            var bar = scrollbar.AddComponent<Scrollbar>();
+            bar.interactable = true;
+            bar.transition = Selectable.Transition.ColorTint;
+
+            var colors = new ColorBlock();
+            colors.normalColor = Color.white;
+            colors.highlightedColor = Color.white;
+            colors.pressedColor = Color.white;
+            colors.selectedColor = Color.white;
+            colors.disabledColor = Color.white;
+            colors.colorMultiplier = 1f;
+            colors.fadeDuration = 0.1f;
+
+            bar.colors = colors;
+            bar.navigation = Navigation.defaultNavigation;
+            bar.direction = Scrollbar.Direction.BottomToTop;
+            bar.value = 0f;
+            bar.size = 1f;
+            bar.numberOfSteps = 0;
+
+            var script = scrollbar.AddComponent<SceneSelectorScrollbar>();
+            selector.scrollbar = script;
+
+            var area = new GameObject("Sliding Area");
+            GameObjectUtility.SetParentAndAlign(area, scrollbar);
+
+            tform = area.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0f, 0f);
+            tform.anchorMax = new Vector2(1f, 1f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 0f);
+            tform.sizeDelta = new Vector2(0f, 0f);
+
+            var handle = new GameObject("Handle");
+            GameObjectUtility.SetParentAndAlign(handle, area);
+
+            tform = handle.AddComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0f, 0f);
+            tform.anchorMax = new Vector2(1f, 1f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 0f);
+            tform.sizeDelta = new Vector2(0f, 0f);
+
+            img = handle.AddComponent<Image>();
+            img.color = Color.white;
+
+            script.handleImage = img;
+            bar.targetGraphic = img;
+            bar.handleRect = tform;
+            rect.verticalScrollbar = bar;
+
+            var obj = new GameObject("Logo");
+            GameObjectUtility.SetParentAndAlign(obj, canvas);
+
+            img = obj.AddComponent<Image>();
+            img.color = Color.white;
+            img.preserveAspect = true;
+            img.sprite = Resources.Load<Sprite>("Tale/Logo");
+
+            tform = obj.GetComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0.5f, 0f);
+            tform.anchorMax = new Vector2(0.5f, 0f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.anchoredPosition = new Vector2(0f, 117f);
+            tform.sizeDelta = new Vector2(396, 171f);
+
+            AddSceneToBuild(scenePath, buildIndex);
+
+            EditorSceneManager.SaveScene(scene, scenePath);
+            EditorSceneManager.SaveOpenScenes();
+
+            if (currentScenePath != null && currentScenePath.Length > 0)
+            {
+                EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+            }
         }
     }
 }

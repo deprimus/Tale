@@ -14,9 +14,9 @@ namespace TaleUtil
         [MenuItem("Tale/Run Setup", priority = 1)]
         static void RunSetup()
         {
-            if (File.Exists(TALE_PREFAB_PATH))
+            if (File.Exists(TALE_MASTER_PREFAB_PATH))
             {
-                EditorUtility.DisplayDialog("Tale Master already created", "Tale Master prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_PREFAB_PATH, "Ok");
+                EditorUtility.DisplayDialog("Tale Master already created", "Tale Master prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_MASTER_PREFAB_PATH, "Ok");
                 return;
             }
 
@@ -67,19 +67,33 @@ namespace TaleUtil
             dialog.ShowPopup();
         }
 
-        [MenuItem("Tale/Finalize/Scene Selector/Create Scene Selector", priority = 30)]
-        static void CreateSceneSelector()
+        [MenuItem("Tale/Scene Selector/Create Scene Selector", priority = 30)]
+        static void SetupCreateSceneSelector()
         {
-            
+            string scenePath = System.IO.Path.Combine("Assets", Config.Setup.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/');
+
+            if (File.Exists(scenePath))
+            {
+                EditorUtility.DisplayDialog("Scene Selector already created", "Scene Selector scene already exists.\n\nIf you want to regenerate it, delete the scene at:\n\n" + scenePath, "Ok");
+                return;
+            }
+
+            if (File.Exists(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH))
+            {
+                EditorUtility.DisplayDialog("Scene Selector already created", "Scene Selector item prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH, "Ok");
+                return;
+            }
+
+            SetupSceneSelector(scenePath);
         }
 
-        [MenuItem("Tale/Finalize/Scene Selector/Auto-Generate Scene Thumbnails", priority = 31)]
+        [MenuItem("Tale/Scene Selector/Auto-Generate Scene Thumbnails", priority = 31)]
         static void AutoGenerateSceneThumbnails()
         {
             CaptureSceneThumbnails();
         }
 
-        [MenuItem("Tale/Finalize/Scene Selector/Generate Current Scene Thumbnail _F11", priority = 32)]
+        [MenuItem("Tale/Scene Selector/Generate Current Scene Thumbnail _F11", priority = 32)]
         static void GenerateSceneThumbnail()
         {
             SceneThumbnailGenerator.CaptureThumbnail();
