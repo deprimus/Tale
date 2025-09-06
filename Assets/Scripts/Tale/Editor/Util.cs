@@ -88,9 +88,22 @@ namespace TaleUtil
                 var path = SceneUtility.GetScenePathByBuildIndex(i);
                 var name = System.IO.Path.GetFileNameWithoutExtension(path);
 
+                if (!File.Exists(path))
+                {
+                    continue; // Deleted scene, but still in build settings
+                }
+
                 if (path == System.IO.Path.Combine("Assets", Config.Setup.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/'))
                 {
                     continue; // Ignore scene selector
+                }
+
+                var thumbnail = SceneThumbnailGenerator.GetThumbnailPathForScenePath(path);
+
+                if (File.Exists(thumbnail))
+                {
+                    Log.Warning("Thumbnail Generator", string.Format("Skipping scene {0} since it already has a thumbnail; if you want to regenerate it, delete the thumbnail at {1}", path, thumbnail));
+                    continue;
                 }
 
                 var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
