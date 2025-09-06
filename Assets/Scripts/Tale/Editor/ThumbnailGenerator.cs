@@ -18,7 +18,7 @@ namespace TaleUtil
             string filename = path.Replace('/', '_');
             filename = System.IO.Path.GetFileNameWithoutExtension(filename);
 
-            return System.IO.Path.Combine("Assets/Resources", Config.Setup.ASSET_ROOT_SCENE_THUMBNAIL, filename).Replace('\\', '/');
+            return System.IO.Path.Combine("Assets/Resources", Config.Setup.ASSET_ROOT_SCENE_THUMBNAIL, filename + ".png").Replace('\\', '/');
         }
 
 #if UNITY_EDITOR
@@ -98,7 +98,7 @@ namespace TaleUtil
 
             RenderTexture.active = backup;
 
-            File.WriteAllBytes(path + ".png", texture.EncodeToPNG());
+            File.WriteAllBytes(path, texture.EncodeToPNG());
 
             DestroyImmediate(texture);
             resized.Release();

@@ -542,6 +542,8 @@ namespace TaleUtil
             var group = new GameObject("Scenes Group");
             GameObjectUtility.SetParentAndAlign(group, canvas);
 
+            group.AddComponent<RectTransform>();
+
             var scroll = new GameObject("Scroll");
             GameObjectUtility.SetParentAndAlign(scroll, group);
 
