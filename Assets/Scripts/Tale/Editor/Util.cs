@@ -15,12 +15,13 @@ namespace TaleUtil
 {
     public partial class Editor
     {
-        const string TALE_PREFAB_PATH = "Assets/Prefabs/TaleMaster.prefab";
+        const string TALE_MASTER_PREFAB_PATH = "Assets/Prefabs/TaleMaster.prefab";
+        const string TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH = "Assets/Prefabs/TaleSceneSelectorItem.prefab";
         const string TALE_CONFIG_PATH = "Assets/TaleConfig.asset";
 
         static bool TaleWasSetUp()
         {
-            return File.Exists(TALE_PREFAB_PATH);
+            return File.Exists(TALE_MASTER_PREFAB_PATH);
         }
 
         static GameObject FindTaleMaster()
@@ -40,14 +41,14 @@ namespace TaleUtil
                 return null;
             }
 
-            return AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH);
+            return AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH);
         }
 
-        static void CreateTaleMasterPrefab(GameObject obj)
+        static void CreatePrefab(GameObject obj, string path)
         {
-            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(TALE_PREFAB_PATH));
+            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
 
-            PrefabUtility.SaveAsPrefabAssetAndConnect(obj, TALE_PREFAB_PATH, InteractionMode.UserAction);
+            PrefabUtility.SaveAsPrefabAssetAndConnect(obj, path, InteractionMode.UserAction);
         }
 
         static bool TagExists(string name)
@@ -73,7 +74,7 @@ namespace TaleUtil
 
         static void InstantiateTaleMasterPrefab()
         {
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH));
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH));
         }
 
         static async void CaptureSceneThumbnails()
@@ -87,7 +88,7 @@ namespace TaleUtil
                 var path = SceneUtility.GetScenePathByBuildIndex(i);
                 var name = System.IO.Path.GetFileNameWithoutExtension(path);
 
-                if (path == System.IO.Path.Combine("Assets/", Config.Setup.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/'))
+                if (path == System.IO.Path.Combine("Assets", Config.Setup.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/'))
                 {
                     continue; // Ignore scene selector
                 }
@@ -126,34 +127,33 @@ namespace TaleUtil
 
         static void CreateSplashScene(string name, Sprite logo, List<AudioClip> soundVariants, int buildIndex = -1)
         {
-            string currentScenePath = EditorSceneManager.GetActiveScene().path;
+            var currentScenePath = EditorSceneManager.GetActiveScene().path;
 
-            string root = System.IO.Path.Combine("Assets/", Config.Setup.ASSET_ROOT_SCENE, "Splash").Replace('\\', '/');
-            string scenePath = string.Format("{0}/{1}.unity", root, name);
+            var scenePath = System.IO.Path.Combine("Assets", Config.Setup.ASSET_ROOT_SCENE, "Splash", string.Format("{0}.unity", name)).Replace('\\', '/');
 
-            Directory.CreateDirectory(root);
+            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(scenePath));
 
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
             EditorSceneManager.SaveScene(scene, scenePath);
 
             scene = EditorSceneManager.OpenScene(scene.path, OpenSceneMode.Single);
 
-            GameObject canvas = CreateCanvas("Canvas", 0);
-            GameObject bg = CreateDarkness("Darkness");
+            var canvas = CreateCanvas("Canvas", 0);
+            var bg = CreateDarkness("Darkness");
             GameObjectUtility.SetParentAndAlign(bg, canvas);
 
-            GameObject obj = new GameObject("Logo");
+            var obj = new GameObject("Logo");
             GameObjectUtility.SetParentAndAlign(obj, canvas);
 
-            GameObject curtain = CreateDarkness("Curtain");
+            var curtain = CreateDarkness("Curtain");
             GameObjectUtility.SetParentAndAlign(curtain, canvas);
 
-            Image img = obj.AddComponent<Image>();
+            var img = obj.AddComponent<Image>();
             img.color = Color.white;
             img.preserveAspect = true;
             img.sprite = logo;
 
-            RectTransform tform = obj.GetComponent<RectTransform>();
+            var tform = obj.GetComponent<RectTransform>();
 
             float factor;
 
@@ -174,7 +174,7 @@ namespace TaleUtil
             tform.anchoredPosition = new Vector2(0f, 0f);
 
             obj = new GameObject("Splash Master");
-            Splash splash = obj.AddComponent<Splash>();
+            var splash = obj.AddComponent<Splash>();
 
             if (soundVariants != null) {
                 List<string> variants = new List<string>();
@@ -189,7 +189,7 @@ namespace TaleUtil
 
             splash.curtain = curtain;
 
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH));
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH));
 
             AddSceneToBuild(scenePath, buildIndex);
 
@@ -219,7 +219,7 @@ namespace TaleUtil
             GameObject story = new GameObject("Story Master");
             story.AddComponent(AssetDatabase.LoadAssetAtPath<MonoScript>(script).GetClass());
 
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_PREFAB_PATH));
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH));
 
             AddSceneToBuild(scenePath, buildIndex);
 
@@ -487,7 +487,7 @@ namespace TaleUtil
             transition.AddCondition(AnimatorConditionMode.If, 0, triggerNeutral);
         }
 
-        static GameObject CreateCanvas(string name, int sortOrder)
+        static GameObject CreateCanvas(string name, int sortOrder, bool raycast = false)
         {
             if (!Object.FindFirstObjectByType<EventSystem>())
             {
@@ -507,6 +507,14 @@ namespace TaleUtil
             scaler.referenceResolution = new Vector2(TaleUtil.Config.Setup.REFERENCE_WIDTH, TaleUtil.Config.Setup.REFERENCE_HEIGHT);
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             scaler.referencePixelsPerUnit = 100;
+
+            if (raycast)
+            {
+                var raycaster = obj.AddComponent<GraphicRaycaster>();
+                raycaster.ignoreReversedGraphics = true;
+                raycaster.blockingObjects = GraphicRaycaster.BlockingObjects.None;
+                raycaster.blockingMask = ~0; // Everything
+            }
 
             return obj;
         }

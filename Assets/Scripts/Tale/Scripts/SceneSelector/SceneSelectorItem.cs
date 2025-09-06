@@ -10,17 +10,13 @@ namespace TaleUtil.Scripts
         public SceneSelectorMaster master;
         public SceneSelectorScrollbar scrollbar;
 
-        [SerializeField]
-        RectTransform outlineTform;
+        public RectTransform outlineTform;
 
-        [SerializeField]
-        Image outline;
+        public Image outline;
 
-        [SerializeField]
-        new TextMeshProUGUI name;
+        public new TextMeshProUGUI name;
 
-        [SerializeField]
-        Image thumbnail;
+        public Image thumbnail;
 
         string path;
 
@@ -46,7 +42,7 @@ namespace TaleUtil.Scripts
             }
             else
             {
-                TaleUtil.Log.Warning("SceneSelector", string.Format("Scene '{0}' has no thumbnail; make one by loading the scene and pressing F11", name));
+                TaleUtil.Log.Warning("SceneSelector", string.Format("Scene '{0}' has no thumbnail; make one by playing the scene and pressing F11, or use Tale -> Scene Selector -> Auto-Generate Scene Thumbnails", name));
             }
 
             outline.color = COLOR_INACTIVE;

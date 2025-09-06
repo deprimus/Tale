@@ -22,6 +22,8 @@ namespace TaleUtil
 
             bool setupSplashScene = true;
 
+            bool setupSceneSelector = true;
+
             void OnGUI()
             {
                 float logoWidth = position.width - 2 * 50f;
@@ -88,6 +90,8 @@ namespace TaleUtil
                     {
                         setupAudio = EditorGUILayout.ToggleLeft("Audio", setupAudio, GUILayout.Width(80));
                         GUILayout.FlexibleSpace();
+
+                        setupSceneSelector = EditorGUILayout.ToggleLeft("Scene selector", setupSplashScene, GUILayout.Width(95));
                     }
                     EndLine();
 
@@ -203,7 +207,7 @@ namespace TaleUtil
 
                 if (GUILayout.Button("Create Transition", createButtonStyle) || (Event.current.keyCode == KeyCode.Return && GUI.enabled))
                 {
-                    using (var scope = new PrefabUtility.EditPrefabContentsScope(TALE_PREFAB_PATH))
+                    using (var scope = new PrefabUtility.EditPrefabContentsScope(TALE_MASTER_PREFAB_PATH))
                     {
                         CreateTaleTransition(scope.prefabContentsRoot, name);
                     }

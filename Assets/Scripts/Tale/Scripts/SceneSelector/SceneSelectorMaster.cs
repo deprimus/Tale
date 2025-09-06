@@ -6,14 +6,11 @@ namespace TaleUtil.Scripts
 {
     public class SceneSelectorMaster : MonoBehaviour
     {
-        [SerializeField]
-        RectTransform sceneItemParent;
+        public RectTransform sceneItemParent;
 
-        [SerializeField]
-        GameObject sceneItemPrefab;
+        public GameObject sceneItemPrefab;
 
-        [SerializeField]
-        SceneSelectorScrollbar scrollbar;
+        public SceneSelectorScrollbar scrollbar;
 
         void Awake()
         {
