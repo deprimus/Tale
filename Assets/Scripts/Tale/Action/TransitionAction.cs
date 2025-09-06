@@ -14,8 +14,7 @@ namespace TaleUtil
         {
             SETUP,
             SETUP_IN,
-            TRANSITION,
-
+            TRANSITION
         }
 
         string transition;
@@ -93,9 +92,15 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    TaleUtil.Assert.Condition(!Props.transitions.HasLastTransition(), "Tale.TransitionOut called twice in a row; did you forget to call Tale.TransitionIn?");
+                    if (type == Type.OUT)
+                    {
+                        TaleUtil.Assert.Condition(!Props.transitions.HasLastTransition(), "Tale.TransitionOut called twice in a row; did you forget to call Tale.TransitionIn?");
 
-                    if(!data.canvas.activeSelf)
+                        Props.transitions.lastName = transition;
+                        Props.transitions.lastDuration = duration;
+                    }
+
+                    if (!data.canvas.activeSelf)
                         data.canvas.SetActive(true);
 
                     if(duration == 0f)
@@ -103,9 +108,6 @@ namespace TaleUtil
                     else data.animator.speed = 1f / duration;
 
                     data.animator.SetTrigger(trigger);
-
-                    Props.transitions.lastName = transition;
-                    Props.transitions.lastDuration = duration;
 
                     state = State.TRANSITION;
 
