@@ -85,7 +85,7 @@ You will have to *manually* set up post processing. For this, check out the post
 ## Compiling
 If you have a story script, you can compile it to Tale code. Simply open the menu `Tale -> Compile Story` and select the file.
 
-The Tale scripts will be generated under `Assets/Scripts/Scenes`, and you will also see `Dialog.cs` and `Transition.cs` which contain helper methods.
+The Tale scripts will be generated under `Assets/Scripts/Scenes`, and you will also see `Dialog.cs` which contains helper methods.
 
 ## What are they?
 Story scripts are basically markdown files in a specific format. When you develop a game, you usually write a script for the game story.

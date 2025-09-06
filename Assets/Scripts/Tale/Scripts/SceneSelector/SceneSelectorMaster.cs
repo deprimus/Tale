@@ -44,10 +44,12 @@ namespace TaleUtil.Scripts
         {
             enabled = false;
 
-            Tale.Transition("Fade", Tale.TransitionType.OUT, 0.5f);
+            Tale.TransitionOut("Fade", 0.5f);
             Tale.Wait(0.5f);
             Tale.Scene(scene);
-            Tale.Transition("Fade", Tale.TransitionType.IN, 0.5f);
+
+            // Handled directly by each scene
+            //Tale.TransitionIn(0.5f);
         }
     }
 }
