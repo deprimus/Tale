@@ -125,9 +125,9 @@ namespace TaleUtil
                 case State.CUSTOM_SETUP:
                 {
                     Props.cinematic.background.groupAnimator.speed = speed;
-                    Props.cinematic.background.groupAnimator.SetTrigger(TaleUtil.Config.Setup.CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER);
+                    Props.cinematic.background.groupAnimator.SetTrigger(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER);
 
-                    customAnimatorState = string.Format(TaleUtil.Config.Setup.CINEMATIC_BACKGROUND_ANIMATOR_STATE_FORMAT, "Out");
+                    customAnimatorState = string.Format(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_STATE_FORMAT, "Out");
 
                     state = State.CUSTOM_TRANSITION_OUT;
 
@@ -144,9 +144,9 @@ namespace TaleUtil
                     Props.cinematic.background.GetActiveImage().sprite = LoadSprite();
 
                     Props.cinematic.background.groupAnimator.speed = 1f;
-                    Props.cinematic.background.groupAnimator.SetTrigger(TaleUtil.Config.Setup.CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER);
+                    Props.cinematic.background.groupAnimator.SetTrigger(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER);
 
-                    customAnimatorState = string.Format(TaleUtil.Config.Setup.CINEMATIC_BACKGROUND_ANIMATOR_STATE_FORMAT, "In");
+                    customAnimatorState = string.Format(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_STATE_FORMAT, "In");
 
                     state = State.CUSTOM_TRANSITION_IN;
 

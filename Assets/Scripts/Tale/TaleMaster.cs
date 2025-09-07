@@ -73,7 +73,7 @@ public class TaleMaster : MonoBehaviour
     {
         string path = "SceneSelector";
 
-        if (SceneManager.GetSceneByPath(TaleUtil.Path.NormalizeAssetPath(TaleUtil.Config.Setup.ASSET_ROOT_SCENE, path)) == null)
+        if (SceneManager.GetSceneByPath(TaleUtil.Path.NormalizeAssetPath(TaleUtil.Config.Editor.ASSET_ROOT_SCENE, path)) == null)
         {
             return;
         }

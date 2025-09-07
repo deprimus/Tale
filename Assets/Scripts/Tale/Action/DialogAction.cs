@@ -217,8 +217,8 @@ namespace TaleUtil
             if (!Props.dialog.animator.HasStates(
                 "Dialog",
                 "Canvas animator doesn't have a state named {0} (this is needed for Tale)",
-                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_STATE_IN,
-                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_STATE_OUT
+                TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_IN,
+                TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_OUT
             ))
             {
                 return false;
@@ -227,9 +227,9 @@ namespace TaleUtil
             if (!Props.dialog.animator.HasTriggers(
                 "Dialog",
                 "Canvas animator doesn't have a trigger named {0} (this is needed for Tale)",
-                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN,
-                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT,
-                TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL
+                TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN,
+                TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT,
+                TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL
             ))
             {
                 return false;
@@ -248,8 +248,8 @@ namespace TaleUtil
             if (!Props.dialog.avatarAnimator.HasStates(
                 "Dialog",
                 "Avatar animator doesn't have a state named {0} (this is needed for Tale)",
-                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_STATE_IN,
-                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_STATE_OUT
+                TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_IN,
+                TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_OUT
             ))
             {
                 return false;
@@ -258,9 +258,9 @@ namespace TaleUtil
             if (!Props.dialog.avatarAnimator.HasTriggers(
                 "Dialog",
                 "Avatar animator doesn't have a trigger named {0} (this is needed for Tale)",
-                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN,
-                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_OUT,
-                TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL
+                TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN,
+                TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_OUT,
+                TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL
             ))
             {
                 return false;
@@ -292,14 +292,14 @@ namespace TaleUtil
         }
 
         bool ActivateCanvasAnimationIn() =>
-            ActivateCanvasAnimation(TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN);
+            ActivateCanvasAnimation(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN);
         bool ActivateCanvasAnimationOut() =>
-            ActivateCanvasAnimation(TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT);
+            ActivateCanvasAnimation(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_OUT);
 
         bool ActivateAvatarAnimationIn() =>
-            ActivateAvatarAnimation(TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN);
+            ActivateAvatarAnimation(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN);
         bool ActivateAvatarAnimationOut() =>
-            ActivateAvatarAnimation(TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_OUT);
+            ActivateAvatarAnimation(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_OUT);
 
         void ActivateCanvasAnimationNeutral()
         {
@@ -309,7 +309,7 @@ namespace TaleUtil
                 {
                     case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_TEXT:
                     case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_TEXT:
-                        Props.dialog.animator.SetTrigger(TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
+                        Props.dialog.animator.SetTrigger(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
                         break;
                     default:
                         break;
@@ -325,7 +325,7 @@ namespace TaleUtil
                 {
                     case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_TEXT:
                     case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_TEXT:
-                        Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
+                        Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
                         break;
                     default:
                         break;
@@ -547,8 +547,8 @@ namespace TaleUtil
                         }
                     }
 
-                    screenToWorldUnitX = ((float) Screen.width) / TaleUtil.Config.Setup.REFERENCE_WIDTH;
-                    screenToWorldUnitY = ((float) Screen.height) / TaleUtil.Config.Setup.REFERENCE_HEIGHT;
+                    screenToWorldUnitX = ((float) Screen.width) / TaleUtil.Config.Editor.REFERENCE_WIDTH;
+                    screenToWorldUnitY = ((float) Screen.height) / TaleUtil.Config.Editor.REFERENCE_HEIGHT;
 
                     if (avatar != null)
                     {
@@ -574,13 +574,13 @@ namespace TaleUtil
                         Props.dialog.animator.speed = Tale.config.TRANSITION_SKIP_SPEED;
                     }
 
-                    if(!Props.dialog.animator.StateFinished(TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_STATE_IN))
+                    if(!Props.dialog.animator.StateFinished(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_IN))
                     {
                         break;
                     }
 
                     Props.dialog.animator.speed = 1f;
-                    Props.dialog.animator.SetTrigger(TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
+                    Props.dialog.animator.SetTrigger(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
 
                     if (Props.dialog.avatarAnimator == null)
                     {
@@ -633,11 +633,11 @@ namespace TaleUtil
                         Props.dialog.avatarAnimator.speed = Tale.config.TRANSITION_SKIP_SPEED;
                     }
 
-                    if (!Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_STATE_IN))
+                    if (!Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_IN))
                         break;
 
                     Props.dialog.avatarAnimator.speed = 1f;
-                    Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
+                    Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
 
                     if(Props.dialog.animator == null)
                     {
@@ -961,13 +961,13 @@ namespace TaleUtil
                         Props.dialog.animator.speed = Tale.config.TRANSITION_SKIP_SPEED;
                     }
 
-                    if(!Props.dialog.animator.StateFinished(TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_STATE_OUT))
+                    if(!Props.dialog.animator.StateFinished(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_OUT))
                     {
                         break;
                     }
 
                     Props.dialog.animator.speed = 1f;
-                    Props.dialog.animator.SetTrigger(TaleUtil.Config.Setup.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
+                    Props.dialog.animator.SetTrigger(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
 
                     if(Props.dialog.avatarAnimator == null)
                     {
@@ -1016,13 +1016,13 @@ namespace TaleUtil
                         Props.dialog.avatarAnimator.speed = Tale.config.TRANSITION_SKIP_SPEED;
                     }
 
-                    if (!Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_STATE_OUT))
+                    if (!Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_OUT))
                     {
                         break;
                     }
 
                     Props.dialog.avatarAnimator.speed = 1f;
-                    Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Setup.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
+                    Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
 
                     switch (Tale.config.DIALOG_ANIMATION_OUT_MODE)
                     {
