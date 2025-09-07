@@ -157,6 +157,11 @@ namespace TaleUtil
                             SetupCreateSplashScene();
                         }
 
+                        if (!advancedMode || setupSceneSelector)
+                        {
+                            SetupSceneSelector();
+                        }
+
                         Close();
                     }
                 }
