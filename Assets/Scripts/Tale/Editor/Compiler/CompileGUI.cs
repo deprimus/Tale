@@ -23,13 +23,10 @@ namespace TaleUtil
 
             void OnGUI()
             {
-                float logoWidth = position.width - 2 * 50f;
-                float logoHeight = logoWidth / 2.31f; // Tale logo aspect ratio: 2.31
+                DrawTaleLogo(position);
 
-                EditorGUI.DrawRect(new Rect(0f, 0f, position.width, logoHeight + 5f), Color.black);
-                GUI.DrawTexture(new Rect(50f, 0f, logoWidth, logoHeight), AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/Tale/Logo.png"), ScaleMode.ScaleToFit);
-
-                GUILayout.Space(logoHeight + 10f);
+                minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 230f + GUI_EXTRA_HEIGHT);
+                maxSize = new Vector2(minSize.x + 0.001f, minSize.y + 0.001f); // Unity ignores maxSize if it's exactly the same as minSize
 
                 if (labelStyle == null)
                 {

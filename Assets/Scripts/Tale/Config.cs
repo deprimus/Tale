@@ -95,7 +95,7 @@ namespace TaleUtil
 #if UNITY_EDITOR
         [Rename("Auto Delay")]
 #endif
-        public float DIALOG_AUTO_DELAY = 3f; // How many seconds until dialog auto-advances in auto mode
+        public float DIALOG_AUTO_DELAY = 1f; // How many seconds until dialog auto-advances in auto mode
 
 #if UNITY_EDITOR
         [Rename("Additive Separator")]

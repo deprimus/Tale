@@ -26,7 +26,11 @@ namespace TaleUtil
 
             GameObject master = new GameObject("Tale Master", typeof(TaleMaster));
 
-            if (!File.Exists(TALE_CONFIG_PATH))
+            if (File.Exists(TALE_CONFIG_PATH))
+            {
+                Log.Warning("Tale Config already exists; if you want to regenerate it, delete the config at " + TALE_CONFIG_PATH);
+            }
+            else
             {
                 AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<TaleUtil.Config>(), TALE_CONFIG_PATH);
             }
