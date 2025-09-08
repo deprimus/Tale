@@ -2,11 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements;
 
 namespace TaleUtil
 {
     public partial class Editor
     {
+#if UNITY_6000_0_OR_NEWER
+        const float GUI_EXTRA_WIDTH = 10f;
+        const float GUI_EXTRA_HEIGHT = 9f;
+#else
+        const float GUI_EXTRA_WIDTH = 0f;
+        const float GUI_EXTRA_HEIGHT = 0f;
+#endif
+        const float TALE_LOGO_MAX_WIDTH = 400f;
+
+        public static void DrawTaleLogo(Rect window)
+        {
+            float logoWidth = Mathf.Min(window.width - 2 * 50f, TALE_LOGO_MAX_WIDTH);
+            float logoHeight = logoWidth / 2.31f; // Tale logo aspect ratio: 2.31
+
+            float logoOffset = (window.width - logoWidth) / 2f;
+
+            EditorGUI.DrawRect(new Rect(0f, 0f, window.width, logoHeight + 5f), Color.black);
+            GUI.DrawTexture(new Rect(logoOffset, 0f, logoWidth, logoHeight), AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/Tale/Logo.png"), ScaleMode.ScaleToFit);
+
+            GUILayout.Space(logoHeight + 15f);
+        }
+
         public class RunSetupDialog : EditorWindow
         {
             bool advancedMode = false;
@@ -26,13 +49,7 @@ namespace TaleUtil
 
             void OnGUI()
             {
-                float logoWidth = position.width - 2 * 50f;
-                float logoHeight = logoWidth / 2.31f; // Tale logo aspect ratio: 2.31
-
-                EditorGUI.DrawRect(new Rect(0f, 0f, position.width, logoHeight + 5f), Color.black);
-                GUI.DrawTexture(new Rect(50f, 0f, logoWidth, logoHeight), AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/Tale/Logo.png"), ScaleMode.ScaleToFit);
-
-                GUILayout.Space(logoHeight + 10f);
+                DrawTaleLogo(position);
 
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
@@ -44,7 +61,7 @@ namespace TaleUtil
 
                 if (advancedMode)
                 {
-                    minSize = new Vector2(400f, 365f);
+                    minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 370f + GUI_EXTRA_HEIGHT);
 
                     GUILayout.Space(10f);
 
@@ -71,7 +88,7 @@ namespace TaleUtil
 
                     BeginLine();
                     {
-                        EditorGUILayout.LabelField("Modules", customSetupCategoryStyle, GUILayout.Width(62));
+                        EditorGUILayout.LabelField("Modules", customSetupCategoryStyle, GUILayout.Width(62 + GUI_EXTRA_WIDTH));
                         GUILayout.FlexibleSpace();
                         EditorGUILayout.LabelField("Options", customSetupCategoryStyle, GUILayout.Width(57));
                     }
@@ -79,19 +96,19 @@ namespace TaleUtil
 
                     BeginLine();
                     {
-                        setupDialog = EditorGUILayout.ToggleLeft("Dialog", setupDialog, GUILayout.Width(55));
+                        setupDialog = EditorGUILayout.ToggleLeft("Dialog", setupDialog, GUILayout.Width(55 + GUI_EXTRA_WIDTH));
                         GUILayout.FlexibleSpace();
 
-                        setupSplashScene = EditorGUILayout.ToggleLeft("Splash scene", setupSplashScene, GUILayout.Width(95));
+                        setupSplashScene = EditorGUILayout.ToggleLeft("Splash scene", setupSplashScene, GUILayout.Width(95 + GUI_EXTRA_WIDTH));
                     }
                     EndLine();
 
                     BeginLine();
                     {
-                        setupAudio = EditorGUILayout.ToggleLeft("Audio", setupAudio, GUILayout.Width(80));
+                        setupAudio = EditorGUILayout.ToggleLeft("Audio", setupAudio, GUILayout.Width(80 + GUI_EXTRA_WIDTH));
                         GUILayout.FlexibleSpace();
 
-                        setupSceneSelector = EditorGUILayout.ToggleLeft("Scene selector", setupSplashScene, GUILayout.Width(95));
+                        setupSceneSelector = EditorGUILayout.ToggleLeft("Scene selector", setupSplashScene, GUILayout.Width(95 + GUI_EXTRA_WIDTH));
                     }
                     EndLine();
 
@@ -120,10 +137,10 @@ namespace TaleUtil
                 }
                 else
                 {
-                    minSize = new Vector2(400f, 205f);
+                    minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 210f + GUI_EXTRA_HEIGHT);
                 }
 
-                maxSize = minSize;
+                maxSize = new Vector2(minSize.x + 0.001f, minSize.y + 0.001f); // Unity ignores maxSize if it's exactly the same as minSize
 
                 EditorGUILayout.Space(5f);
 
@@ -157,6 +174,11 @@ namespace TaleUtil
                             SetupCreateSplashScene();
                         }
 
+                        if (!advancedMode || setupSceneSelector)
+                        {
+                            SetupSceneSelector();
+                        }
+
                         Close();
                     }
                 }
@@ -165,12 +187,12 @@ namespace TaleUtil
             void BeginLine()
             {
                 EditorGUILayout.BeginHorizontal();
-                GUILayout.Space(30f);
+                GUILayout.Space(30f + GUI_EXTRA_WIDTH / 2f);
             }
 
             void EndLine()
             {
-                GUILayout.Space(30f);
+                GUILayout.Space(30f + GUI_EXTRA_WIDTH / 2f);
                 EditorGUILayout.EndHorizontal();
             }
         }
@@ -182,13 +204,10 @@ namespace TaleUtil
 
             void OnGUI()
             {
-                float logoWidth = position.width - 2 * 50f;
-                float logoHeight = logoWidth / 2.31f; // Tale logo aspect ratio: 2.31
+                DrawTaleLogo(position);
 
-                EditorGUI.DrawRect(new Rect(0f, 0f, position.width, logoHeight + 5f), Color.black);
-                GUI.DrawTexture(new Rect(50f, 0f, logoWidth, logoHeight), AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/Tale/Logo.png"), ScaleMode.ScaleToFit);
-
-                GUILayout.Space(logoHeight + 15f);
+                minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 203f + GUI_EXTRA_HEIGHT);
+                maxSize = new Vector2(minSize.x + 0.001f, minSize.y + 0.001f); // Unity ignores maxSize if it's exactly the same as minSize
 
                 name = EditorGUILayout.TextField("Transition Name:", name);
 
@@ -228,13 +247,10 @@ namespace TaleUtil
 
             void OnGUI()
             {
-                float logoWidth = position.width - 2 * 50f;
-                float logoHeight = logoWidth / 2.31f; // Tale logo aspect ratio: 2.31
+                DrawTaleLogo(position);
 
-                EditorGUI.DrawRect(new Rect(0f, 0f, position.width, logoHeight + 5f), Color.black);
-                GUI.DrawTexture(new Rect(50f, 0f, logoWidth, logoHeight), AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/Tale/Logo.png"), ScaleMode.ScaleToFit);
-
-                GUILayout.Space(logoHeight + 10f);
+                minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 321f + GUI_EXTRA_HEIGHT + 21f * (soundVariants != null ? soundVariants.Count : 0f));
+                maxSize = new Vector2(minSize.x + 0.001f, minSize.y + 0.001f); // Unity ignores maxSize if it's exactly the same as minSize
 
                 name = EditorGUILayout.TextField("Splash Scene name:", name);
 
@@ -272,7 +288,6 @@ namespace TaleUtil
                             if (GUILayout.Button("Remove", GUILayout.Width(65f)))
                             {
                                 soundVariants.RemoveAt(i);
-                                continue;
                             }
                         }
                         EditorGUILayout.EndHorizontal();
@@ -282,8 +297,6 @@ namespace TaleUtil
                 }
 
                 EditorGUI.indentLevel--;
-
-                minSize = new Vector2(minSize.x, 315f + 21 * (soundVariants != null ? soundVariants.Count : 0));
 
                 EditorGUILayout.Space(5);
 

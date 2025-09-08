@@ -70,21 +70,7 @@ namespace TaleUtil
         [MenuItem("Tale/Scene Selector/Create Scene Selector", priority = 30)]
         static void SetupCreateSceneSelector()
         {
-            string scenePath = System.IO.Path.Combine("Assets", Config.Setup.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/');
-
-            if (File.Exists(scenePath))
-            {
-                EditorUtility.DisplayDialog("Scene Selector already created", "Scene Selector scene already exists.\n\nIf you want to regenerate it, delete the scene at:\n\n" + scenePath, "Ok");
-                return;
-            }
-
-            if (File.Exists(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH))
-            {
-                EditorUtility.DisplayDialog("Scene Selector already created", "Scene Selector item prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH, "Ok");
-                return;
-            }
-
-            SetupSceneSelector(scenePath);
+            SetupSceneSelector();
         }
 
         [MenuItem("Tale/Scene Selector/Auto-Generate Scene Thumbnails", priority = 31)]

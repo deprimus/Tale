@@ -35,6 +35,7 @@ Here's what Tale currently provides:
   - Exec, for custom code that runs on the Tale queue
   - Repeat and Delay, for managing other actions
   - Multiplex and Parallel, for orchestrating many actions at the same time
+- **Scene Selector**, with auto-generated or custom scene thumbnails
 - **Editor Macros**, for setting up Tale and adding new props as easily as possible
 - **Script Compiler**, for easily generating Tale code from story scripts
 

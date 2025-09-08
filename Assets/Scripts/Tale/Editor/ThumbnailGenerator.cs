@@ -18,7 +18,7 @@ namespace TaleUtil
             string filename = path.Replace('/', '_');
             filename = System.IO.Path.GetFileNameWithoutExtension(filename);
 
-            return System.IO.Path.Combine("Assets/Resources", Config.Setup.ASSET_ROOT_SCENE_THUMBNAIL, filename + ".png").Replace('\\', '/');
+            return System.IO.Path.Combine("Assets/Resources", Config.Editor.ASSET_ROOT_SCENE_THUMBNAIL, filename + ".png").Replace('\\', '/');
         }
 
 #if UNITY_EDITOR
@@ -54,8 +54,8 @@ namespace TaleUtil
 
             string path = GetThumbnailPathForScenePath(SceneManager.GetActiveScene().path);
 
-            int width = Config.Setup.SCENE_THUMBNAIL_WIDTH;
-            int height = Config.Setup.SCENE_THUMBNAIL_HEIGHT;
+            int width = Config.Editor.SCENE_THUMBNAIL_WIDTH;
+            int height = Config.Editor.SCENE_THUMBNAIL_HEIGHT;
 
             RenderTexture captured = new RenderTexture(Screen.width, Screen.height, 24);
 

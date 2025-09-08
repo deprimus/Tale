@@ -93,7 +93,7 @@ namespace TaleUtil
                     continue; // Deleted scene, but still in build settings
                 }
 
-                if (path == System.IO.Path.Combine("Assets", Config.Setup.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/'))
+                if (path == System.IO.Path.Combine("Assets", Config.Editor.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/'))
                 {
                     continue; // Ignore scene selector
                 }
@@ -142,7 +142,7 @@ namespace TaleUtil
         {
             var currentScenePath = EditorSceneManager.GetActiveScene().path;
 
-            var scenePath = System.IO.Path.Combine("Assets", Config.Setup.ASSET_ROOT_SCENE, "Splash", string.Format("{0}.unity", name)).Replace('\\', '/');
+            var scenePath = System.IO.Path.Combine("Assets", Config.Editor.ASSET_ROOT_SCENE, "Splash", string.Format("{0}.unity", name)).Replace('\\', '/');
 
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(scenePath));
 
@@ -174,13 +174,13 @@ namespace TaleUtil
             {
                 // width > height
                 // resize based on width
-                factor = (0.6f * TaleUtil.Config.Setup.REFERENCE_WIDTH) / logo.bounds.size.x;
+                factor = (0.6f * TaleUtil.Config.Editor.REFERENCE_WIDTH) / logo.bounds.size.x;
             }
             else
             {
                 // height > width
                 // resize based on height
-                factor = (0.6f * TaleUtil.Config.Setup.REFERENCE_HEIGHT) / logo.bounds.size.y;
+                factor = (0.6f * TaleUtil.Config.Editor.REFERENCE_HEIGHT) / logo.bounds.size.y;
             }
 
             tform.sizeDelta = new Vector2(factor * logo.bounds.size.x, factor * logo.bounds.size.y);
@@ -322,7 +322,7 @@ namespace TaleUtil
             TaleMaster tale = master.GetComponent<TaleMaster>();
 
             // Fade
-            GameObject canvas = CreateCanvas(string.Format("Transition {0} Canvas", name), TaleUtil.Config.Setup.TRANSITION_SORT_ORDER);
+            GameObject canvas = CreateCanvas(string.Format("Transition {0} Canvas", name), TaleUtil.Config.Editor.TRANSITION_SORT_ORDER);
             GameObjectUtility.SetParentAndAlign(canvas, master);
 
             Animator anim = AddAnimator(canvas);
@@ -334,11 +334,11 @@ namespace TaleUtil
             GameObjectUtility.SetParentAndAlign(darkness, canvas);
 
             CreateCompleteTriangleAnimator(anim, string.Format("Transition{0}", name),
-                string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_STATE_FORMAT, "In"),
-                string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_STATE_FORMAT, "Out"),
-                string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "In"),
-                string.Format(TaleUtil.Config.Setup.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "Out"),
-                TaleUtil.Config.Setup.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL,
+                string.Format(TaleUtil.Config.Editor.TRANSITION_ANIMATOR_STATE_FORMAT, "In"),
+                string.Format(TaleUtil.Config.Editor.TRANSITION_ANIMATOR_STATE_FORMAT, "Out"),
+                string.Format(TaleUtil.Config.Editor.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "In"),
+                string.Format(TaleUtil.Config.Editor.TRANSITION_ANIMATOR_TRIGGER_FORMAT, "Out"),
+                TaleUtil.Config.Editor.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL,
                 "Darkness", typeof(Image), "m_Color.a",
                 AnimationCurve.Linear(0f, 1f, 1f, 0f),
                 AnimationCurve.Linear(0f, 0f, 1f, 1f));
@@ -517,7 +517,7 @@ namespace TaleUtil
 
             CanvasScaler scaler = obj.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(TaleUtil.Config.Setup.REFERENCE_WIDTH, TaleUtil.Config.Setup.REFERENCE_HEIGHT);
+            scaler.referenceResolution = new Vector2(TaleUtil.Config.Editor.REFERENCE_WIDTH, TaleUtil.Config.Editor.REFERENCE_HEIGHT);
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             scaler.referencePixelsPerUnit = 100;
 
