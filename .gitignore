@@ -2,7 +2,6 @@ _dist/
 Logs/
 Temp/
 Library/
-*.meta
 
 ExportedObj/
 obj/
