@@ -24,6 +24,7 @@ namespace TaleUtil
             WRITE,
             WAIT_FOR_INPUT_OVERRIDE,
             WAIT_FOR_INPUT_ADDITIVE,
+            WAIT_FOR_ACTION,
             END_WRITE,
 
             AVATAR_TRANSITION_OUT,
@@ -41,6 +42,8 @@ namespace TaleUtil
 
         bool loopVoice;
         bool reverb;
+
+        TaleUtil.Action action;
 
         public Type type;
         public State state;
@@ -60,7 +63,7 @@ namespace TaleUtil
 
         DialogAction() { }
 
-        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb)
+        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb, TaleUtil.Action action)
         {
             if (content != null)
             {
@@ -122,6 +125,12 @@ namespace TaleUtil
             this.voice = voice;
             this.loopVoice = loopVoice;
             this.reverb = reverb;
+            this.action = action;
+
+            if (this.action != null)
+            {
+                TaleUtil.Queue.RemoveLast(this.action);
+            }
 
             type = additive ? Type.ADDITIVE : Type.OVERRIDE;
             ChangeState(State.SETUP);
@@ -378,6 +387,7 @@ namespace TaleUtil
             clone.index = index;
             clone.timePerChar = timePerChar;
             clone.clock = clock;
+            clone.action = action.Clone();
 
             return clone;
         }
@@ -741,6 +751,15 @@ namespace TaleUtil
                             Props.audio.voice.loop = false;
                         }
 
+                        clock = 0f;
+
+                        if (action != null)
+                        {
+                            // Run the custom action; don't wait for user input and don't show CTC
+                            ChangeState(State.WAIT_FOR_ACTION);
+                            break;
+                        }
+
                         // If an additive dialog action follows this one,
                         // use the additive CTC
                         var nextDialog = GetNextDialogAction(Queue.FetchNext());
@@ -777,8 +796,6 @@ namespace TaleUtil
 
                             ChangeState(State.WAIT_FOR_INPUT_OVERRIDE);
                         }
-
-                        clock = 0f;
                     }
 
                     break;
@@ -825,6 +842,15 @@ namespace TaleUtil
                         // set the neutral trigger so that the animators return to the idle state.
                         ActivateCanvasAnimationNeutral();
                         ActivateAvatarAnimationNeutral();
+                    }
+
+                    break;
+                }
+                case State.WAIT_FOR_ACTION:
+                {
+                    if (action.Run())
+                    {
+                        state = State.END_WRITE;
                     }
 
                     break;

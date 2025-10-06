@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using TMPro;
+using System.Linq;
 
 #if UNITY_POST_PROCESSING_STACK_V2
 using UnityEngine.Rendering.PostProcessing;
@@ -16,6 +17,7 @@ namespace TaleUtil
         public static Camera camera;
         public static Dialog dialog;
         public static Audio audio;
+        public static Choice choice;
         public static Cinematic cinematic;
 
 #if UNITY_POST_PROCESSING_STACK_V2
@@ -33,6 +35,7 @@ namespace TaleUtil
             transitions          = new Transitions(props.transitions);
             dialog               = new Dialog(props.dialogCanvas, props.dialogActor, props.dialogContent, props.dialogAvatar, props.dialogAnimator, props.dialogCtc, props.dialogActc);
             audio                = new Audio(props.audioGroup, props.audioSoundGroup, props.audioSound, props.audioMusic, props.audioVoice);
+            choice               = new Choice(props.choiceContainer, props.choiceStyles);
             cinematic            = new Cinematic(props.cinematicCanvas, props.cinematicSubtitles, props.cinematicSubtitlesBackground, props.cinematicSubtitlesGroup);
             cinematic.background = new CinematicBackground(props.cinematicBackgroundGroupAnimator, props.cinematicBackground, props.cinematicBackgroundAlt);
             cinematic.video      = new CinematicVideo(props.cinematicVideoGroup, props.cinematicVideoPlayer, props.cinematicVideoAudioSource);
@@ -305,6 +308,57 @@ namespace TaleUtil
                     voice.Stop();
                 }
             }
+        }
+
+        public class Choice
+        {
+            public Transform container;
+            public ChoiceStyles styles;
+
+            public Choice(Transform container, ChoiceStyle[] styles)
+            {
+                this.container = container;
+                this.styles = new ChoiceStyles(styles);
+            }
+        }
+
+        public class ChoiceStyles
+        {
+            public Dictionary<string, GameObject> entries;
+
+            public ChoiceStyles(ChoiceStyle[] styles)
+            {
+                entries = new Dictionary<string, GameObject>();
+
+                if (styles == null)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < styles.Length; ++i)
+                {
+                    if (styles[i].prefab == null)
+                    {
+                        Warning(string.Format("Prefab is null for choice style '{0}'; the entry will be ignored", styles[i].name));
+                    }
+                    else
+                    {
+                        entries[styles[i].name.ToLowerInvariant()] = styles[i].prefab;
+                    }
+                }
+
+                if (styles.Length != entries.Count)
+                {
+                    Warning("Two or more choice styles with same name exist; in these cases, the last one is kept");
+                }
+            }
+        }
+
+        [System.Serializable]
+        public class ChoiceStyle
+        {
+            public string name;
+            public GameObject prefab;
         }
 
         public class Cinematic

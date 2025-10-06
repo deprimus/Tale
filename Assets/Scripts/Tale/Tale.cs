@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using TaleUtil;
 
-public static class Tale
+public static partial class Tale
 {
     // Whether or not the TaleMaster object is alive (initially false).
     public static bool alive = false;
@@ -106,8 +106,8 @@ public static class Tale
     public static TaleUtil.Action Scene(string path) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(TaleUtil.Path.NormalizeAssetPath(Config.Editor.ASSET_ROOT_SCENE, path)));
 
-    public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb));
+    public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false, TaleUtil.Action action = null) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, action));
 
     public static TaleUtil.Action TransitionIn(float duration = Tale.Default.FLOAT) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.TransitionAction(null, TransitionAction.Type.IN, duration));
@@ -141,6 +141,9 @@ public static class Tale
 
     public static TaleUtil.Action Exec(TaleUtil.Delegates.ShallowDelegate action) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.ExecAction(action));
+
+    public static TaleUtil.Action Branch(string flag, TaleUtil.Delegates.BranchDelegate<ulong> action) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.BranchAction(flag, action));
 
     public static TaleUtil.Action Cinematic() =>
         TaleUtil.Queue.Enqueue(new TaleUtil.CinematicToggleAction());
@@ -506,6 +509,11 @@ public static class Tale
 
         public static Task ShakeYAsync(UnityEngine.Transform transform, float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             Async(ShakeY(transform, magnitude, duration, interpolation));
+    }
+
+    public static partial class Choice
+    {
+        // Functions are declared by the scripts in Scripts/Choice
     }
 
     public static class Cinema

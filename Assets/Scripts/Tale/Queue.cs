@@ -37,7 +37,7 @@ namespace TaleUtil
             // actions on their own.
             Action queueAction = FetchLast();
 
-            if(queueAction != null && action == queueAction)
+            if (queueAction != null && action == queueAction)
             {
                 data.RemoveLast();
             }
