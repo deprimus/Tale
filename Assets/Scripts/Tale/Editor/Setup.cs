@@ -434,7 +434,7 @@ namespace TaleUtil
             TaleMaster tale = master.GetComponent<TaleMaster>();
 
             foreach (var choice in tale.props.choiceStyles) {
-                GameObject.DestroyImmediate(choice.obj);
+                GameObject.DestroyImmediate(choice.obj.transform.parent.gameObject);
             }
 
             tale.props.choiceStyles = null;
