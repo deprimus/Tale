@@ -150,6 +150,7 @@ namespace TaleUtil
             text = content.AddComponent<TextMeshProUGUI>();
             text.fontSize = 38f;
             text.alignment = TextAlignmentOptions.TopLeft;
+            text.textWrappingMode = TextWrappingModes.Normal;
             text.overflowMode = TextOverflowModes.ScrollRect;
 
             tform = content.GetComponent<RectTransform>();
