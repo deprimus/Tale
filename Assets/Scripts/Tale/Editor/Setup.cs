@@ -14,74 +14,97 @@ namespace TaleUtil
 {
     public partial class Editor
     {
-        static void SetupCreateMasterObject(bool dialog = true, bool audio = true, bool transitions = true, bool choice = true, bool cinematic = true, bool debug = true)
+        static void SetupCreateMasterObject(SetupFlag dialog, SetupFlag audio, SetupFlag transitions, SetupFlag choice, SetupFlag cinematic, SetupFlag debug)
         {
-            if (File.Exists(TALE_MASTER_PREFAB_PATH))
+            GameObject master = GameObject.Find("Tale Master");
+
+            if (!master && File.Exists(TALE_MASTER_PREFAB_PATH)) {
+                master = PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH)) as GameObject;
+            }
+
+            if (!master)
             {
-                EditorUtility.DisplayDialog("Tale Master already created", "Tale Master prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_MASTER_PREFAB_PATH, "Ok");
-                return;
+                master = new GameObject("Tale Master", typeof(TaleMaster));
+
+                if (File.Exists(TALE_CONFIG_PATH)) {
+                    Log.Warning("Tale Config already exists; if you want to regenerate it, delete the config at " + TALE_CONFIG_PATH);
+                } else {
+                    AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<TaleUtil.Config>(), TALE_CONFIG_PATH);
+                }
+
+                var script = master.GetComponent<TaleMaster>();
+                script.props = new TaleMaster.InspectorProps();
+                script.config = AssetDatabase.LoadAssetAtPath<TaleUtil.Config>(TALE_CONFIG_PATH);
+
+                SetupAdvance(master);
+
+                CreateTag("TaleMaster");
+                master.tag = "TaleMaster";
             }
 
-            Scene s = EditorSceneManager.GetActiveScene();
-
-            GameObject master = new GameObject("Tale Master", typeof(TaleMaster));
-
-            if (File.Exists(TALE_CONFIG_PATH))
+            if (dialog.HasChanged())
             {
-                Log.Warning("Tale Config already exists; if you want to regenerate it, delete the config at " + TALE_CONFIG_PATH);
+                if (dialog.should) {
+                    SetupDialog(master);
+                } else {
+                    RemoveDialog(master);
+                }
             }
-            else
+
+            if (audio.HasChanged())
             {
-                AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<TaleUtil.Config>(), TALE_CONFIG_PATH);
+                if (audio.should) {
+                    SetupAudio(master);
+                } else {
+                    RemoveAudio(master);
+                }
             }
 
-            var script = master.GetComponent<TaleMaster>();
-            script.props = new TaleMaster.InspectorProps();
-            script.config = AssetDatabase.LoadAssetAtPath<TaleUtil.Config>(TALE_CONFIG_PATH);
-
-            if (dialog)
+            if (transitions.HasChanged())
             {
-                SetupDialog(master);
+                if (transitions.should) {
+                    SetupTransitions(master);
+                } else {
+                    RemoveTransitions(master);
+                }
             }
 
-            if (audio)
+            if (choice.HasChanged()) {
+                if (choice.should) {
+                    SetupChoice(master);
+                } else {
+                    RemoveChoice(master);
+                }
+            }
+
+            if (cinematic.HasChanged())
             {
-                SetupAudio(master);
+                if (cinematic.should) {
+                    SetupCinematic(master);
+                } else {
+                    RemoveCinematic(master);
+                }
             }
 
-            SetupAdvance(master);
-
-            if (transitions)
+            if (debug.HasChanged())
             {
-                SetupTransitions(master);
+                if (debug.should) {
+                    SetupDebug(master);
+                } else {
+                    RemoveDebug(master);
+                }
             }
 
-            if (choice) {
-                SetupChoice(master);
-            }
-
-            if (cinematic)
-            {
-                SetupCinematic(master);
-            }
-
-            if (debug)
-            {
-                SetupDebug(master);
-            }
-
-            CreateTag("TaleMaster");
-            master.tag = "TaleMaster";
-
-            Undo.RegisterCreatedObjectUndo(master, "Create " + master.name);
+            Undo.RegisterCreatedObjectUndo(master, "Set up " + master.name);
             Selection.activeGameObject = master;
 
-            CreatePrefab(master, TALE_MASTER_PREFAB_PATH);
-
-            if (s.path != null && s.path.Length > 0)
-            {
-                EditorSceneManager.SaveScene(s, s.path);
+            if (File.Exists(TALE_MASTER_PREFAB_PATH)) {
+                PrefabUtility.ApplyPrefabInstance(master, InteractionMode.UserAction);
+            } else {
+                CreatePrefab(master, TALE_MASTER_PREFAB_PATH);
             }
+
+            SaveCurrentScene();
         }
 
         static void SetupDialog(GameObject master)
@@ -234,6 +257,20 @@ namespace TaleUtil
             tale.props.dialogActc = actc;
         }
 
+        static void RemoveDialog(GameObject master) {
+            TaleMaster tale = master.GetComponent<TaleMaster>();
+
+            GameObject.DestroyImmediate(tale.props.dialogCanvas.gameObject);
+
+            tale.props.dialogCanvas = null;
+            tale.props.dialogAnimator = null;
+            tale.props.dialogAvatar = null;
+            tale.props.dialogActor = null;
+            tale.props.dialogContent = null;
+            tale.props.dialogCtc = null;
+            tale.props.dialogActc = null;
+        }
+
         static void SetupAudio(GameObject master)
         {
             TaleMaster tale = master.GetComponent<TaleMaster>();
@@ -276,6 +313,18 @@ namespace TaleUtil
             tale.props.audioVoice = voice.GetComponent<AudioSource>();
         }
 
+        static void RemoveAudio(GameObject master) {
+            TaleMaster tale = master.GetComponent<TaleMaster>();
+
+            GameObject.DestroyImmediate(tale.props.audioGroup);
+
+            tale.props.audioGroup = null;
+            tale.props.audioSoundGroup = null;
+            tale.props.audioSound = null;
+            tale.props.audioMusic = null;
+            tale.props.audioVoice = null;
+        }
+
         static void SetupAdvance(GameObject master)
         {
             TaleMaster tale = master.GetComponent<TaleMaster>();
@@ -291,6 +340,16 @@ namespace TaleUtil
         static void SetupTransitions(GameObject master)
         {
             CreateTaleTransition(master, "Fade");
+        }
+
+        static void RemoveTransitions(GameObject master) {
+            TaleMaster tale = master.GetComponent<TaleMaster>();
+
+            foreach (var transition in tale.props.transitions) {
+                GameObject.DestroyImmediate(transition.data.canvas);
+            }
+
+            tale.props.transitions = null;
         }
 
         static void SetupChoice(GameObject master) {
@@ -371,6 +430,16 @@ namespace TaleUtil
             style.obj = canvas;
         }
 
+        static void RemoveChoice(GameObject master) {
+            TaleMaster tale = master.GetComponent<TaleMaster>();
+
+            foreach (var choice in tale.props.choiceStyles) {
+                GameObject.DestroyImmediate(choice.obj.transform.parent.gameObject);
+            }
+
+            tale.props.choiceStyles = null;
+        }
+
         static void SetupCinematic(GameObject master)
         {
             TaleMaster tale = master.GetComponent<TaleMaster>();
@@ -419,7 +488,7 @@ namespace TaleUtil
             string file = "VideoRenderTexture.renderTexture";
 
             Directory.CreateDirectory(dir);
-            AssetDatabase.CreateAsset(texture, Path.NormalizeAssetPath(dir, file, true));
+            AssetDatabase.CreateAsset(texture, Path.NormalizeResourcePath(dir, file, true));
 
             GameObject video = new GameObject("Video Player");
             GameObjectUtility.SetParentAndAlign(video, group);
@@ -477,6 +546,14 @@ namespace TaleUtil
             tform.anchoredPosition = new Vector2(0f, -300f);
         }
 
+        static void RemoveCinematic(GameObject master) {
+            TaleMaster tale = master.GetComponent<TaleMaster>();
+
+            GameObject.DestroyImmediate(tale.props.cinematicCanvas);
+
+            tale.props.cinematicCanvas = null;
+        }
+
         static void SetupDebug(GameObject master)
         {
             TaleMaster tale = master.GetComponent<TaleMaster>();
@@ -501,9 +578,25 @@ namespace TaleUtil
             tale.props.debugMaster = debugMaster;
         }
 
-        static void SetupTaleSplashScene()
+        static void RemoveDebug(GameObject master) {
+            TaleMaster tale = master.GetComponent<TaleMaster>();
+
+            GameObject.DestroyImmediate(tale.props.debugMaster.gameObject);
+
+            tale.props.debugMaster = null;
+        }
+
+        static void SetupTaleSplashScene(SetupFlag setup)
         {
-            CreateSplashScene("Tale", Resources.Load<Sprite>("Tale/Logo"), new List<AudioClip> { Resources.Load<AudioClip>("Tale/Splash") }, 0);
+            if (!setup.HasChanged()) {
+                return;
+            }
+
+            if (setup.should) {
+                CreateSplashScene("Tale", Resources.Load<Sprite>("Tale/Logo"), new List<AudioClip> { Resources.Load<AudioClip>("Tale/Splash") }, 0);
+            } else {
+                DeleteScene(GetSplashScenePath("Tale"), true);
+            }
         }
 
         static void SetupSceneSelectorItemPrefab()
@@ -587,216 +680,36 @@ namespace TaleUtil
             CreatePrefab(obj, TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH);
         }
 
-        static void SetupSceneSelector(int buildIndex = -1)
+        static void SetupSceneSelector(SetupFlag setup, int buildIndex = -1)
         {
+            if (!setup.HasChanged()) {
+                return;
+            }
+
             string scenePath = System.IO.Path.Combine("Assets", Config.Editor.ASSET_ROOT_SCENE, "SceneSelector.unity").Replace('\\', '/');
 
-            if (File.Exists(scenePath))
-            {
-                EditorUtility.DisplayDialog("Scene Selector already created", "Scene Selector scene already exists.\n\nIf you want to regenerate it, delete the scene at:\n\n" + scenePath, "Ok");
-                return;
+            if (setup.should) {
+                CreateSceneSelector(scenePath, buildIndex);
+            } else {
+                DeleteSceneSelector(scenePath);
+            }
+        }
+
+        public static void CleanTale() {
+            SetupTaleSplashScene(false);
+            SetupSceneSelector(false);
+
+            var master = GameObject.Find("Tale Master");
+            if (master != null) {
+                GameObject.DestroyImmediate(master);
             }
 
-            if (File.Exists(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH))
-            {
-                EditorUtility.DisplayDialog("Scene Selector already created", "Scene Selector item prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH, "Ok");
-                return;
+            if (System.IO.File.Exists(TALE_MASTER_PREFAB_PATH)) {
+                DeleteAsset(TALE_MASTER_PREFAB_PATH, true);
             }
 
-            var currentScenePath = EditorSceneManager.GetActiveScene().path;
-
-            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(scenePath));
-
-            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-            EditorSceneManager.SaveScene(scene, scenePath);
-
-            scene = EditorSceneManager.OpenScene(scene.path, OpenSceneMode.Single);
-
-            SetupSceneSelectorItemPrefab();
-
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH));
-
-            var canvas = CreateCanvas("Canvas", 0, true);
-
-            var selector = canvas.AddComponent<SceneSelectorMaster>();
-            selector.sceneItemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH);
-
-            var bg = CreateDarkness("Background");
-            GameObjectUtility.SetParentAndAlign(bg, canvas);
-
-            var title = new GameObject("Title");
-            GameObjectUtility.SetParentAndAlign(title, canvas);
-
-            TextMeshProUGUI text = title.AddComponent<TextMeshProUGUI>();
-            text.text = "Scenes";
-            text.fontSize = 96;
-            text.alignment = TextAlignmentOptions.Center;
-            text.color = Color.white;
-
-            var tform = title.GetComponent<RectTransform>();
-            tform.anchorMin = new Vector2(0.5f, 0.5f);
-            tform.anchorMax = new Vector2(0.5f, 0.5f);
-            tform.pivot = new Vector2(0.5f, 0.5f);
-            tform.anchoredPosition = new Vector2(0f, 426f);
-            tform.sizeDelta = new Vector2(350f, 110f);
-
-            var group = new GameObject("Scenes Group");
-            GameObjectUtility.SetParentAndAlign(group, canvas);
-
-            group.AddComponent<RectTransform>();
-
-            var scroll = new GameObject("Scroll");
-            GameObjectUtility.SetParentAndAlign(scroll, group);
-
-            tform = scroll.AddComponent<RectTransform>();
-            tform.anchorMin = new Vector2(0f, 0f);
-            tform.anchorMax = new Vector2(1f, 0f);
-            tform.pivot = new Vector2(0.5f, 0.5f);
-            tform.anchoredPosition = new Vector2(0f, 50f);
-            tform.sizeDelta = new Vector2(1420f, 574f);
-
-            var rect = scroll.AddComponent<ScrollRect>();
-            rect.horizontal = false;
-            rect.vertical = true;
-            rect.movementType = ScrollRect.MovementType.Elastic;
-            rect.elasticity = 0.05f;
-            rect.inertia = true;
-            rect.decelerationRate = 0.135f;
-            rect.scrollSensitivity = 32f;
-            rect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
-
-            var mask = scroll.AddComponent<RectMask2D>();
-            mask.padding = new Vector4(0f, 0f, 0f, -25f);
-            mask.softness = new Vector2Int(0, 50);
-
-            var viewport = new GameObject("Viewport");
-            GameObjectUtility.SetParentAndAlign(viewport, scroll);
-
-            tform = viewport.AddComponent<RectTransform>();
-            tform.anchorMin = new Vector2(0f, 0f);
-            tform.anchorMax = new Vector2(1f, 1f);
-            tform.pivot = new Vector2(0.5f, 0.5f);
-            tform.anchoredPosition = new Vector2(0f, 0f);
-            tform.sizeDelta = new Vector2(0f, 0f);
-
-            rect.viewport = tform;
-
-            var scenes = new GameObject("Scenes");
-            GameObjectUtility.SetParentAndAlign(scenes, viewport);
-
-            tform = scenes.AddComponent<RectTransform>();
-            tform.anchorMin = new Vector2(0.5f, 0.5f);
-            tform.anchorMax = new Vector2(0.5f, 0.5f);
-            tform.pivot = new Vector2(0.5f, 0.5f);
-            tform.anchoredPosition = new Vector2(0f, 0f);
-            tform.sizeDelta = new Vector2(1520f, 0f);
-
-            rect.content = tform;
-            selector.sceneItemParent = tform;
-
-            var layout = scenes.AddComponent<GridLayoutGroup>();
-            layout.padding = new RectOffset(0, 0, 0, 0);
-            layout.cellSize = new Vector2(240f, 180f);
-            layout.spacing = new Vector2(50f, 17f);
-            layout.startCorner = GridLayoutGroup.Corner.UpperLeft;
-            layout.startAxis = GridLayoutGroup.Axis.Horizontal;
-            layout.childAlignment = TextAnchor.UpperCenter;
-            layout.constraint = GridLayoutGroup.Constraint.Flexible;
-
-            var fitter = scenes.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            // TODO: Add canvas renderer?
-
-            var img = scenes.AddComponent<Image>();
-            img.color = Color.black;
-
-            var scrollbar = new GameObject("Scrollbar");
-            GameObjectUtility.SetParentAndAlign(scrollbar, group);
-
-            tform = scrollbar.AddComponent<RectTransform>();
-            tform.anchorMin = new Vector2(0.5f, 0.5f);
-            tform.anchorMax = new Vector2(0.5f, 0.5f);
-            tform.pivot = new Vector2(0.5f, 0.5f);
-            tform.anchoredPosition = new Vector2(756f, 0f);
-            tform.sizeDelta = new Vector2(5f, 574f);
-
-            var bar = scrollbar.AddComponent<Scrollbar>();
-            bar.interactable = true;
-            bar.transition = Selectable.Transition.ColorTint;
-
-            var colors = new ColorBlock();
-            colors.normalColor = Color.white;
-            colors.highlightedColor = Color.white;
-            colors.pressedColor = Color.white;
-            colors.selectedColor = Color.white;
-            colors.disabledColor = Color.white;
-            colors.colorMultiplier = 1f;
-            colors.fadeDuration = 0.1f;
-
-            bar.colors = colors;
-            bar.navigation = Navigation.defaultNavigation;
-            bar.direction = Scrollbar.Direction.BottomToTop;
-            bar.value = 0f;
-            bar.size = 1f;
-            bar.numberOfSteps = 0;
-
-            var script = scrollbar.AddComponent<SceneSelectorScrollbar>();
-            selector.scrollbar = script;
-
-            var area = new GameObject("Sliding Area");
-            GameObjectUtility.SetParentAndAlign(area, scrollbar);
-
-            tform = area.AddComponent<RectTransform>();
-            tform.anchorMin = new Vector2(0f, 0f);
-            tform.anchorMax = new Vector2(1f, 1f);
-            tform.pivot = new Vector2(0.5f, 0.5f);
-            tform.anchoredPosition = new Vector2(0f, 0f);
-            tform.sizeDelta = new Vector2(0f, 0f);
-
-            var handle = new GameObject("Handle");
-            GameObjectUtility.SetParentAndAlign(handle, area);
-
-            tform = handle.AddComponent<RectTransform>();
-            tform.anchorMin = new Vector2(0f, 0f);
-            tform.anchorMax = new Vector2(1f, 1f);
-            tform.pivot = new Vector2(0.5f, 0.5f);
-            tform.anchoredPosition = new Vector2(0f, 0f);
-            tform.sizeDelta = new Vector2(0f, 0f);
-
-            img = handle.AddComponent<Image>();
-            img.color = Color.white;
-
-            script.handleImage = img;
-            bar.targetGraphic = img;
-            bar.handleRect = tform;
-            rect.verticalScrollbar = bar;
-
-            var obj = new GameObject("Logo");
-            GameObjectUtility.SetParentAndAlign(obj, canvas);
-
-            img = obj.AddComponent<Image>();
-            img.color = Color.white;
-            img.preserveAspect = true;
-            img.sprite = Resources.Load<Sprite>("Tale/Logo");
-
-            tform = obj.GetComponent<RectTransform>();
-            tform.anchorMin = new Vector2(0.5f, 0f);
-            tform.anchorMax = new Vector2(0.5f, 0f);
-            tform.pivot = new Vector2(0.5f, 0.5f);
-            tform.anchoredPosition = new Vector2(0f, 117f);
-            tform.sizeDelta = new Vector2(396, 171f);
-
-            AddSceneToBuild(scenePath, buildIndex);
-
-            EditorSceneManager.SaveScene(scene, scenePath);
-            EditorSceneManager.SaveOpenScenes();
-
-            if (currentScenePath != null && currentScenePath.Length > 0)
-            {
-                EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
-            }
+            SaveCurrentScene();
+            AssetDatabase.Refresh();
         }
     }
 }

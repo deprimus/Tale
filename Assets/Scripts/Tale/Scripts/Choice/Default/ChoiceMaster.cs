@@ -1,6 +1,6 @@
-using TaleUtil.Scripts.Choice.Default;
 using UnityEngine;
 using TMPro;
+using TaleUtil.Scripts.Choice.Default;
 
 public static partial class Tale {
     public static partial class Choice {

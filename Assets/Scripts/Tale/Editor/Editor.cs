@@ -1,11 +1,6 @@
 #if UNITY_EDITOR
-using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEditor;
-using UnityEditor.SceneManagement;
-using UnityEngine.Rendering;
-using System.Collections;
 
 namespace TaleUtil
 {
@@ -14,14 +9,9 @@ namespace TaleUtil
         [MenuItem("Tale/Run Setup", priority = 1)]
         static void RunSetup()
         {
-            if (File.Exists(TALE_MASTER_PREFAB_PATH))
-            {
-                EditorUtility.DisplayDialog("Tale Master already created", "Tale Master prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_MASTER_PREFAB_PATH, "Ok");
-                return;
-            }
-
             RunSetupDialog dialog = EditorWindow.GetWindow<RunSetupDialog>();
             dialog.titleContent = new GUIContent("Tale - Setup");
+            dialog.Init();
             dialog.ShowPopup();
         }
 
@@ -70,7 +60,7 @@ namespace TaleUtil
         [MenuItem("Tale/Scene Selector/Create Scene Selector", priority = 30)]
         static void SetupCreateSceneSelector()
         {
-            SetupSceneSelector();
+            SetupSceneSelector(true);
         }
 
         [MenuItem("Tale/Scene Selector/Auto-Generate Scene Thumbnails", priority = 31)]
@@ -88,13 +78,16 @@ namespace TaleUtil
         [MenuItem("Tale/Debug/Create Full Master Object", priority = 50)]
         static void SetupCreateMasterObjectMenu()
         {
-            SetupCreateMasterObject();
+            SetupCreateMasterObject(true, true, true, true, true, true);
         }
 
-        [MenuItem("Tale/Debug/Create Tale Splash Scene", priority = 51)]
-        static void SetupCreateSplashScene()
-        {
-            SetupTaleSplashScene();
+        [MenuItem("Tale/Debug/Clean", priority = 51)]
+        static void SetupDeleteTalePrefabs() {
+            if (!EditorUtility.DisplayDialog("Clean Tale?", "This will delete ALL Tale prefabs and scenes.\n\nOnly the Tale config will remain untouched.\n\nAre you sure?", "Yes", "No")) {
+                return;
+            }
+
+            CleanTale();
         }
     }
 }

@@ -4,15 +4,16 @@ namespace TaleUtil
 {
     public static class Path
     {
-        public static string NormalizeAssetPath(string path, bool keepExtension = false)
-        {
-            return NormalizeAssetPath("", path, keepExtension);
-        }
-
-        // Normalizes a path to a valid Asset path.
+        // Normalizes a path to a valid runtime Asset path.
         // (removes extensions, removes prefixes such as Assets/Resources, etc).
         // Also adds a root to the path, only if the path is relative.
-        public static string NormalizeAssetPath(string root, string path, bool keepExtension = false)
+        public static string NormalizeResourcePath(string path, bool keepExtension = false)
+        {
+            return NormalizeResourcePath("", path, keepExtension);
+        }
+
+        // Also adds a root to the path, only if the path is relative.
+        public static string NormalizeResourcePath(string root, string path, bool keepExtension = false)
         {
             bool relative = true;
 
@@ -55,7 +56,7 @@ namespace TaleUtil
 
             foreach (string path in paths)
             {
-                result.Add(NormalizeAssetPath(root, path));
+                result.Add(NormalizeResourcePath(root, path));
             }
 
             return result;

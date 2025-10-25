@@ -30,7 +30,7 @@ namespace TaleUtil.Scripts
                 var path = SceneUtility.GetScenePathByBuildIndex(i);
                 var name = System.IO.Path.GetFileNameWithoutExtension(path);
 
-                if (path == SceneManager.GetActiveScene().path || (blacklist != null && blacklist.Contains(Path.NormalizeAssetPath(path))))
+                if (path == SceneManager.GetActiveScene().path || (blacklist != null && blacklist.Contains(Path.NormalizeResourcePath(path))))
                 {
                     continue; // Ignore scene selector + blacklisted
                 }
