@@ -177,8 +177,8 @@ public static class Dialog {");
                     foreach (var character in characters)
                     {
                         sw.Write(string.Format(@"
-    public static TaleUtil.Action {0}(string what, string voice = null, bool additive = false, bool reverb = false) =>
-        Tale.Dialog(""{0}"", what, null, voice != null ? Path.Combine(""{0}"", voice) : null, voice != null && voice.ToLower().EndsWith(""loop""), additive, reverb);
+    public static TaleUtil.Action {0}(string what, string voice = null, bool additive = false, bool reverb = false, bool keepOpen = false, TaleUtil.Action action = null) =>
+        Tale.Dialog(""{0}"", what, null, voice != null ? Path.Combine(""{0}"", voice) : null, voice != null && voice.ToLower().EndsWith(""loop""), additive, reverb, keepOpen, action);
 ", character));
                     }
 
