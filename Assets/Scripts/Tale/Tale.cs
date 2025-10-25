@@ -106,10 +106,10 @@ public static partial class Tale
     public static TaleUtil.Action Scene(int index = 1) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(index));
     public static TaleUtil.Action Scene(string path) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(TaleUtil.Path.NormalizeAssetPath(Config.Editor.ASSET_ROOT_SCENE, path)));
+        TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(TaleUtil.Path.NormalizeResourcePath(Config.Editor.ASSET_ROOT_SCENE, path)));
 
     public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false, bool keepOpen = false, TaleUtil.Action action = null) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, keepOpen, action));
+        TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, keepOpen, action));
 
     public static TaleUtil.Action TransitionIn(float duration = Tale.Default.FLOAT) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.TransitionAction(null, TransitionAction.Type.IN, duration));
@@ -223,10 +223,10 @@ public static partial class Tale
     public static class Sound
     {
         public static TaleUtil.Action Play(string path, float volume = 1f, float pitch = 1f) =>
-            Parallel(new TaleUtil.SoundAction(0, TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
+            Parallel(new TaleUtil.SoundAction(0, TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
 
         public static TaleUtil.Action Play(int channel, string path, float volume = 1f, float pitch = 1f) =>
-            Parallel(new TaleUtil.SoundAction(channel, TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
+            Parallel(new TaleUtil.SoundAction(channel, TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
 
         public static TaleUtil.Action Stop(int channel = 0) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.SoundAction(channel, null, 1f, 1f));
@@ -237,10 +237,10 @@ public static partial class Tale
         // Async actions
 
         public static Task PlayAsync(string path, float volume = 1f, float pitch = 1f) =>
-            Async(new TaleUtil.SoundAction(0, TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
+            Async(new TaleUtil.SoundAction(0, TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
 
         public static Task PlayAsync(int channel, string path, float volume = 1f, float pitch = 1f) =>
-            Async(new TaleUtil.SoundAction(channel, TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
+            Async(new TaleUtil.SoundAction(channel, TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
 
         public static Task StopAsync(int channel = 0) =>
             Async(Stop(channel));
@@ -262,7 +262,7 @@ public static partial class Tale
 
         // TODO: Change the asset root to MUSIC.
         public static TaleUtil.Action Play(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Parallel(new TaleUtil.MusicAction(new List<string>(1) { TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            Parallel(new TaleUtil.MusicAction(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Play(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
             Parallel(new TaleUtil.MusicAction(TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
@@ -279,7 +279,7 @@ public static partial class Tale
         // Async actions
 
         public static Task PlayAsync(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Async(new TaleUtil.MusicAction(new List<string>(1) { TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
+            Async(new TaleUtil.MusicAction(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
 
         public static Task PlayAsync(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
             Async(new TaleUtil.MusicAction(TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
@@ -543,10 +543,10 @@ public static partial class Tale
             TaleUtil.Queue.Enqueue(new TaleUtil.CinematicSubtitleAction(content, ttl, showBackground));
 
         public static TaleUtil.Action Background(string path, BackgroundTransitionType type = BackgroundTransitionType.INSTANT, float speed = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicBackgroundAction(TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_CINEMATIC_BACKGROUND, path), (TaleUtil.CinematicBackgroundAction.Type) (int) type, speed));
+            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicBackgroundAction(TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_CINEMATIC_BACKGROUND, path), (TaleUtil.CinematicBackgroundAction.Type) (int) type, speed));
 
         public static TaleUtil.Action Video(string path, float detatchValue = 0f, VideoDetatchType detatchType = VideoDetatchType.BEFORE, float speed = 1f) =>
-            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicVideoAction(TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_CINEMATIC_VIDEO, path), detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int) detatchType, speed));
+            TaleUtil.Queue.Enqueue(new TaleUtil.CinematicVideoAction(TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_CINEMATIC_VIDEO, path), detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int) detatchType, speed));
 
         public static TaleUtil.Action VideoPause() =>
             TaleUtil.Queue.Enqueue(new TaleUtil.CinematicVideoPauseAction());
@@ -575,10 +575,10 @@ public static partial class Tale
     public static class Image
     {
         public static TaleUtil.Action Set(UnityEngine.UI.Image img, string path) =>
-            Tale.Exec(() => img.sprite = Resources.Load<Sprite>(TaleUtil.Path.NormalizeAssetPath(path)));
+            Tale.Exec(() => img.sprite = Resources.Load<Sprite>(TaleUtil.Path.NormalizeResourcePath(path)));
 
         public static TaleUtil.Action Set(SpriteRenderer img, string path) =>
-            Tale.Exec(() => img.sprite = Resources.Load<Sprite>(TaleUtil.Path.NormalizeAssetPath(path)));
+            Tale.Exec(() => img.sprite = Resources.Load<Sprite>(TaleUtil.Path.NormalizeResourcePath(path)));
 
         public static TaleUtil.Action Fade(UnityEngine.UI.Image img, float from, float to, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             Tale.Interpolate(from, to, (value) => img.color = new UnityEngine.Color(img.color.r, img.color.g, img.color.b, value), transitionDuration, interpolation);

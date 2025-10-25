@@ -1,8 +1,9 @@
 #if UNITY_EDITOR
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.UIElements;
+using TaleUtil.Scripts.Choice.Default;
 
 namespace TaleUtil
 {
@@ -16,6 +17,28 @@ namespace TaleUtil
         const float GUI_EXTRA_HEIGHT = 0f;
 #endif
         const float TALE_LOGO_MAX_WIDTH = 400f;
+
+        static readonly Color TALE_COLOR_RED = new Color(255f / 255f, 20f / 255f, 20f / 255f);
+        static readonly Color TALE_COLOR_GREEN = new Color(20f / 255f, 255f / 255f, 20f / 255f);
+
+        class SetupFlag {
+            public bool was;
+            public bool should;
+
+            static SetupFlag setUp = new SetupFlag() { was = false, should = true };
+
+            public void Set(bool value) {
+                was = value;
+                should = value;
+            }
+
+            public bool HasChanged() {
+                return was != should;
+            }
+
+            public static implicit operator SetupFlag(bool value) =>
+                new SetupFlag() { was = !value, should = value };
+        }
 
         public static void DrawTaleLogo(Rect window)
         {
@@ -32,60 +55,87 @@ namespace TaleUtil
 
         public class RunSetupDialog : EditorWindow
         {
-            bool advancedMode = false;
+            enum State {
+                SETUP,
+                ADVANCED_SETUP,
+                MODIFY
+            }
+
+            State state = State.SETUP;
+
             GUIStyle setupButtonStyle = null;
             GUIStyle customSetupLabelStyle = null;
             GUIStyle customSetupCategoryStyle = null;
 
-            bool setupDialog = true;
-            bool setupAudio = true;
-            bool setupTransitions = true;
-            bool setupChoice = true;
-            bool setupCinematic = true;
-            bool setupDebug = true;
+            GUIStyle greenLabelStyle = null;
+            GUIStyle redLabelStyle = null;
 
-            bool setupSplashScene = true;
+            SetupFlag setupDialog = true;
+            SetupFlag setupAudio = true;
+            SetupFlag setupTransitions = true;
+            SetupFlag setupChoice = true;
+            SetupFlag setupCinematic = true;
+            SetupFlag setupDebug = true;
 
-            bool setupSceneSelector = true;
+            SetupFlag setupSplashScene = true;
+            SetupFlag setupSceneSelector = true;
+
+            public void Init() {
+                if (File.Exists(TALE_MASTER_PREFAB_PATH)) {
+                    state = State.MODIFY;
+
+                    var obj = GameObject.Find("Tale Master");
+
+                    if (obj == null) {
+                        obj = PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH)) as GameObject;
+                    }
+
+                    var master = obj.GetComponent<TaleMaster>();
+
+                    setupDialog.Set(master.props.dialogCanvas != null);
+                    setupAudio.Set(master.props.audioGroup != null);
+                    setupTransitions.Set(master.props.transitions != null && master.props.transitions.Length > 0);
+                    setupChoice.Set(master.props.choiceStyles != null && master.props.choiceStyles.Length > 0);
+                    setupCinematic.Set(master.props.cinematicCanvas != null);
+                    setupDebug.Set(master.props.debugMaster != null);
+
+                    setupSplashScene.Set(File.Exists(GetSplashScenePath("Tale")));
+                    setupSceneSelector.Set(File.Exists(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH));
+                }
+            }
 
             void OnGUI()
             {
+                if (Event.current.keyCode == KeyCode.Escape) {
+                    Close();
+                    return;
+                }
+
                 DrawTaleLogo(position);
 
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
-                {
-                    advancedMode = EditorGUILayout.ToggleLeft("I know what I'm doing", advancedMode, GUILayout.Width(145));
-                }
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
+                InitStyles();
 
-                if (advancedMode)
+                float headingSize = 0f;
+
+                if (state != State.MODIFY) {
+                    headingSize = 20f;
+
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.FlexibleSpace();
+                    {
+                        state = EditorGUILayout.ToggleLeft("I know what I'm doing", state == State.ADVANCED_SETUP, GUILayout.Width(145 + GUI_EXTRA_WIDTH)) ? State.ADVANCED_SETUP : State.SETUP;
+                    }
+                    GUILayout.FlexibleSpace();
+                    EditorGUILayout.EndHorizontal();
+                }
+
+                if (state != State.SETUP)
                 {
-                    minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 390f + GUI_EXTRA_HEIGHT);
+                    minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 370f + headingSize + GUI_EXTRA_HEIGHT);
 
                     GUILayout.Space(10f);
 
-                    if (customSetupLabelStyle == null)
-                    {
-                        customSetupLabelStyle = new GUIStyle(EditorStyles.boldLabel)
-                        {
-                            alignment = TextAnchor.MiddleCenter,
-                            wordWrap = false,
-                            fontSize = 16
-                        };
-                    }
-
-                    if (customSetupCategoryStyle == null)
-                    {
-                        customSetupCategoryStyle = new GUIStyle(EditorStyles.boldLabel)
-                        {
-                            wordWrap = false,
-                            fontSize = 14
-                        };
-                    }
-
-                    EditorGUILayout.LabelField("Custom setup", customSetupLabelStyle);
+                    EditorGUILayout.LabelField(state == State.MODIFY ? "Modify Tale" : "Custom setup", customSetupLabelStyle);
 
                     BeginLine();
                     {
@@ -97,46 +147,44 @@ namespace TaleUtil
 
                     BeginLine();
                     {
-                        setupDialog = EditorGUILayout.ToggleLeft(new GUIContent("Dialog", tooltip: "Dialog system (required for Tale.Dialog)."), setupDialog, GUILayout.Width(55 + GUI_EXTRA_WIDTH));
+                        DrawCheckbox(setupDialog, "Dialog", "Dialog system (required for Tale.Dialog).", 55);
                         GUILayout.FlexibleSpace();
-
-                        setupSplashScene = EditorGUILayout.ToggleLeft(new GUIContent("Splash Scene", tooltip: "Create the Tale splash scene, and add it to the build."), setupSplashScene, GUILayout.Width(95 + GUI_EXTRA_WIDTH));
+                        DrawCheckbox(setupSplashScene, "Splash Scene", "Create the Tale splash scene, and add it to the build.", 95);
                     }
                     EndLine();
 
                     BeginLine();
                     {
-                        setupAudio = EditorGUILayout.ToggleLeft(new GUIContent("Audio", tooltip: "Audio system (required for Tale.Sound, Tale.Music, and dialog voices)."), setupAudio, GUILayout.Width(80 + GUI_EXTRA_WIDTH));
+                        DrawCheckbox(setupAudio, "Audio", "Audio system (required for Tale.Sound, Tale.Music, and dialog voices).", 80);
                         GUILayout.FlexibleSpace();
-
-                        setupSceneSelector = EditorGUILayout.ToggleLeft(new GUIContent("Scene Selector", tooltip: "Create and enable the scene selector (F12 key)."), setupSceneSelector, GUILayout.Width(95 + GUI_EXTRA_WIDTH));
+                        DrawCheckbox(setupSceneSelector, "Scene Selector", "Create and enable the scene selector (F12 key).", 95);
                     }
                     EndLine();
 
                     BeginLine();
                     {
-                        setupTransitions = EditorGUILayout.ToggleLeft(new GUIContent("Transition", tooltip: "Transition system (required for Tale.TransitionIn/Out)."), setupTransitions, GUILayout.Width(80));
+                        DrawCheckbox(setupTransitions, "Transition", "Transition system (required for Tale.TransitionIn/Out).", 80);
                         GUILayout.FlexibleSpace();
                     }
                     EndLine();
 
                     BeginLine();
                     {
-                        setupChoice = EditorGUILayout.ToggleLeft(new GUIContent("Choice", tooltip: "Choice system (required for Tale.Choice)."), setupChoice, GUILayout.Width(80));
+                        DrawCheckbox(setupChoice, "Choice", "Choice system (required for Tale.Choice).", 80);
                         GUILayout.FlexibleSpace();
                     }
                     EndLine();
 
                     BeginLine();
                     {
-                        setupCinematic = EditorGUILayout.ToggleLeft(new GUIContent("Cinematic", tooltip: "Cinematic system (required for Tale.Cinema.*)."), setupCinematic, GUILayout.Width(80));
+                        DrawCheckbox(setupCinematic, "Cinematic", "Cinematic system (required for Tale.Cinema.*).", 80);
                         GUILayout.FlexibleSpace();
                     }
                     EndLine();
 
                     BeginLine();
                     {
-                        setupDebug = EditorGUILayout.ToggleLeft(new GUIContent("Debug", tooltip: "Debug system (F3 key)."), setupDebug, GUILayout.Width(80));
+                        DrawCheckbox(setupDebug, "Debug", "Debug system (F3 key).", 80);
                         GUILayout.FlexibleSpace();
                     }
                     EndLine();
@@ -152,40 +200,19 @@ namespace TaleUtil
 
                 EditorGUILayout.Space(5f);
 
-                if (setupButtonStyle == null)
+                if (state != State.SETUP && setupSplashScene.should && (!setupTransitions.should || !setupAudio.should))
                 {
-                    setupButtonStyle = new GUIStyle(GUI.skin.button) {
-                        fontSize = 20,
-                        fixedHeight = 40,
-                    };
-                }
-
-                if (advancedMode && setupSplashScene && (!setupTransitions || !setupAudio))
-                {
-                    EditorGUILayout.HelpBox("Splash Scene requires the Transitions and Audio modules", MessageType.Warning);
+                    EditorGUILayout.HelpBox("Splash Scene requires the Transition and Audio modules", MessageType.Warning);
                 }
                 else
                 {
-                    if (GUILayout.Button("Run Setup", setupButtonStyle) || Event.current.keyCode == KeyCode.Return)
+                    if (GUILayout.Button(state == State.MODIFY ? "Modify" : "Run Setup", setupButtonStyle) || Event.current.keyCode == KeyCode.Return)
                     {
-                        if (advancedMode)
-                        {
-                            SetupCreateMasterObject(setupDialog, setupAudio, setupTransitions, setupChoice, setupCinematic, setupDebug);
-                        }
-                        else
-                        {
-                            SetupCreateMasterObject();
-                        }
+                        SetupCreateMasterObject(setupDialog, setupAudio, setupTransitions, setupChoice, setupCinematic, setupDebug);
+                        SetupTaleSplashScene(setupSplashScene);
+                        SetupSceneSelector(setupSceneSelector);
 
-                        if (!advancedMode || setupSplashScene)
-                        {
-                            SetupCreateSplashScene();
-                        }
-
-                        if (!advancedMode || setupSceneSelector)
-                        {
-                            SetupSceneSelector();
-                        }
+                        AssetDatabase.Refresh();
 
                         Close();
                     }
@@ -203,6 +230,72 @@ namespace TaleUtil
                 GUILayout.Space(30f + GUI_EXTRA_WIDTH / 2f);
                 EditorGUILayout.EndHorizontal();
             }
+
+            void DrawCheckbox(SetupFlag val, string label, string tooltip, int width) {
+                val.should = EditorGUILayout.ToggleLeft(new GUIContent(label, tooltip: tooltip), val.should, GetLabelStyle(val), GUILayout.Width(width + GUI_EXTRA_WIDTH));
+            }
+
+            void InitStyles() {
+                if (setupButtonStyle == null) {
+                    customSetupLabelStyle = new GUIStyle(EditorStyles.boldLabel) {
+                        alignment = TextAnchor.MiddleCenter,
+                        wordWrap = false,
+                        fontSize = 16
+                    };
+
+                    customSetupCategoryStyle = new GUIStyle(EditorStyles.boldLabel) {
+                        wordWrap = false,
+                        fontSize = 14
+                    };
+
+                    setupButtonStyle = new GUIStyle(GUI.skin.button) {
+                        fontSize = 20,
+                        fixedHeight = 40,
+                    };
+
+                    greenLabelStyle = new GUIStyle(EditorStyles.label) {
+                        normal = {
+                            textColor = TALE_COLOR_GREEN
+                        },
+                        active = {
+                            textColor = TALE_COLOR_GREEN
+                        },
+                        focused = {
+                            textColor = TALE_COLOR_GREEN
+                        },
+                        hover = {
+                            textColor = TALE_COLOR_GREEN
+                        }
+                    };
+
+                    redLabelStyle = new GUIStyle(EditorStyles.label) {
+                        normal = {
+                            textColor = TALE_COLOR_RED
+                        },
+                        active = {
+                            textColor = TALE_COLOR_RED
+                        },
+                        focused = {
+                            textColor = TALE_COLOR_RED
+                        },
+                        hover = {
+                            textColor = TALE_COLOR_RED
+                        }
+                    };
+                }
+            }
+
+            GUIStyle GetLabelStyle(SetupFlag val) {
+                if (state != State.MODIFY || val.was == val.should) {
+                    return EditorStyles.label;
+                }
+
+                if (val.should) {
+                    return greenLabelStyle;
+                }
+
+                return redLabelStyle;
+            }
         }
 
         public class CreateTransitionDialog : EditorWindow
@@ -212,6 +305,11 @@ namespace TaleUtil
 
             void OnGUI()
             {
+                if (Event.current.keyCode == KeyCode.Escape) {
+                    Close();
+                    return;
+                }
+
                 DrawTaleLogo(position);
 
                 minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 203f + GUI_EXTRA_HEIGHT);
@@ -255,6 +353,11 @@ namespace TaleUtil
 
             void OnGUI()
             {
+                if (Event.current.keyCode == KeyCode.Escape) {
+                    Close();
+                    return;
+                }
+
                 DrawTaleLogo(position);
 
                 minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 321f + GUI_EXTRA_HEIGHT + 21f * (soundVariants != null ? soundVariants.Count : 0f));

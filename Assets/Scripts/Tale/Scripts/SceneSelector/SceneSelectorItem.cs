@@ -33,7 +33,7 @@ namespace TaleUtil.Scripts
             this.master = master;
             this.scrollbar = scrollbar;
 
-            var img = Resources.Load<Sprite>(Path.NormalizeAssetPath(SceneThumbnailGenerator.GetThumbnailPathForScenePath(path)));
+            var img = Resources.Load<Sprite>(Path.NormalizeResourcePath(SceneThumbnailGenerator.GetThumbnailPathForScenePath(path)));
 
             if (img != null)
             {
