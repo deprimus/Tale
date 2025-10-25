@@ -40,6 +40,7 @@ namespace TaleUtil
             bool setupDialog = true;
             bool setupAudio = true;
             bool setupTransitions = true;
+            bool setupChoice = true;
             bool setupCinematic = true;
             bool setupDebug = true;
 
@@ -61,7 +62,7 @@ namespace TaleUtil
 
                 if (advancedMode)
                 {
-                    minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 370f + GUI_EXTRA_HEIGHT);
+                    minSize = new Vector2(400f + GUI_EXTRA_WIDTH, 390f + GUI_EXTRA_HEIGHT);
 
                     GUILayout.Space(10f);
 
@@ -96,39 +97,46 @@ namespace TaleUtil
 
                     BeginLine();
                     {
-                        setupDialog = EditorGUILayout.ToggleLeft("Dialog", setupDialog, GUILayout.Width(55 + GUI_EXTRA_WIDTH));
+                        setupDialog = EditorGUILayout.ToggleLeft(new GUIContent("Dialog", tooltip: "Dialog system (required for Tale.Dialog)."), setupDialog, GUILayout.Width(55 + GUI_EXTRA_WIDTH));
                         GUILayout.FlexibleSpace();
 
-                        setupSplashScene = EditorGUILayout.ToggleLeft("Splash scene", setupSplashScene, GUILayout.Width(95 + GUI_EXTRA_WIDTH));
+                        setupSplashScene = EditorGUILayout.ToggleLeft(new GUIContent("Splash Scene", tooltip: "Create the Tale splash scene, and add it to the build."), setupSplashScene, GUILayout.Width(95 + GUI_EXTRA_WIDTH));
                     }
                     EndLine();
 
                     BeginLine();
                     {
-                        setupAudio = EditorGUILayout.ToggleLeft("Audio", setupAudio, GUILayout.Width(80 + GUI_EXTRA_WIDTH));
+                        setupAudio = EditorGUILayout.ToggleLeft(new GUIContent("Audio", tooltip: "Audio system (required for Tale.Sound, Tale.Music, and dialog voices)."), setupAudio, GUILayout.Width(80 + GUI_EXTRA_WIDTH));
                         GUILayout.FlexibleSpace();
 
-                        setupSceneSelector = EditorGUILayout.ToggleLeft("Scene selector", setupSplashScene, GUILayout.Width(95 + GUI_EXTRA_WIDTH));
+                        setupSceneSelector = EditorGUILayout.ToggleLeft(new GUIContent("Scene Selector", tooltip: "Create and enable the scene selector (F12 key)."), setupSceneSelector, GUILayout.Width(95 + GUI_EXTRA_WIDTH));
                     }
                     EndLine();
 
                     BeginLine();
                     {
-                        setupTransitions = EditorGUILayout.ToggleLeft("Transitions", setupTransitions, GUILayout.Width(80));
-                        GUILayout.FlexibleSpace();
-                    }
-                    EndLine();
-
-                    BeginLine();
-                    {
-                        setupCinematic = EditorGUILayout.ToggleLeft("Cinematic", setupCinematic, GUILayout.Width(80));
+                        setupTransitions = EditorGUILayout.ToggleLeft(new GUIContent("Transition", tooltip: "Transition system (required for Tale.TransitionIn/Out)."), setupTransitions, GUILayout.Width(80));
                         GUILayout.FlexibleSpace();
                     }
                     EndLine();
 
                     BeginLine();
                     {
-                        setupDebug = EditorGUILayout.ToggleLeft("Debug", setupDebug, GUILayout.Width(80));
+                        setupChoice = EditorGUILayout.ToggleLeft(new GUIContent("Choice", tooltip: "Choice system (required for Tale.Choice)."), setupChoice, GUILayout.Width(80));
+                        GUILayout.FlexibleSpace();
+                    }
+                    EndLine();
+
+                    BeginLine();
+                    {
+                        setupCinematic = EditorGUILayout.ToggleLeft(new GUIContent("Cinematic", tooltip: "Cinematic system (required for Tale.Cinema.*)."), setupCinematic, GUILayout.Width(80));
+                        GUILayout.FlexibleSpace();
+                    }
+                    EndLine();
+
+                    BeginLine();
+                    {
+                        setupDebug = EditorGUILayout.ToggleLeft(new GUIContent("Debug", tooltip: "Debug system (F3 key)."), setupDebug, GUILayout.Width(80));
                         GUILayout.FlexibleSpace();
                     }
                     EndLine();
@@ -162,7 +170,7 @@ namespace TaleUtil
                     {
                         if (advancedMode)
                         {
-                            SetupCreateMasterObject(setupDialog, setupAudio, setupTransitions, setupCinematic, setupDebug);
+                            SetupCreateMasterObject(setupDialog, setupAudio, setupTransitions, setupChoice, setupCinematic, setupDebug);
                         }
                         else
                         {

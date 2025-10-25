@@ -36,6 +36,7 @@ namespace TaleUtil
             public const int ADVANCE_SORT_ORDER = 400;
             public const int DIALOG_SORT_ORDER = 300;
             public const int TRANSITION_SORT_ORDER = 200;
+            public const int CHOICE_SORT_ORDER = 500;
             public const int CINEMATIC_SORT_ORDER = 100;
 
             public const string ASSET_ROOT_SCENE = "Scenes/";

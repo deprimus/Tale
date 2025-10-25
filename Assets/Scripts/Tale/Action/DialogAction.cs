@@ -24,6 +24,7 @@ namespace TaleUtil
             WRITE,
             WAIT_FOR_INPUT_OVERRIDE,
             WAIT_FOR_INPUT_ADDITIVE,
+            WAIT_FOR_ACTION,
             END_WRITE,
 
             AVATAR_TRANSITION_OUT,
@@ -41,6 +42,10 @@ namespace TaleUtil
 
         bool loopVoice;
         bool reverb;
+
+        bool keepOpen;
+
+        TaleUtil.Action action;
 
         public Type type;
         public State state;
@@ -60,7 +65,7 @@ namespace TaleUtil
 
         DialogAction() { }
 
-        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb)
+        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb, bool keepOpen, TaleUtil.Action action)
         {
             if (content != null)
             {
@@ -76,15 +81,6 @@ namespace TaleUtil
             {
                 SoftAssert.Condition(Props.dialog.actor != null,
                     "DialogAction requires an actor object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
-            }
-
-            if (reverb)
-            {
-                if (!SoftAssert.Condition(Props.audio.voiceReverb != null,
-                    "DialogAction has Reverb set to true, but there is no AudioReverbFilter component on the Audio Voice prop; reverb will be disabled"))
-                {
-                    reverb = false;
-                }
             }
 
             if (voice != null)
@@ -122,6 +118,13 @@ namespace TaleUtil
             this.voice = voice;
             this.loopVoice = loopVoice;
             this.reverb = reverb;
+            this.keepOpen = keepOpen;
+            this.action = action;
+
+            if (this.action != null)
+            {
+                TaleUtil.Queue.RemoveLast(this.action);
+            }
 
             type = additive ? Type.ADDITIVE : Type.OVERRIDE;
             ChangeState(State.SETUP);
@@ -373,6 +376,9 @@ namespace TaleUtil
             clone.avatar = avatar;
             clone.voice = voice;
             clone.loopVoice = loopVoice;
+            clone.reverb = reverb;
+            clone.keepOpen = keepOpen;
+            clone.action = action.Clone();
             clone.type = type;
             clone.state = state;
             clone.index = index;
@@ -553,7 +559,7 @@ namespace TaleUtil
                     if (avatar != null)
                     {
                         SoftAssert.Condition(Props.dialog.avatar != null,
-                            "An avatar was passed to the dialog action, but no avatar prop is available?");
+                            "An avatar was passed to the dialog action, but no avatar prop is available");
 
                         Props.dialog.avatar.sprite = (Sprite) Resources.Load<Sprite>(avatar);
 
@@ -741,6 +747,15 @@ namespace TaleUtil
                             Props.audio.voice.loop = false;
                         }
 
+                        clock = 0f;
+
+                        if (action != null)
+                        {
+                            // Run the custom action; don't wait for user input and don't show CTC
+                            ChangeState(State.WAIT_FOR_ACTION);
+                            break;
+                        }
+
                         // If an additive dialog action follows this one,
                         // use the additive CTC
                         var nextDialog = GetNextDialogAction(Queue.FetchNext());
@@ -777,8 +792,6 @@ namespace TaleUtil
 
                             ChangeState(State.WAIT_FOR_INPUT_OVERRIDE);
                         }
-
-                        clock = 0f;
                     }
 
                     break;
@@ -829,6 +842,15 @@ namespace TaleUtil
 
                     break;
                 }
+                case State.WAIT_FOR_ACTION:
+                {
+                    if (action.Run())
+                    {
+                        state = State.END_WRITE;
+                    }
+
+                    break;
+                }
                 case State.END_WRITE:
                 {
                     // Disable the voice object and audio group
@@ -867,7 +889,18 @@ namespace TaleUtil
                         }
                     }
 
-                    // If the next action is a dialog, don't play Transition Out.
+                    // Keep the dialog open
+                    if (keepOpen) {
+                        if (actor != null) {
+                            Props.dialog.actor.text = "";
+                        }
+                        Props.dialog.content.text = "";
+
+                        ChangeState(State.END);
+                        return true;
+                    }
+
+                    // If the next action is a dialog, also keep open
                     var nextDialog = GetNextDialogAction(Queue.FetchNext());
 
                     if (nextDialog != null)

@@ -40,7 +40,7 @@ namespace TaleUtil
         {
             if (!TaleWasSetUp())
             {
-                EditorUtility.DisplayDialog("Tale not set up", "Please set up Tale before creating transitions:\n\nTale -> Setup -> Run Full Setup", "Ok");
+                EditorUtility.DisplayDialog("Tale not set up", "Please set up Tale before creating transitions:\n\nTale -> Run Setup", "Ok");
                 return;
             }
 
