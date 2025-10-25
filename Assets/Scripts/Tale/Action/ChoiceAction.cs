@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TaleUtil
 {
-    public class ChoiceAction : Action
+    public class ChoiceAction<TArgs, TChoice> : Action
     {
         enum State
         {
@@ -12,15 +12,15 @@ namespace TaleUtil
         }
 
         string style;
-        object args;
-        object choices;
+        TArgs args;
+        TChoice[] choices;
         State state;
 
         ChoiceAction() { }
 
-        public ChoiceAction(string style, object args, object choices)
+        public ChoiceAction(string style, TArgs args, TChoice[] choices)
         {
-            SoftAssert.Condition(Props.choice.styles.entries.ContainsKey(style),
+            SoftAssert.Condition(Props.choice.styles.ContainsKey(style.ToLowerInvariant()),
                     string.Format("Unknown choice style '{0}'; did you forget to register it in TaleMaster?", style));
 
             this.style = style;
@@ -32,9 +32,9 @@ namespace TaleUtil
 
         public override Action Clone()
         {
-            ChoiceAction clone = new ChoiceAction();
+            var clone = new ChoiceAction<TArgs, TChoice>();
             clone.delta = delta;
-            clone.args = args;       // TODO: these are passed by reference; clone them properly
+            clone.args = args;       // TODO: these may be passed by reference; clone them properly
             clone.choices = choices;
 
             return clone;
@@ -46,21 +46,32 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    var prefab = TaleUtil.Props.choice.styles.entries[style];
+                    var obj = Props.choice.styles[style];
 
-                    var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, TaleUtil.Props.choice.container);
-                    var master = obj.GetComponent<TaleUtil.Scripts.ChoiceMaster>();
+                    var master = obj.GetComponent<Scripts.Choice.ChoiceMaster<TArgs, TChoice>>();
+                    var canvas = obj.GetComponent<Canvas>();
 
                     if (master == null)
                     {
-                        Log.Error("CHOICE", string.Format("No ChoiceMaster script attached to prefab for choice style '{0}'; make sure to add exactly one ChoiceMaster component to the root object of the prefab", style));
+                        Log.Error("CHOICE", string.Format("No ChoiceMaster script attached to object for choice style '{0}'; make sure to add exactly one ChoiceMaster component to the root object", style));
                     }
 
                     state = State.WAIT_FOR_CHOICE;
 
-                    master.Construct(args, choices, () => {
-                        GameObject.Destroy(obj);
+                    master.enabled = true;
+
+                    if (canvas != null) {
+                        canvas.enabled = true;
+                    }
+
+                    master.Present(args, choices, () => {
                         state = State.END;
+
+                        master.enabled = false;
+
+                        if (canvas != null) {
+                            canvas.enabled = false;
+                        }
                     });
 
                     return false;

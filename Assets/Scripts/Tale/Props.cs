@@ -35,7 +35,7 @@ namespace TaleUtil
             transitions          = new Transitions(props.transitions);
             dialog               = new Dialog(props.dialogCanvas, props.dialogActor, props.dialogContent, props.dialogAvatar, props.dialogAnimator, props.dialogCtc, props.dialogActc);
             audio                = new Audio(props.audioGroup, props.audioSoundGroup, props.audioSound, props.audioMusic, props.audioVoice);
-            choice               = new Choice(props.choiceContainer, props.choiceStyles);
+            choice               = new Choice(props.choiceStyles);
             cinematic            = new Cinematic(props.cinematicCanvas, props.cinematicSubtitles, props.cinematicSubtitlesBackground, props.cinematicSubtitlesGroup);
             cinematic.background = new CinematicBackground(props.cinematicBackgroundGroupAnimator, props.cinematicBackground, props.cinematicBackgroundAlt);
             cinematic.video      = new CinematicVideo(props.cinematicVideoGroup, props.cinematicVideoPlayer, props.cinematicVideoAudioSource);
@@ -312,23 +312,11 @@ namespace TaleUtil
 
         public class Choice
         {
-            public Transform container;
-            public ChoiceStyles styles;
+            public Dictionary<string, GameObject> styles;
 
-            public Choice(Transform container, ChoiceStyle[] styles)
+            public Choice(ChoiceStyle[] styles)
             {
-                this.container = container;
-                this.styles = new ChoiceStyles(styles);
-            }
-        }
-
-        public class ChoiceStyles
-        {
-            public Dictionary<string, GameObject> entries;
-
-            public ChoiceStyles(ChoiceStyle[] styles)
-            {
-                entries = new Dictionary<string, GameObject>();
+                this.styles = new Dictionary<string, GameObject>();
 
                 if (styles == null)
                 {
@@ -337,19 +325,21 @@ namespace TaleUtil
 
                 for (int i = 0; i < styles.Length; ++i)
                 {
-                    if (styles[i].prefab == null)
+                    if (styles[i].obj == null)
                     {
-                        Warning(string.Format("Prefab is null for choice style '{0}'; the entry will be ignored", styles[i].name));
+                        Warning(string.Format("Object is null for choice style '{0}'; the entry will be ignored", styles[i].name));
                     }
                     else
                     {
-                        entries[styles[i].name.ToLowerInvariant()] = styles[i].prefab;
-                    }
-                }
+                        var key = styles[i].name.ToLowerInvariant();
 
-                if (styles.Length != entries.Count)
-                {
-                    Warning("Two or more choice styles with same name exist; in these cases, the last one is kept");
+                        if (this.styles.ContainsKey(key))
+                        {
+                            Warning("There are two choice styles with the name '{0}'; the last one will take precedence");
+                        }
+
+                        this.styles[styles[i].name.ToLowerInvariant()] = styles[i].obj;
+                    }
                 }
             }
         }
@@ -358,7 +348,7 @@ namespace TaleUtil
         public class ChoiceStyle
         {
             public string name;
-            public GameObject prefab;
+            public GameObject obj;
         }
 
         public class Cinematic

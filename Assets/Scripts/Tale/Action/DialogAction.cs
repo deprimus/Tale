@@ -43,6 +43,8 @@ namespace TaleUtil
         bool loopVoice;
         bool reverb;
 
+        bool keepOpen;
+
         TaleUtil.Action action;
 
         public Type type;
@@ -63,7 +65,7 @@ namespace TaleUtil
 
         DialogAction() { }
 
-        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb, TaleUtil.Action action)
+        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb, bool keepOpen, TaleUtil.Action action)
         {
             if (content != null)
             {
@@ -79,15 +81,6 @@ namespace TaleUtil
             {
                 SoftAssert.Condition(Props.dialog.actor != null,
                     "DialogAction requires an actor object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
-            }
-
-            if (reverb)
-            {
-                if (!SoftAssert.Condition(Props.audio.voiceReverb != null,
-                    "DialogAction has Reverb set to true, but there is no AudioReverbFilter component on the Audio Voice prop; reverb will be disabled"))
-                {
-                    reverb = false;
-                }
             }
 
             if (voice != null)
@@ -125,6 +118,7 @@ namespace TaleUtil
             this.voice = voice;
             this.loopVoice = loopVoice;
             this.reverb = reverb;
+            this.keepOpen = keepOpen;
             this.action = action;
 
             if (this.action != null)
@@ -382,12 +376,14 @@ namespace TaleUtil
             clone.avatar = avatar;
             clone.voice = voice;
             clone.loopVoice = loopVoice;
+            clone.reverb = reverb;
+            clone.keepOpen = keepOpen;
+            clone.action = action.Clone();
             clone.type = type;
             clone.state = state;
             clone.index = index;
             clone.timePerChar = timePerChar;
             clone.clock = clock;
-            clone.action = action.Clone();
 
             return clone;
         }
@@ -563,7 +559,7 @@ namespace TaleUtil
                     if (avatar != null)
                     {
                         SoftAssert.Condition(Props.dialog.avatar != null,
-                            "An avatar was passed to the dialog action, but no avatar prop is available?");
+                            "An avatar was passed to the dialog action, but no avatar prop is available");
 
                         Props.dialog.avatar.sprite = (Sprite) Resources.Load<Sprite>(avatar);
 
@@ -893,7 +889,18 @@ namespace TaleUtil
                         }
                     }
 
-                    // If the next action is a dialog, don't play Transition Out.
+                    // Keep the dialog open
+                    if (keepOpen) {
+                        if (actor != null) {
+                            Props.dialog.actor.text = "";
+                        }
+                        Props.dialog.content.text = "";
+
+                        ChangeState(State.END);
+                        return true;
+                    }
+
+                    // If the next action is a dialog, also keep open
                     var nextDialog = GetNextDialogAction(Queue.FetchNext());
 
                     if (nextDialog != null)

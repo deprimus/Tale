@@ -179,10 +179,7 @@ public class TaleMaster : MonoBehaviour
 
 #if UNITY_EDITOR
         [Header("Choice")]
-        [Rename("Container")]
 #endif
-        public Transform choiceContainer;
-
         public TaleUtil.Props.ChoiceStyle[] choiceStyles;
 
 #if UNITY_EDITOR

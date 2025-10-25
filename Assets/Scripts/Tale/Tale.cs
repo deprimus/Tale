@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
 using TaleUtil;
+using TaleUtil.Scripts.Choice;
 
 public static partial class Tale
 {
@@ -106,8 +108,8 @@ public static partial class Tale
     public static TaleUtil.Action Scene(string path) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.SceneAction(TaleUtil.Path.NormalizeAssetPath(Config.Editor.ASSET_ROOT_SCENE, path)));
 
-    public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false, TaleUtil.Action action = null) =>
-        TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, action));
+    public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false, bool keepOpen = false, TaleUtil.Action action = null) =>
+        TaleUtil.Queue.Enqueue(new TaleUtil.DialogAction(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, keepOpen, action));
 
     public static TaleUtil.Action TransitionIn(float duration = Tale.Default.FLOAT) =>
         TaleUtil.Queue.Enqueue(new TaleUtil.TransitionAction(null, TransitionAction.Type.IN, duration));
@@ -513,7 +515,10 @@ public static partial class Tale
 
     public static partial class Choice
     {
-        // Functions are declared by the scripts in Scripts/Choice
+        static TaleUtil.Action Style<TArgs, TChoice>(string style, TArgs title, params TChoice[] choices) =>
+            TaleUtil.Queue.Enqueue(new TaleUtil.ChoiceAction<TArgs, TChoice>(style, title, choices));
+
+        // Wrapper functions are declared by the scripts located at Scripts/Choice
     }
 
     public static class Cinema
@@ -639,4 +644,11 @@ public static partial class Tale
         public static Task FadeOutAsync(TextMeshProUGUI text, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             FadeAsync(text, 1f, 0f, transitionDuration, interpolation);
     }
+}
+
+namespace System.Runtime.CompilerServices
+{
+    // Required for records to work in Unity
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    internal class IsExternalInit { }
 }

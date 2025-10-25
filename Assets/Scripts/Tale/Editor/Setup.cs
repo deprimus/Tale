@@ -14,7 +14,7 @@ namespace TaleUtil
 {
     public partial class Editor
     {
-        static void SetupCreateMasterObject(bool dialog = true, bool audio = true, bool transitions = true, bool cinematic = true, bool debug = true)
+        static void SetupCreateMasterObject(bool dialog = true, bool audio = true, bool transitions = true, bool choice = true, bool cinematic = true, bool debug = true)
         {
             if (File.Exists(TALE_MASTER_PREFAB_PATH))
             {
@@ -54,6 +54,10 @@ namespace TaleUtil
             if (transitions)
             {
                 SetupTransitions(master);
+            }
+
+            if (choice) {
+                SetupChoice(master);
             }
 
             if (cinematic)
@@ -286,6 +290,84 @@ namespace TaleUtil
         static void SetupTransitions(GameObject master)
         {
             CreateTaleTransition(master, "Fade");
+        }
+
+        static void SetupChoice(GameObject master) {
+            var tale = master.GetComponent<TaleMaster>();
+
+            var group = new GameObject("Choice");
+            GameObjectUtility.SetParentAndAlign(group, master);
+
+            var canvas = CreateCanvas("Choice Default", TaleUtil.Config.Editor.CHOICE_SORT_ORDER);
+            GameObjectUtility.SetParentAndAlign(canvas, group);
+
+            canvas.AddComponent<GraphicRaycaster>();
+            canvas.GetComponent<Canvas>().enabled = false;
+
+            var title = new GameObject("Title");
+            GameObjectUtility.SetParentAndAlign(title, canvas);
+
+            var tmp = title.AddComponent<TextMeshProUGUI>();
+            tmp.enableAutoSizing = true;
+            tmp.fontSizeMin = 18f;
+            tmp.fontSizeMax = 72f;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
+            tmp.overflowMode = TextOverflowModes.Ellipsis;
+
+            var tform = title.GetComponent<RectTransform>();
+            tform.anchorMin = new Vector2(0.5f, 0.5f);
+            tform.anchorMax = new Vector2(0.5f, 0.5f);
+            tform.pivot = new Vector2(0.5f, 0.5f);
+            tform.sizeDelta = new Vector2(1165f, 92f);
+            tform.anchoredPosition = new Vector2(0f, 0f);
+
+            var script = canvas.AddComponent<TaleUtil.Scripts.Choice.Default.ChoiceMaster>();
+            script.enabled = false;
+
+            var ys = new float[] { -40f, 70f, 180f, 290f, 400f };
+
+            script.title = tmp;
+            script.choiceObjs = new TaleUtil.Scripts.Choice.Default.ChoiceObj[ys.Length];
+
+            for (int i = 0; i < ys.Length; ++i) {
+                var choice = new GameObject("Choice " + (i + 1));
+                GameObjectUtility.SetParentAndAlign(choice, canvas);
+
+                var image = choice.AddComponent<Image>();
+                image.color = new Color(0f, 0f, 0f, 0.5f);
+
+                tform = choice.GetComponent<RectTransform>();
+                tform.sizeDelta = new Vector2(1165f, 83f);
+                tform.anchoredPosition = new Vector2(0f, ys[i]);
+
+                var obj = choice.AddComponent<TaleUtil.Scripts.Choice.Default.ChoiceObj>();
+                script.choiceObjs[i] = obj;
+
+                var text = new GameObject("Text");
+                GameObjectUtility.SetParentAndAlign(text, choice);
+
+                tmp = text.AddComponent<TextMeshProUGUI>();
+                tmp.enableAutoSizing = true;
+                tmp.fontSizeMin = 18f;
+                tmp.fontSizeMax = 72f;
+                tmp.alignment = TextAlignmentOptions.Center;
+                tmp.textWrappingMode = TextWrappingModes.NoWrap;
+                tmp.overflowMode = TextOverflowModes.Ellipsis;
+
+                tform = text.GetComponent<RectTransform>();
+                tform.anchorMin = new Vector2(0f, 0f);
+                tform.anchorMax = new Vector2(1f, 1f);
+                tform.pivot = new Vector2(0.5f, 0.5f);
+                tform.sizeDelta = new Vector2(-72f, -17.24f);
+                tform.anchoredPosition = new Vector2(0f, 0f);
+            }
+
+            tale.props.choiceStyles = new Props.ChoiceStyle[1];
+
+            var style = tale.props.choiceStyles[0] = new Props.ChoiceStyle();
+            style.name = "Default";
+            style.obj = canvas;
         }
 
         static void SetupCinematic(GameObject master)
