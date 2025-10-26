@@ -17,7 +17,7 @@ namespace TaleUtil
 {
     public partial class Editor
     {
-        const string TALE_MASTER_PREFAB_PATH = "Assets/Prefabs/TaleMaster.prefab";
+        const string TALE_MASTER_PREFAB_PATH = "Assets/Prefabs/Tale Master.prefab";
         const string TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH = "Assets/Prefabs/TaleSceneSelectorItem.prefab";
         const string TALE_CONFIG_PATH = "Assets/TaleConfig.asset";
         const string TALE_SPLASH_SCENE_DIR = "Splash";

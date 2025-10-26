@@ -514,8 +514,10 @@ public static partial class Tale
     }
 
     public static partial class Choice
-    {
-        static TaleUtil.Action Style<TArgs, TChoice>(string style, TArgs title, params TChoice[] choices) =>
+    {   
+        // Only use this if you know what you're doing.
+        // Generic types must match the style's master script generic types
+        public static TaleUtil.Action Style<TArgs, TChoice>(string style, TArgs title, params TChoice[] choices) =>
             TaleUtil.Queue.Enqueue(new TaleUtil.ChoiceAction<TArgs, TChoice>(style, title, choices));
 
         // Wrapper functions are declared by the scripts located at Scripts/Choice
