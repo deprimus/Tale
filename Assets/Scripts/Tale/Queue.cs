@@ -3,38 +3,42 @@ using System.Collections.Generic;
 
 namespace TaleUtil
 {
-    public static class Queue
+    public class Queue
     {
-        private static LinkedList<TaleUtil.Action> data;
+        private LinkedList<TaleUtil.Action> data;
 
-        private static ulong totalActionCount = 0;
+        private ulong totalActionCount = 0;
 
-        public static TaleUtil.Action Fetch() =>
+        public Queue() {
+            data = new LinkedList<TaleUtil.Action>();
+        }
+
+        public TaleUtil.Action Fetch() =>
             data.First.Value;
 
-        public static TaleUtil.Action FetchNext() =>
+        public TaleUtil.Action FetchNext() =>
             data.Count > 1 ? data.ElementAt(1) : null;
 
-        public static TaleUtil.Action FetchLast() =>
+        public TaleUtil.Action FetchLast() =>
             data.Count > 0 ? data.ElementAt(data.Count - 1) : null;
 
-        public static TaleUtil.Action FetchIfAny() =>
+        public TaleUtil.Action FetchIfAny() =>
             data.Count > 0 ? data.First.Value : null;
 
-        public static int Count() =>
+        public int Count() =>
             data.Count;
 
-        public static void ForceClear() =>
+        public void ForceClear() =>
             data.Clear();
 
-        public static void Remove(TaleUtil.Action action) =>
+        public void Remove(TaleUtil.Action action) =>
             data.Remove(action);
 
-        public static void RemoveLast(TaleUtil.Action action)
+        // If the queue has actions, and the last action is this one, remove it.
+        // This is used by multiple actions, such as QueueAction, which handle the
+        // actions on their own.
+        public void RemoveLast(TaleUtil.Action action)
         {
-            // If the queue has actions, and the last action is this one, remove it.
-            // This is used by multiple actions, such as QueueAction, which handle the
-            // actions on their own.
             Action queueAction = FetchLast();
 
             if (queueAction != null && action == queueAction)
@@ -43,30 +47,32 @@ namespace TaleUtil
             }
         }
 
-        public static TaleUtil.Action Enqueue(TaleUtil.Action act)
+        public void RemoveLast(TaleUtil.Action[] actions) {
+            // C# arg order is left -> right, so the 'params' keyword always pushes to the queue in-order
+            for (int i = actions.Length - 1; i >= 0; --i) {
+                RemoveLast(actions[i]);
+            }
+        }
+
+        public TaleUtil.Action Enqueue(TaleUtil.Action act)
         {
             data.AddLast(act);
             ++totalActionCount;
             return act;
         }
 
-        public static void Dequeue() =>
+        public void Dequeue() =>
             data.RemoveFirst();
 
-
-        public static void Init() =>
-            data = new LinkedList<TaleUtil.Action>();
-
-        public static bool Run()
+        public bool Run()
         {
-            // As simple as it gets.
             if(data.Count > 0 && data.First.Value.Run())
                 Dequeue(); // Run if queue is not empty. After running, if the action is done, dequeue.
 
             return data.Count == 0;
         }
 
-        public static ulong GetTotalActionCount()
+        public ulong GetTotalActionCount()
         {
             return totalActionCount;
         }

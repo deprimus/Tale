@@ -15,25 +15,14 @@ namespace TaleUtil
         State state;
         TaleUtil.Action returned;
 
-        BranchAction() { }
-
-        public BranchAction(string flag, Delegates.BranchDelegate<ulong> action)
+        public BranchAction Init(string flag, Delegates.BranchDelegate<ulong> action)
         {
             this.flag = flag;
             this.action = action;
 
             state = State.SETUP;
-        }
 
-        public override Action Clone()
-        {
-            BranchAction clone = new BranchAction();
-            clone.delta = delta;
-            clone.flag = flag;
-            clone.action = action;
-            clone.state = state;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()
@@ -50,8 +39,11 @@ namespace TaleUtil
                         return true;
                     }
 
+                    returned.SetDeltaCallback(delta);
+
                     state = State.RUN;
-                    break;
+
+                    return returned.Run();
                 }
                 case State.RUN:
                 {
@@ -63,6 +55,14 @@ namespace TaleUtil
                 }
             }
             return false;
+        }
+
+        public override void SetDeltaCallback(Delegates.DeltaDelegate callback) {
+            base.SetDeltaCallback(callback);
+
+            if (returned != null) {
+                returned.SetDeltaCallback(callback);
+            }
         }
 
         public override void OnInterrupt()

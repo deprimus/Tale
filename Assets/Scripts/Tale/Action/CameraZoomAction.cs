@@ -20,9 +20,7 @@ namespace TaleUtil
 
         State state;
 
-        CameraZoomAction() { }
-
-        public CameraZoomAction(float factor, float transitionDuration, Delegates.InterpolationDelegate interpolation)
+        public CameraZoomAction Init(float factor, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {
             Assert.Condition(Props.camera != null, "CameraZoomAction requires a main camera object (which could not be found)");
 
@@ -33,19 +31,8 @@ namespace TaleUtil
             clock = 0f;
 
             state = State.SETUP;
-        }
 
-        public override Action Clone()
-        {
-            CameraZoomAction clone = new CameraZoomAction();
-            clone.delta = delta;
-            clone.factor = factor;
-            clone.transitionDuration = transitionDuration;
-            clone.interpolation = interpolation;
-            clone.clock = clock;
-            clone.state = state;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()

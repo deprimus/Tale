@@ -20,10 +20,8 @@ namespace TaleUtil
 
         State state;
 
-        SoundAction() { }
-
         // null path -> stop sound
-        public SoundAction(int channel, string path, float volume, float pitch)
+        public SoundAction Init(int channel, string path, float volume, float pitch)
         {
             Assert.Condition(Props.audio.soundGroup != null, "SoundAction requires a sound group object; did you forget to register it in TaleMaster?");
             Assert.Condition(Props.audio.group != null, "SoundAction requires an audio group object; did you forget to register it in TaleMaster?");
@@ -43,15 +41,19 @@ namespace TaleUtil
             {
                 state = State.STOP;
             }
+
+            return this;
         }
 
         // Sound sync
-        public SoundAction(int channel, float syncTimestamp)
+        public SoundAction Init(int channel, float syncTimestamp)
         {
             state = State.SYNC;
 
             this.channel = channel;
             this.syncTimestamp = syncTimestamp;
+
+            return this;
         }
 
         AudioClip LoadAudio()
@@ -66,10 +68,10 @@ namespace TaleUtil
         {
             Props.audio.sound[channel].clip = null;
 
-            Action next = Queue.FetchNext();
+            Action next = Tale.Master.Queue.FetchNext();
 
             // The next action isn't a SoundAction.
-            if(!(Queue.FetchNext() is SoundAction))
+            if(!(Tale.Master.Queue.FetchNext() is SoundAction))
             {
                 Props.audio.sound[channel].gameObject.SetActive(false);
 
@@ -95,23 +97,11 @@ namespace TaleUtil
                         Props.audio.group.SetActive(false);
                 }
             }
-            else if(((SoundAction)Queue.FetchNext()).channel != channel)
+            else if(((SoundAction)Tale.Master.Queue.FetchNext()).channel != channel)
             {
                 // If this channel is not used in the next action, deactivate it.
                 Props.audio.sound[channel].gameObject.SetActive(false);
             }
-        }
-
-        public override Action Clone()
-        {
-            SoundAction clone = new SoundAction();
-            clone.delta = delta;
-            clone.channel = channel;
-            clone.path = path;
-            clone.volume = volume;
-            clone.state = state;
-
-            return clone;
         }
 
         public override bool Run()

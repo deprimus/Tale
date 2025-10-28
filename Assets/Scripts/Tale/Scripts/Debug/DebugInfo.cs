@@ -44,7 +44,7 @@ public class DebugInfo : MonoBehaviour
 
     void UpdateAction()
     {
-        TaleUtil.Action act = TaleUtil.Queue.FetchIfAny();
+        TaleUtil.Action act = Tale.Master.Queue.FetchIfAny();
 
         if (act != null)
         {
@@ -58,6 +58,6 @@ public class DebugInfo : MonoBehaviour
 
     void UpdateActionCount()
     {
-        actionCountInfo.text = TaleUtil.Queue.GetTotalActionCount().ToString();
+        actionCountInfo.text = Tale.Master.Queue.GetTotalActionCount().ToString();
     }
 }

@@ -81,14 +81,10 @@ namespace TaleUtil
             SetupFlag setupSceneSelector = true;
 
             public void Init() {
-                if (File.Exists(TALE_MASTER_PREFAB_PATH)) {
+                if (File.Exists(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB)) {
                     state = State.MODIFY;
 
-                    var obj = GameObject.Find("Tale Master");
-
-                    if (obj == null) {
-                        obj = PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH)) as GameObject;
-                    }
+                    var obj = AssetDatabase.LoadAssetAtPath<GameObject>(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB);
 
                     var master = obj.GetComponent<TaleMaster>();
 
@@ -100,7 +96,7 @@ namespace TaleUtil
                     setupDebug.Set(master.props.debugMaster != null);
 
                     setupSplashScene.Set(File.Exists(GetSplashScenePath("Tale")));
-                    setupSceneSelector.Set(File.Exists(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH));
+                    setupSceneSelector.Set(File.Exists(TaleUtil.Config.Editor.RESOURCE_SCENE_SELECTOR_ITEM_PREFAB));
                 }
             }
 
@@ -332,7 +328,7 @@ namespace TaleUtil
 
                 if (GUILayout.Button("Create Transition", createButtonStyle) || (Event.current.keyCode == KeyCode.Return && GUI.enabled))
                 {
-                    using (var scope = new PrefabUtility.EditPrefabContentsScope(TALE_MASTER_PREFAB_PATH))
+                    using (var scope = new PrefabUtility.EditPrefabContentsScope(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB))
                     {
                         CreateTaleTransition(scope.prefabContentsRoot, name);
                     }

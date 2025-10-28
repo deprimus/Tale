@@ -7,22 +7,11 @@ namespace TaleUtil
         float amount;
         float clock;
 
-        WaitAction() { }
-
-        public WaitAction(float amount)
-        {
+        public WaitAction Init(float amount) {
             this.amount = amount;
             clock = 0f;
-        }
 
-        public override Action Clone()
-        {
-            WaitAction clone = new WaitAction();
-            clone.delta = delta;
-            clone.amount = amount;
-            clone.clock = clock;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()

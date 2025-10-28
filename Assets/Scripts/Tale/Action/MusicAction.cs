@@ -39,9 +39,7 @@ namespace TaleUtil
 
         State state;
 
-        MusicAction() { }
-
-        public MusicAction(List<string> paths, Mode mode, float volume, float pitch)
+        public MusicAction Init(List<string> paths, Mode mode, float volume, float pitch)
         {
             Assert.Condition(Props.audio.music != null, "MusicAction requires a music object with an AudioSource component; did you forget to register it in TaleMaster?");
             Assert.Condition(Props.audio.group != null, "MusicAction requires an audio group object; did you forget to register it in TaleMaster?");
@@ -55,24 +53,30 @@ namespace TaleUtil
             this.mode = mode;
             this.volume = volume;
             this.pitch = pitch;
+
+            return this;
         }
 
         // Music stop with a fade out duration parameter.
-        public MusicAction(float stopDuration, Delegates.InterpolationDelegate interpolation)
+        public MusicAction Init(float stopDuration, Delegates.InterpolationDelegate interpolation)
         {
             state = State.STOP;
 
             this.stopDuration = stopDuration;
             this.interpolation = interpolation == null ? Math.Identity : interpolation;
             clock = 0f;
+
+            return this;
         }
 
         // Music sync
-        public MusicAction(float syncTimestamp)
+        public MusicAction Init(float syncTimestamp)
         {
             state = State.SYNC;
 
             this.syncTimestamp = syncTimestamp;
+
+            return this;
         }
 
         AudioClip LoadAudio(string path)
@@ -89,10 +93,10 @@ namespace TaleUtil
         {
             Props.audio.music.clip = null;
 
-            Action next = Queue.FetchNext();
+            Action next = Tale.Master.Queue.FetchNext();
 
             // The next action isn't a MusicAction.
-            if (!(Queue.FetchNext() is MusicAction))
+            if (!(Tale.Master.Queue.FetchNext() is MusicAction))
             {
                 Props.audio.music.gameObject.SetActive(false);
 
@@ -154,19 +158,6 @@ namespace TaleUtil
         bool HasNext()
         {
             return currentIndex < current.Count - 1;
-        }
-
-        public override Action Clone()
-        {
-            MusicAction clone = new MusicAction();
-            clone.delta = delta;
-            clone.paths = new List<string>(paths);
-            clone.mode = mode;
-            clone.volume = volume;
-            clone.pitch = pitch;
-            clone.state = state;
-
-            return clone;
         }
 
         public override bool Run()

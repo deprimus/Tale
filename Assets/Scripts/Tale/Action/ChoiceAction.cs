@@ -16,9 +16,7 @@ namespace TaleUtil
         TChoice[] choices;
         State state;
 
-        ChoiceAction() { }
-
-        public ChoiceAction(string style, TArgs args, TChoice[] choices)
+        public ChoiceAction<TArgs, TChoice> Init(string style, TArgs args, TChoice[] choices)
         {
             SoftAssert.Condition(Props.choice.styles.ContainsKey(style.ToLowerInvariant()),
                     string.Format("Unknown choice style '{0}'; did you forget to register it in TaleMaster?", style));
@@ -28,16 +26,8 @@ namespace TaleUtil
             this.choices = choices;
 
             state = State.SETUP;
-        }
 
-        public override Action Clone()
-        {
-            var clone = new ChoiceAction<TArgs, TChoice>();
-            clone.delta = delta;
-            clone.args = args;       // TODO: these may be passed by reference; clone them properly
-            clone.choices = choices;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()

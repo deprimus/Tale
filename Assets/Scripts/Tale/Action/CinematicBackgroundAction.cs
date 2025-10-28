@@ -32,9 +32,7 @@ namespace TaleUtil
 
         string customAnimatorState;
 
-        CinematicBackgroundAction() { }
-
-        public CinematicBackgroundAction(string path, Type type, float speed)
+        public CinematicBackgroundAction Init(string path, Type type, float speed)
         {
             Assert.Condition(Props.cinematic.background.image != null, "CinematicBackgroundAction requires a background Image object; did you forget to register it in TaleMaster?");
 
@@ -57,6 +55,8 @@ namespace TaleUtil
                     state = State.CROSSFADE_SETUP;
                     break;
             }
+
+            return this;
         }
 
         Sprite LoadSprite()
@@ -65,18 +65,6 @@ namespace TaleUtil
             Assert.Condition(sprite != null, "The cinematic background '" + path + "' is missing");
 
             return sprite;
-        }
-
-        public override Action Clone()
-        {
-            CinematicBackgroundAction clone = new CinematicBackgroundAction();
-            clone.delta = delta;
-            clone.path = path;
-            clone.speed = speed;
-            clone.state = state;
-            clone.clock = clock;
-
-            return clone;
         }
 
         public override bool Run()

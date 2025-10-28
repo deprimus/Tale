@@ -22,10 +22,8 @@ namespace TaleUtil
 
         State state;
 
-        TransformShakeAction() { }
-
         // For transforms which can have their references changed (e.g. the camera when switching scenes).
-        public TransformShakeAction(Props.Transformable transformable, Vector2 magnitude, float transitionDuration, Delegates.InterpolationDelegate interpolation)
+        public TransformShakeAction Init(Props.Transformable transformable, Vector2 magnitude, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {
             this.transformable = transformable;
             this.magnitude = magnitude;
@@ -35,26 +33,12 @@ namespace TaleUtil
             clock = 0f;
 
             state = State.SETUP;
+
+            return this;
         }
 
-        public TransformShakeAction(Transform transform, Vector2 magnitude, float transitionDuration, Delegates.InterpolationDelegate interpolation)
-            : this(new Props.Transformable(transform), magnitude, transitionDuration, interpolation) { }
-
-        public override Action Clone()
-        {
-            TransformShakeAction clone = new TransformShakeAction();
-            clone.delta = delta;
-            clone.transformable = transformable;
-            clone.magnitude = magnitude;
-            clone.transitionDuration = transitionDuration;
-            clone.interpolation = interpolation;
-            clone.clock = clock;
-            clone.state = state;
-            clone.initialPos = initialPos;
-            clone.isRectTransform = isRectTransform;
-
-            return clone;
-        }
+        public TransformShakeAction Init(Transform transform, Vector2 magnitude, float transitionDuration, Delegates.InterpolationDelegate interpolation) =>
+            Init(new Props.Transformable(transform), magnitude, transitionDuration, interpolation);
 
         public override bool Run()
         {

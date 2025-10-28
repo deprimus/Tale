@@ -28,9 +28,7 @@ namespace TaleUtil
 
         State state;
 
-        TransitionAction() { }
-
-        public TransitionAction(string transition, Type type, float duration)
+        public TransitionAction Init(string transition, Type type, float duration)
         {
             switch (type)
             {
@@ -48,20 +46,8 @@ namespace TaleUtil
                     break;
                 }
             }
-        }
 
-        public override Action Clone()
-        {
-            TransitionAction clone = new TransitionAction();
-            clone.delta = delta;
-            clone.data = data;
-            clone.duration = duration;
-            clone.type = type;
-            clone.animatorState = animatorState;
-            clone.trigger = trigger;
-            clone.state = state;
-
-            return clone;
+            return this;
         }
 
         void PrepareTransition(string transition, Type type, float duration)

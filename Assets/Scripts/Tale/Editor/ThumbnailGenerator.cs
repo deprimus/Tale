@@ -18,7 +18,7 @@ namespace TaleUtil
             string filename = path.Replace('/', '_');
             filename = System.IO.Path.GetFileNameWithoutExtension(filename);
 
-            return System.IO.Path.Combine("Assets/Resources", Config.Editor.ASSET_ROOT_SCENE_THUMBNAIL, filename + ".png").Replace('\\', '/');
+            return System.IO.Path.Combine(Config.Editor.RESOURCE_ROOT_SCENE_THUMBNAIL, filename + ".png").Replace('\\', '/');
         }
 
 #if UNITY_EDITOR

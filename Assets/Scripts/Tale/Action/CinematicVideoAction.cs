@@ -37,9 +37,7 @@ namespace TaleUtil
 
         double startTime; // VideoPlayer.time is of type double.
 
-        CinematicVideoAction() { }
-
-        public CinematicVideoAction(string path, float detatchTime, DetatchType detatchType, float speed)
+        public CinematicVideoAction Init(string path, float detatchTime, DetatchType detatchType, float speed)
         {
             Assert.Condition(Props.cinematic.video.group != null, "CinematicVideoAction requires a group object; did you forget to register it in TaleMaster?");
             Assert.Condition(Props.cinematic.video.player != null, "CinematicVideoAction requires a video player object; did you forget to register it in TaleMaster?");
@@ -49,25 +47,13 @@ namespace TaleUtil
             this.detatchType = detatchType;
             this.speed = speed;
 
-            this.startTime = 0f;
+            startTime = 0f;
 
             if(path == null)
                 state = State.PLAY;
             else state = State.LOAD;
-        }
 
-        public override Action Clone()
-        {
-            CinematicVideoAction clone = new CinematicVideoAction();
-            clone.delta = delta;
-            clone.path = path;
-            clone.detatchTime = detatchTime;
-            clone.detatchType = detatchType;
-            clone.state = state;
-            clone.speed = speed;
-            clone.startTime = startTime;
-
-            return clone;
+            return this;
         }
 
         VideoClip LoadVideo()

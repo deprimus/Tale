@@ -4,20 +4,11 @@ namespace TaleUtil
     {
         Delegates.ShallowDelegate action;
 
-        ExecAction() { }
-
-        public ExecAction(Delegates.ShallowDelegate action)
+        public ExecAction Init(Delegates.ShallowDelegate action)
         {
             this.action = action;
-        }
 
-        public override Action Clone()
-        {
-            ExecAction clone = new ExecAction();
-            clone.delta = delta;
-            clone.action = action;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()

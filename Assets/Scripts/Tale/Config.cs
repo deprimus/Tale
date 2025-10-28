@@ -6,7 +6,9 @@ namespace TaleUtil
     [CreateAssetMenu(fileName = "TaleConfig", menuName = "Tale/Config", order = 1)]
     public class Config : ScriptableObject
     {
-        // Used for Editor stuff, like setting up Tale props
+        // Meta-config used for Editor stuff.
+        // These are kept here since they must be accessible during the initial Tale setup,
+        // and should not be changed after that.
         public static class Editor
         {
             // Default width and height used for creating canvases, render textures, etc
@@ -39,10 +41,15 @@ namespace TaleUtil
             public const int CHOICE_SORT_ORDER = 500;
             public const int CINEMATIC_SORT_ORDER = 100;
 
+            public const string RESOURCE_MASTER_PREFAB = "Assets/Resources/Tale/Tale Master.prefab";
+            public const string RESOURCE_SCENE_SELECTOR_ITEM_PREFAB = "Assets/Resources/Tale/TaleSceneSelectorItem.prefab";
+            public const string RESOURCE_CONFIG = "Assets/Resources/Tale/TaleConfig.asset";
+
             public const string ASSET_ROOT_SCENE = "Scenes/";
+            public const string SPLASH_SCENE_DIR = "Splash";
 
             // Where to store scene thumbnails for the scene selector
-            public const string ASSET_ROOT_SCENE_THUMBNAIL = "Sprites/SceneThumbnails";
+            public const string RESOURCE_ROOT_SCENE_THUMBNAIL = "Assets/Resources/Sprites/SceneThumbnails";
 
             public const int SCENE_THUMBNAIL_WIDTH = REFERENCE_WIDTH / 10;
             public const int SCENE_THUMBNAIL_HEIGHT = REFERENCE_HEIGHT / 10;

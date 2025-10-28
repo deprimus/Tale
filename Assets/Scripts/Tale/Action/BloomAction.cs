@@ -29,9 +29,9 @@ namespace TaleUtil
 
         State state;
 
-        BloomAction() { }
+        BloomAction(TaleMaster master) : base(master) { }
 
-        public BloomAction(float intensity, float transitionDuration, Color? color, float threshold, float diffusion, float anamorphicRatio, Delegates.InterpolationDelegate interpolation)
+        public BloomAction(TaleMaster master, float intensity, float transitionDuration, Color? color, float threshold, float diffusion, float anamorphicRatio, Delegates.InterpolationDelegate interpolation) : base(master)
         {
             Assert.Condition(Props.postProcessing.bloom != null, "BloomAction requires a bloom object (and, therefore, a PostProcessVolume component on the main camera)");
 
@@ -55,7 +55,7 @@ namespace TaleUtil
 
         public override Action Clone()
         {
-            BloomAction clone = new BloomAction();
+            BloomAction clone = new BloomAction(master);
             clone.delta = delta;
             clone.transitionDuration = transitionDuration;
             clone.intensity = intensity;

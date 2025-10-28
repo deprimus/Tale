@@ -9,8 +9,6 @@ namespace TaleUtil
 
         bool secondaryDone;
 
-        BindAction() { }
-
         // How this works:
         //
         // The Tale.* methods add actions to the queue.
@@ -28,34 +26,14 @@ namespace TaleUtil
         //     Tale.Transition()
         // );
 
-        public BindAction(Action primary, Action secondary)
+        public BindAction Init(Action primary, Action secondary)
         {
             this.primary = primary;
             this.secondary = secondary;
 
-            this.secondaryDone = false;
+            secondaryDone = false;
 
-            Queue.RemoveLast(secondary);
-            Queue.RemoveLast(primary);
-        }
-
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
-        {
-            base.SetDeltaCallback(callback);
-
-            primary.SetDeltaCallback(callback);
-            secondary.SetDeltaCallback(callback);
-        }
-
-        public override Action Clone()
-        {
-            BindAction clone = new BindAction();
-            clone.delta = delta;
-            clone.primary = primary;
-            clone.secondary = secondary;
-            clone.secondaryDone = false;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()
@@ -75,6 +53,13 @@ namespace TaleUtil
             }
 
             return false;
+        }
+
+        public override void SetDeltaCallback(Delegates.DeltaDelegate callback) {
+            base.SetDeltaCallback(callback);
+
+            primary.SetDeltaCallback(callback);
+            secondary.SetDeltaCallback(callback);
         }
 
         public override string ToString()

@@ -3,11 +3,15 @@ namespace TaleUtil
     public abstract class Action
     {
         public ulong id;
+        protected TaleMaster master;
 
         public System.Threading.Tasks.TaskCompletionSource<bool> task;
 
+        protected Delegates.DeltaDelegate delta = () => UnityEngine.Time.deltaTime;
+
+        internal Action() { }
+
         public abstract bool Run();
-        public abstract Action Clone();
 
         public virtual void OnInterrupt() { }
 
@@ -21,7 +25,9 @@ namespace TaleUtil
         public virtual void SetDeltaCallback(Delegates.DeltaDelegate callback) =>
             delta = callback;
 
-        // Default: use scaled delta time
-        protected Delegates.DeltaDelegate delta = () => UnityEngine.Time.deltaTime;
+        internal void Prime(TaleMaster master, ulong id) {
+            this.id = id;
+            this.master = master;
+        }
     }
 }

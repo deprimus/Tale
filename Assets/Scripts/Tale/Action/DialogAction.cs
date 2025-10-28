@@ -2,7 +2,6 @@
 
 using UnityEngine;
 using TMPro;
-using UnityEditor;
 
 namespace TaleUtil
 {
@@ -63,10 +62,7 @@ namespace TaleUtil
         bool hasAnimation;
         bool hasAvatarAnimation;
 
-        DialogAction() { }
-
-        public DialogAction(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb, bool keepOpen, TaleUtil.Action action)
-        {
+        public DialogAction Init(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb, bool keepOpen, TaleUtil.Action action) {
             if (content != null)
             {
                 SoftAssert.Condition(Props.dialog.content != null,
@@ -121,11 +117,6 @@ namespace TaleUtil
             this.keepOpen = keepOpen;
             this.action = action;
 
-            if (this.action != null)
-            {
-                TaleUtil.Queue.RemoveLast(this.action);
-            }
-
             type = additive ? Type.ADDITIVE : Type.OVERRIDE;
             ChangeState(State.SETUP);
 
@@ -139,6 +130,8 @@ namespace TaleUtil
 
             hasAnimation = HasAnimation();
             hasAvatarAnimation = HasAnimateableAvatar();
+
+            return this;
         }
 
         // After the dialog ends, we want to see if another dialog action
@@ -365,27 +358,6 @@ namespace TaleUtil
 
                 // TODO: add tint color support
             }
-        }
-
-        public override Action Clone()
-        {
-            DialogAction clone = new DialogAction();
-            clone.delta = delta;
-            clone.actor = actor;
-            clone.content = content;
-            clone.avatar = avatar;
-            clone.voice = voice;
-            clone.loopVoice = loopVoice;
-            clone.reverb = reverb;
-            clone.keepOpen = keepOpen;
-            clone.action = action.Clone();
-            clone.type = type;
-            clone.state = state;
-            clone.index = index;
-            clone.timePerChar = timePerChar;
-            clone.clock = clock;
-
-            return clone;
         }
 
         public override bool Run()
@@ -758,7 +730,7 @@ namespace TaleUtil
 
                         // If an additive dialog action follows this one,
                         // use the additive CTC
-                        var nextDialog = GetNextDialogAction(Queue.FetchNext());
+                        var nextDialog = GetNextDialogAction(Tale.Master.Queue.FetchNext());
 
                         if(nextDialog != null && nextDialog.type == Type.ADDITIVE)
                         {
@@ -901,7 +873,7 @@ namespace TaleUtil
                     }
 
                     // If the next action is a dialog, also keep open
-                    var nextDialog = GetNextDialogAction(Queue.FetchNext());
+                    var nextDialog = GetNextDialogAction(Tale.Master.Queue.FetchNext());
 
                     if (nextDialog != null)
                     {

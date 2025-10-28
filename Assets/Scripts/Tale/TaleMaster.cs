@@ -3,13 +3,23 @@
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
+using System;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
+// TODO: execution order is no longer required since the object is lazy init'ed
 [DefaultExecutionOrder(-1000)]
 public class TaleMaster : MonoBehaviour
 {
+    #region Fields
+    public TaleUtil.Queue Queue { get; private set; }
+
+    ulong actionCounter;
+    #endregion
+
+    #region Behavior
     // Hello Tale!
     void Awake()
     {
@@ -34,7 +44,10 @@ public class TaleMaster : MonoBehaviour
             }
         }
 
-        TaleUtil.Queue.Init();
+        Queue = new TaleUtil.Queue();
+
+        actionCounter = 0;
+
         TaleUtil.Parallel.Init();
         TaleUtil.Triggers.Init();
         TaleUtil.Hooks.Init();
@@ -61,7 +74,7 @@ public class TaleMaster : MonoBehaviour
         }
 
         // That's it.
-        TaleUtil.Queue.Run();
+        Queue.Run();
         TaleUtil.Parallel.Run();
     }
 
@@ -69,6 +82,17 @@ public class TaleMaster : MonoBehaviour
     {
         TaleUtil.Triggers.Update();
     }
+
+#if UNITY_EDITOR
+    // This ensures that Tale works even without domain reloads
+    static void OnExitPlayMode(PlayModeStateChange state) {
+        if (state == PlayModeStateChange.ExitingPlayMode) {
+            EditorApplication.playModeStateChanged -= OnExitPlayMode;
+            SceneManager.sceneLoaded -= TaleUtil.Events.OnSceneLoaded;
+            Tale.alive = false;
+        }
+    }
+#endif
 
     void TriggerSceneSelector()
     {
@@ -79,7 +103,7 @@ public class TaleMaster : MonoBehaviour
             return;
         }
 
-        TaleUtil.Queue.ForceClear();
+        Queue.ForceClear();
         TaleUtil.Parallel.ForceClear();
 
         Tale.Scene(path);
@@ -88,26 +112,25 @@ public class TaleMaster : MonoBehaviour
         // Reset() places some transition cleaning actions on the parallel queue; execute all of them
         TaleUtil.Parallel.Run();
     }
+    #endregion
 
-#if UNITY_EDITOR
-    // This ensures that Tale works even without domain reloads
-    static void OnExitPlayMode(PlayModeStateChange state)
-    {
-        if (state == PlayModeStateChange.ExitingPlayMode)
-        {
-            EditorApplication.playModeStateChanged -= OnExitPlayMode;
-            SceneManager.sceneLoaded -= TaleUtil.Events.OnSceneLoaded;
-            Tale.alive = false;
-        }
+    #region Publics
+    public T CreateAction<T>() where T : TaleUtil.Action, new() {
+        var act = new T();
+        act.Prime(this, actionCounter++);
+
+        return act;
     }
-#endif
+    #endregion
 
+    #region Inspector
 #if UNITY_EDITOR
     [Space(10)]
 #endif
     public TaleUtil.Config config;
 
-    public InspectorProps props;
+    [SerializeField]
+    internal InspectorProps props;
 
     [System.Serializable]
     public class InspectorProps
@@ -263,4 +286,5 @@ public class TaleMaster : MonoBehaviour
 #endif
         public DebugMaster debugMaster;
     }
+    #endregion
 }

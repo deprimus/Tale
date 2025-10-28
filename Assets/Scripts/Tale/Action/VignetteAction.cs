@@ -28,9 +28,9 @@ namespace TaleUtil
 
         State state;
 
-        VignetteAction() { }
+        VignetteAction(TaleMaster master) : base(master) { }
 
-        public VignetteAction(float intensity, float transitionDuration, Color? color, float smoothness, float roundness, bool? rounded, Delegates.InterpolationDelegate interpolation)
+        public VignetteAction(TaleMaster master, float intensity, float transitionDuration, Color? color, float smoothness, float roundness, bool? rounded, Delegates.InterpolationDelegate interpolation) : base(master)
         {
             Assert.Condition(Props.postProcessing.bloom != null, "VignetteAction requires a vignette object (and, therefore, a PostProcessVolume component on the main camera)");
 
@@ -53,7 +53,7 @@ namespace TaleUtil
 
         public override Action Clone()
         {
-            VignetteAction clone = new VignetteAction();
+            VignetteAction clone = new VignetteAction(master);
             clone.delta = delta;
             clone.transitionDuration = transitionDuration;
             clone.intensity = intensity;

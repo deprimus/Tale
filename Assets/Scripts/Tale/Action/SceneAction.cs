@@ -15,29 +15,20 @@ namespace TaleUtil
 
         Type type;
 
-        SceneAction() { }
-
-        public SceneAction(int index)
+        public SceneAction Init(int index)
         {
             this.index = index;
-            type = Type.INDEX;   
+            type = Type.INDEX;
+
+            return this;
         }
 
-        public SceneAction(string path)
+        public SceneAction Init(string path)
         {
             this.path = path;
             type = Type.PATH;
-        }
 
-        public override Action Clone()
-        {
-            SceneAction clone = new SceneAction();
-            clone.delta = delta;
-            clone.index = index;
-            clone.path = path;
-            clone.type = type;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()

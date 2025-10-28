@@ -35,9 +35,7 @@ namespace TaleUtil
 
         float clock;
 
-        CinematicSubtitleAction() { }
-
-        public CinematicSubtitleAction(string content, float ttl, bool showBackground)
+        public CinematicSubtitleAction Init(string content, float ttl, bool showBackground)
         {
             Assert.Condition(Props.cinematic.subtitlesGroup != null, "CinematicSubtitleAction requires a subtitles group object; did you forget to register it in TaleMaster?");
             Assert.Condition(Props.cinematic.subtitles != null, "CinematicSubtitleAction requires a subtitles object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
@@ -52,19 +50,8 @@ namespace TaleUtil
             state = State.SETUP;
 
             clock = 0f;
-        }
 
-        public override Action Clone()
-        {
-            CinematicSubtitleAction clone = new CinematicSubtitleAction();
-            clone.delta = delta;
-            clone.content = content;
-            clone.ttl = ttl;
-            clone.showBackground = showBackground;
-            clone.state = state;
-            clone.clock = clock;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()
@@ -132,7 +119,7 @@ namespace TaleUtil
 
                     if(clock >= ttl)
                     {
-                        if(!(Queue.FetchNext() is CinematicSubtitleAction))
+                        if(!(Tale.Master.Queue.FetchNext() is CinematicSubtitleAction))
                         {
                             Props.cinematic.subtitlesGroup.SetActive(false);
                         }

@@ -12,20 +12,13 @@ namespace TaleUtil
 
         State state;
 
-        public AdvanceAction()
+        public AdvanceAction Init()
         {
             Assert.Condition(Props.advanceCanvas != null, string.Format("Advance Canvas is null; did you forget to register it in TaleMaster?"));
 
             state = State.SETUP;
-        }
 
-        public override Action Clone()
-        {
-            AdvanceAction clone = new AdvanceAction();
-            clone.delta = delta;
-            clone.state = state;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()

@@ -3,16 +3,10 @@ namespace TaleUtil
     public class CinematicVideoPauseAction : Action
     {
 
-        public CinematicVideoPauseAction() {
+        public CinematicVideoPauseAction Init() {
             Assert.Condition(Props.cinematic.video.player != null, "CinematicVideoPauseAction requires a video player object; did you forget to register it in TaleMaster?");
-        }
 
-        public override Action Clone()
-        {
-            CinematicVideoPauseAction clone = new CinematicVideoPauseAction();
-            clone.delta = delta;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()

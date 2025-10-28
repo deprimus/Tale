@@ -4,17 +4,10 @@ namespace TaleUtil
 {
     public class CinematicToggleAction : Action
     {
-
-        public CinematicToggleAction() {
+        public CinematicToggleAction Init() {
             Assert.Condition(Props.cinematic.canvas != null, "CinematicToggleAction requires a canvas object; did you forget to register it in TaleMaster?");
-        }
 
-        public override Action Clone()
-        {
-            CinematicToggleAction clone = new CinematicToggleAction();
-            clone.delta = delta;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()

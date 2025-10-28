@@ -20,9 +20,9 @@ namespace TaleUtil
         float initialContribution;
         State state;
 
-        CameraEffectAction() { }
+        CameraEffectAction(TaleMaster master) : base(master) { }
 
-        public CameraEffectAction(string effect, float transitionDuration, Delegates.InterpolationDelegate interpolation)
+        public CameraEffectAction(TaleMaster master, string effect, float transitionDuration, Delegates.InterpolationDelegate interpolation) : base(master)
         {
             Assert.Condition(Props.postProcessing.colorGrading != null, "CameraEffectAction requires a color grading object (and, therefore, a PostProcessVolume component on the main camera)");
 
@@ -48,7 +48,7 @@ namespace TaleUtil
 
         public override Action Clone()
         {
-            CameraEffectAction clone = new CameraEffectAction();
+            CameraEffectAction clone = new CameraEffectAction(master);
             clone.delta = delta;
             clone.transitionDuration = transitionDuration;
             clone.lut = lut;

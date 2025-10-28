@@ -21,9 +21,7 @@ namespace TaleUtil
 
         State state;
 
-        InterpolationAction() { }
-
-        public InterpolationAction(T initial, T target, Delegates.CallbackDelegate<T> callback, float transitionDuration, Delegates.InterpolationDelegate interpolation)
+        public InterpolationAction<T> Init(T initial, T target, Delegates.CallbackDelegate<T> callback, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {
             if (typeof(T) == typeof(float))
             {
@@ -49,21 +47,8 @@ namespace TaleUtil
             this.interpolation = interpolation == null ? Math.Identity : interpolation;
 
             clock = 0f;
-        }
 
-        public override Action Clone()
-        {
-            InterpolationAction<T> clone = new InterpolationAction<T>();
-            clone.delta = delta;
-            clone.initial = initial;
-            clone.target = target;
-            clone.callback = callback;
-            clone.transitionDuration = transitionDuration;
-            clone.interpolation = interpolation;
-            clone.clock = clock;
-            clone.state = state;
-
-            return clone;
+            return this;
         }
 
         void Tick()

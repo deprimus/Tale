@@ -6,20 +6,11 @@ namespace TaleUtil
     {
         string trigger;
 
-        WaitForAction() { }
-
-        public WaitForAction(string trigger)
+        public WaitForAction Init(string trigger)
         {
             this.trigger = trigger;
-        }
 
-        public override Action Clone()
-        {
-            WaitForAction clone = new WaitForAction();
-            clone.delta = delta;
-            clone.trigger = trigger;
-
-            return clone;
+            return this;
         }
 
         public override bool Run()

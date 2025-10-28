@@ -16,34 +16,20 @@ namespace TaleUtil
 
         State state;
 
-        DelayedByAction() { }
-
-        public DelayedByAction(string trigger, Action action)
+        public DelayedByAction Init(string trigger, Action action)
         {
             this.trigger = trigger;
             this.action = action;
 
-            // Remove the action from the Tale queue because it will be handled here
-            Queue.RemoveLast(action);
-
             state = State.WAIT_FOR_TRIGGER;
+
+            return this;
         }
 
         public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
         {
             base.SetDeltaCallback(callback);
             action.SetDeltaCallback(callback);
-        }
-
-        public override Action Clone()
-        {
-            DelayedByAction clone = new DelayedByAction();
-            clone.delta = delta;
-            clone.trigger = trigger;
-            clone.state = state;
-            clone.action = action.Clone();
-
-            return clone;
         }
 
         public override bool Run()
