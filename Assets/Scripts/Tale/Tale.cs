@@ -4,14 +4,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
 using TaleUtil;
+using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public static partial class Tale
 {
-    // Whether or not the TaleMaster object is alive (initially false).
-    public static bool alive = false;
-
-    public static TaleUtil.Config config;
-
     static TaleMaster master;
 
     public static TaleMaster Master {
@@ -25,17 +22,38 @@ public static partial class Tale
     }
 
     static void InitTaleMaster() {
+#if UNITY_EDITOR
+        EditorApplication.playModeStateChanged += OnExitPlayMode;
+#endif
+
         // Part of the scene
         var obj = GameObject.FindFirstObjectByType<TaleMaster>();
 
         if (obj != null) {
             master = obj;
-            return;
+        } else {
+            // Missing from scene; instantiate it now
+            master = GameObject.Instantiate(Resources.Load<GameObject>(TaleUtil.Path.NormalizeResourcePath(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB))).GetComponent<TaleMaster>();
         }
 
-        // Missing from scene; instantiate it now
-        master = GameObject.Instantiate(Resources.Load<GameObject>(TaleUtil.Path.NormalizeResourcePath(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB))).GetComponent<TaleMaster>();
+        Debug.Assert(master != null, "[TALE] Master object Instantiate() returned false; something is seriously wrong");
+
+        SceneManager.sceneLoaded += master.OnSceneLoaded;
     }
+
+#if UNITY_EDITOR
+    // This ensures that Tale works even without domain reloads
+    static void OnExitPlayMode(PlayModeStateChange state) {
+        if (state == PlayModeStateChange.ExitingPlayMode) {
+            EditorApplication.playModeStateChanged -= OnExitPlayMode;
+
+            if (master != null) {
+                SceneManager.sceneLoaded -= master.OnSceneLoaded;
+                master = null;
+            }
+        }
+    }
+#endif
 
     // Preserve the same order as in TransitionAction (the cast will silently fail otherwise).
     public enum TransitionType
@@ -146,7 +164,7 @@ public static partial class Tale
             Master.Queue.RemoveLast(action);
         }
 
-        return Master.Queue.Enqueue(Master.CreateAction<DialogAction>().Init(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, keepOpen, action));
+        return Master.Queue.Enqueue(Master.CreateAction<DialogAction>().Init(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, keepOpen, action));
     }
 
     public static TaleUtil.Action TransitionIn(float duration = Tale.Default.FLOAT) =>
@@ -204,10 +222,10 @@ public static partial class Tale
     public static class Sound
     {
         public static TaleUtil.Action Play(string path, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<SoundAction>().Init(0, TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
+            Parallel(Master.CreateAction<SoundAction>().Init(0, TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
 
         public static TaleUtil.Action Play(int channel, string path, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<SoundAction>().Init(channel, TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
+            Parallel(Master.CreateAction<SoundAction>().Init(channel, TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
 
         public static TaleUtil.Action Stop(int channel = 0) =>
             Master.Queue.Enqueue(Master.CreateAction<SoundAction>().Init(channel, null, 1f, 1f));
@@ -229,13 +247,13 @@ public static partial class Tale
 
         // TODO: Change the asset root to MUSIC.
         public static TaleUtil.Action Play(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            Parallel(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Play(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Play(List<string> paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, paths), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, paths), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Stop(float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             Master.Queue.Enqueue(Master.CreateAction<MusicAction>().Init(duration, interpolation));
@@ -246,13 +264,13 @@ public static partial class Tale
         // Async actions
 
         public static Task PlayAsync(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Async(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
+            Async(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
 
         public static Task PlayAsync(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
+            Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
 
         public static Task PlayAsync(List<string> paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Tale.config.ASSET_ROOT_AUDIO_MUSIC, paths), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
+            Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, paths), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
 
         public static Task StopAsync(float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             Async(Stop(duration, interpolation));
@@ -264,55 +282,55 @@ public static partial class Tale
     public static class Cam
     {
         public static TaleUtil.Action Position(Vector2 pos, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformPositionAction>().Init(TaleUtil.Props.camera, pos, transitionDuration, interpolation, false));
+            Master.Queue.Enqueue(Master.CreateAction<TransformPositionAction>().Init(Master.Props.camera, pos, transitionDuration, interpolation, false));
 
         public static TaleUtil.Action Position(float x = Default.FLOAT, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformPositionAction>().Init(TaleUtil.Props.camera, new Vector2(x, y), transitionDuration, interpolation, false));
+            Master.Queue.Enqueue(Master.CreateAction<TransformPositionAction>().Init(Master.Props.camera, new Vector2(x, y), transitionDuration, interpolation, false));
 
         public static TaleUtil.Action Move(Vector2 pos, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformPositionAction>().Init(TaleUtil.Props.camera, pos, transitionDuration, interpolation, true));
+            Master.Queue.Enqueue(Master.CreateAction<TransformPositionAction>().Init(Master.Props.camera, pos, transitionDuration, interpolation, true));
 
         public static TaleUtil.Action Move(float x = Default.FLOAT, float y = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformPositionAction>().Init(TaleUtil.Props.camera, new Vector2(x, y), transitionDuration, interpolation, true));
+            Master.Queue.Enqueue(Master.CreateAction<TransformPositionAction>().Init(Master.Props.camera, new Vector2(x, y), transitionDuration, interpolation, true));
 
         public static TaleUtil.Action Zoom(float factor, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             Master.Queue.Enqueue(Master.CreateAction<CameraZoomAction>().Init(factor, transitionDuration, interpolation));
 
         public static TaleUtil.Action Rotation(float degreesX = Default.FLOAT, float degreesY = Default.FLOAT, float degreesZ = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(TaleUtil.Props.camera, new Vector3(degreesX, degreesY, degreesZ), transitionDuration, interpolation, false));
+            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(Master.Props.camera, new Vector3(degreesX, degreesY, degreesZ), transitionDuration, interpolation, false));
 
         public static TaleUtil.Action RotationX(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(TaleUtil.Props.camera, new Vector3(degrees, Default.FLOAT, Default.FLOAT), transitionDuration, interpolation, false));
+            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(Master.Props.camera, new Vector3(degrees, Default.FLOAT, Default.FLOAT), transitionDuration, interpolation, false));
 
         public static TaleUtil.Action RotationY(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(TaleUtil.Props.camera, new Vector3(Default.FLOAT, degrees, Default.FLOAT), transitionDuration, interpolation, false));
+            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(Master.Props.camera, new Vector3(Default.FLOAT, degrees, Default.FLOAT), transitionDuration, interpolation, false));
 
         public static TaleUtil.Action RotationZ(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(TaleUtil.Props.camera, new Vector3(Default.FLOAT, Default.FLOAT, degrees), transitionDuration, interpolation, false));
+            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(Master.Props.camera, new Vector3(Default.FLOAT, Default.FLOAT, degrees), transitionDuration, interpolation, false));
 
         public static TaleUtil.Action Rotate(float degreesX = Default.FLOAT, float degreesY = Default.FLOAT, float degreesZ = Default.FLOAT, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(TaleUtil.Props.camera, new Vector3(degreesX, degreesY, degreesZ), transitionDuration, interpolation, true));
+            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(Master.Props.camera, new Vector3(degreesX, degreesY, degreesZ), transitionDuration, interpolation, true));
 
         public static TaleUtil.Action RotateX(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(TaleUtil.Props.camera, new Vector3(degrees, Default.FLOAT, Default.FLOAT), transitionDuration, interpolation, true));
+            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(Master.Props.camera, new Vector3(degrees, Default.FLOAT, Default.FLOAT), transitionDuration, interpolation, true));
 
         public static TaleUtil.Action RotateY(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(TaleUtil.Props.camera, new Vector3(Default.FLOAT, degrees, Default.FLOAT), transitionDuration, interpolation, true));
+            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(Master.Props.camera, new Vector3(Default.FLOAT, degrees, Default.FLOAT), transitionDuration, interpolation, true));
 
         public static TaleUtil.Action RotateZ(float degrees, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(TaleUtil.Props.camera, new Vector3(Default.FLOAT, Default.FLOAT, degrees), transitionDuration, interpolation, true));
+            Master.Queue.Enqueue(Master.CreateAction<TransformRotateAction>().Init(Master.Props.camera, new Vector3(Default.FLOAT, Default.FLOAT, degrees), transitionDuration, interpolation, true));
 
         public static TaleUtil.Action Shake(Vector2 magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformShakeAction>().Init(TaleUtil.Props.camera, magnitude, duration, interpolation));
+            Master.Queue.Enqueue(Master.CreateAction<TransformShakeAction>().Init(Master.Props.camera, magnitude, duration, interpolation));
 
         public static TaleUtil.Action Shake(float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformShakeAction>().Init(TaleUtil.Props.camera, new Vector2(magnitude, magnitude), duration, interpolation));
+            Master.Queue.Enqueue(Master.CreateAction<TransformShakeAction>().Init(Master.Props.camera, new Vector2(magnitude, magnitude), duration, interpolation));
 
         public static TaleUtil.Action ShakeX(float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformShakeAction>().Init(TaleUtil.Props.camera, new Vector2(magnitude, Default.FLOAT), duration, interpolation));
+            Master.Queue.Enqueue(Master.CreateAction<TransformShakeAction>().Init(Master.Props.camera, new Vector2(magnitude, Default.FLOAT), duration, interpolation));
 
         public static TaleUtil.Action ShakeY(float magnitude, float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
-            Master.Queue.Enqueue(Master.CreateAction<TransformShakeAction>().Init(TaleUtil.Props.camera, new Vector2(Default.FLOAT, magnitude), duration, interpolation));
+            Master.Queue.Enqueue(Master.CreateAction<TransformShakeAction>().Init(Master.Props.camera, new Vector2(Default.FLOAT, magnitude), duration, interpolation));
 
 #if UNITY_POST_PROCESSING_STACK_V2
         public static TaleUtil.Action Effect(string name = null, float transitionDuration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
@@ -408,10 +426,10 @@ public static partial class Tale
             Master.Queue.Enqueue(Master.CreateAction<CinematicSubtitleAction>().Init(content, ttl, showBackground));
 
         public static TaleUtil.Action Background(string path, BackgroundTransitionType type = BackgroundTransitionType.INSTANT, float speed = 1f) =>
-            Master.Queue.Enqueue(Master.CreateAction<CinematicBackgroundAction>().Init(TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_CINEMATIC_BACKGROUND, path), (TaleUtil.CinematicBackgroundAction.Type) (int) type, speed));
+            Master.Queue.Enqueue(Master.CreateAction<CinematicBackgroundAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_CINEMATIC_BACKGROUND, path), (TaleUtil.CinematicBackgroundAction.Type) (int) type, speed));
 
         public static TaleUtil.Action Video(string path, float detatchValue = 0f, VideoDetatchType detatchType = VideoDetatchType.BEFORE, float speed = 1f) =>
-            Master.Queue.Enqueue(Master.CreateAction<CinematicVideoAction>().Init(TaleUtil.Path.NormalizeResourcePath(Tale.config.ASSET_ROOT_CINEMATIC_VIDEO, path), detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int) detatchType, speed));
+            Master.Queue.Enqueue(Master.CreateAction<CinematicVideoAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_CINEMATIC_VIDEO, path), detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int) detatchType, speed));
 
         public static TaleUtil.Action VideoPause() =>
             Master.Queue.Enqueue(Master.CreateAction<CinematicVideoPauseAction>().Init());

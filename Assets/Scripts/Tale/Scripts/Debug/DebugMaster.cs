@@ -8,7 +8,9 @@ public class DebugMaster : MonoBehaviour
 
     void Update()
     {
-        if (Tale.config.DEBUG_INFO_ENABLE && GetKeyDownNoMod(Tale.config.DEBUG_INFO_KEY))
+        var config = Tale.Master.Config;
+
+        if (config.DEBUG_INFO_ENABLE && GetKeyDownNoMod(config.DEBUG_INFO_KEY))
         {
             debugInfo.SetActive(!debugInfo.activeSelf);
         }
@@ -21,16 +23,6 @@ public class DebugMaster : MonoBehaviour
 
     static bool GetKeyDownNoMod(KeyCode key)
     {
-        return Input.GetKeyDown(key)
-            && !Input.GetKeyDown(KeyCode.LeftShift)
-            && !Input.GetKeyDown(KeyCode.RightShift)
-            && !Input.GetKeyDown(KeyCode.LeftControl)
-            && !Input.GetKeyDown(KeyCode.RightControl)
-            && !Input.GetKeyDown(KeyCode.LeftAlt)
-            && !Input.GetKeyDown(KeyCode.RightAlt)
-            && !Input.GetKeyDown(KeyCode.LeftWindows)
-            && !Input.GetKeyDown(KeyCode.RightWindows)
-            && !Input.GetKeyDown(KeyCode.LeftCommand)
-            && !Input.GetKeyDown(KeyCode.RightCommand);
+        return TaleUtil.Input.GetKeyDown(key) && !TaleUtil.Input.AnyModPressed();
     }
 }

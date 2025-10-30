@@ -32,7 +32,7 @@ namespace TaleUtil
 
         public VignetteAction(TaleMaster master, float intensity, float transitionDuration, Color? color, float smoothness, float roundness, bool? rounded, Delegates.InterpolationDelegate interpolation) : base(master)
         {
-            Assert.Condition(Props.postProcessing.bloom != null, "VignetteAction requires a vignette object (and, therefore, a PostProcessVolume component on the main camera)");
+            Assert.Condition(master.Props.postProcessing.bloom != null, "VignetteAction requires a vignette object (and, therefore, a PostProcessVolume component on the main camera)");
 
             Assert.Condition(intensity == float.MinValue || (intensity >= 0f && intensity <= 1f), "Vignette intensity must be between 0 and 1 (inclusive)");
             Assert.Condition(smoothness == float.MinValue || (smoothness > 0f && smoothness <= 1f), "Vignette smoothness must be between 0 (exclusive) and 1 (inclusive)");
@@ -74,16 +74,16 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    Props.postProcessing.vignette.intensity.overrideState  = true;
-                    Props.postProcessing.vignette.color.overrideState      = true;
-                    Props.postProcessing.vignette.smoothness.overrideState = true;
-                    Props.postProcessing.vignette.roundness.overrideState  = true;
-                    Props.postProcessing.vignette.rounded.overrideState    = true;
+                    master.Props.postProcessing.vignette.intensity.overrideState  = true;
+                    master.Props.postProcessing.vignette.color.overrideState      = true;
+                    master.Props.postProcessing.vignette.smoothness.overrideState = true;
+                    master.Props.postProcessing.vignette.roundness.overrideState  = true;
+                    master.Props.postProcessing.vignette.rounded.overrideState    = true;
 
-                    initialIntensity  = Props.postProcessing.vignette.intensity.value;
-                    initialColor      = Props.postProcessing.vignette.color.value;
-                    initialSmoothness = Props.postProcessing.vignette.smoothness.value;
-                    initialRoundness  = Props.postProcessing.vignette.roundness.value;
+                    initialIntensity  = master.Props.postProcessing.vignette.intensity.value;
+                    initialColor      = master.Props.postProcessing.vignette.color.value;
+                    initialSmoothness = master.Props.postProcessing.vignette.smoothness.value;
+                    initialRoundness  = master.Props.postProcessing.vignette.roundness.value;
 
                     if(intensity == float.MinValue)
                         intensity = initialIntensity;
@@ -94,9 +94,9 @@ namespace TaleUtil
                     if(roundness == float.MinValue)
                         roundness = initialRoundness;
                     if(rounded == null)
-                        rounded = Props.postProcessing.vignette.rounded.value;
+                        rounded = master.Props.postProcessing.vignette.rounded.value;
 
-                    Props.postProcessing.vignette.rounded.value = (bool) rounded;
+                    master.Props.postProcessing.vignette.rounded.value = (bool) rounded;
 
                     state = State.TRANSITION;
 
@@ -111,10 +111,10 @@ namespace TaleUtil
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
-                    Props.postProcessing.vignette.intensity.value  = Math.Interpolate(initialIntensity, intensity, interpolationFactor);
-                    Props.postProcessing.vignette.color.value      = Math.Interpolate(initialColor, (Color) color, interpolationFactor);
-                    Props.postProcessing.vignette.smoothness.value = Math.Interpolate(initialSmoothness, smoothness, interpolationFactor);
-                    Props.postProcessing.vignette.roundness.value  = Math.Interpolate(initialRoundness, roundness, interpolationFactor);
+                    master.Props.postProcessing.vignette.intensity.value  = Math.Interpolate(initialIntensity, intensity, interpolationFactor);
+                    master.Props.postProcessing.vignette.color.value      = Math.Interpolate(initialColor, (Color) color, interpolationFactor);
+                    master.Props.postProcessing.vignette.smoothness.value = Math.Interpolate(initialSmoothness, smoothness, interpolationFactor);
+                    master.Props.postProcessing.vignette.roundness.value  = Math.Interpolate(initialRoundness, roundness, interpolationFactor);
 
                     if(clock == transitionDuration)
                         return true;

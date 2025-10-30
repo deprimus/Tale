@@ -34,7 +34,7 @@ namespace TaleUtil
 
         public CinematicBackgroundAction Init(string path, Type type, float speed)
         {
-            Assert.Condition(Props.cinematic.background.image != null, "CinematicBackgroundAction requires a background Image object; did you forget to register it in TaleMaster?");
+            Assert.Condition(master.Props.cinematic.background.image != null, "CinematicBackgroundAction requires a background Image object; did you forget to register it in TaleMaster?");
 
             this.path = path;
             this.speed = speed;
@@ -47,11 +47,11 @@ namespace TaleUtil
                     state = State.INSTANT;
                     break;
                 case Type.CUSTOM:
-                    Assert.Condition(Props.cinematic.background.groupAnimator != null, "CinematicBackgroundAction with type 'Custom' requires a group animator object; did you forget to register it in TaleMaster?");
+                    Assert.Condition(master.Props.cinematic.background.groupAnimator != null, "CinematicBackgroundAction with type 'Custom' requires a group animator object; did you forget to register it in TaleMaster?");
                     state = State.CUSTOM_SETUP;
                     break;
                 case Type.CROSSFADE:
-                    Assert.Condition(Props.cinematic.background.imageAlt != null, "CinematicBackgroundAction with type 'Crossfade' requires a background (alt) Image object; did you forget to register it in TaleMaster?");
+                    Assert.Condition(master.Props.cinematic.background.imageAlt != null, "CinematicBackgroundAction with type 'Crossfade' requires a background (alt) Image object; did you forget to register it in TaleMaster?");
                     state = State.CROSSFADE_SETUP;
                     break;
             }
@@ -73,17 +73,17 @@ namespace TaleUtil
             {
                 case State.INSTANT:
                 {
-                    Props.cinematic.background.GetActiveImage().color = new Color32(255, 255, 255, 255);
-                    Props.cinematic.background.GetActiveImage().sprite = LoadSprite();
+                    master.Props.cinematic.background.GetActiveImage().color = new Color32(255, 255, 255, 255);
+                    master.Props.cinematic.background.GetActiveImage().sprite = LoadSprite();
                     return true;
 
                     break;
                 }
                 case State.CROSSFADE_SETUP:
                 {
-                    Props.cinematic.background.GetPassiveImage().gameObject.SetActive(true);
-                    Props.cinematic.background.GetPassiveImage().color = new Color32(255, 255, 255, 255);
-                    Props.cinematic.background.GetPassiveImage().sprite = LoadSprite();
+                    master.Props.cinematic.background.GetPassiveImage().gameObject.SetActive(true);
+                    master.Props.cinematic.background.GetPassiveImage().color = new Color32(255, 255, 255, 255);
+                    master.Props.cinematic.background.GetPassiveImage().sprite = LoadSprite();
 
                     state = State.CROSSFADE;
 
@@ -96,15 +96,15 @@ namespace TaleUtil
                     if(clock > speed)
                         clock = speed;
 
-                    Color activeColor = Props.cinematic.background.GetActiveImage().color;
+                    Color activeColor = master.Props.cinematic.background.GetActiveImage().color;
 
-                    Props.cinematic.background.GetActiveImage().color = new Color32((byte)(activeColor.r * 255), (byte)(activeColor.g * 255), (byte)(activeColor.b * 255), (byte) (255 * (1f - clock / speed)));
+                    master.Props.cinematic.background.GetActiveImage().color = new Color32((byte)(activeColor.r * 255), (byte)(activeColor.g * 255), (byte)(activeColor.b * 255), (byte) (255 * (1f - clock / speed)));
 
                     if(clock == speed)
                     {
-                        Props.cinematic.background.GetActiveImage().sprite = null;
-                        Props.cinematic.background.GetActiveImage().gameObject.SetActive(false);
-                        Props.cinematic.background.Swap();
+                        master.Props.cinematic.background.GetActiveImage().sprite = null;
+                        master.Props.cinematic.background.GetActiveImage().gameObject.SetActive(false);
+                        master.Props.cinematic.background.Swap();
                         return true;
                     }
 
@@ -112,8 +112,8 @@ namespace TaleUtil
                 }
                 case State.CUSTOM_SETUP:
                 {
-                    Props.cinematic.background.groupAnimator.speed = speed;
-                    Props.cinematic.background.groupAnimator.SetTrigger(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER);
+                    master.Props.cinematic.background.groupAnimator.speed = speed;
+                    master.Props.cinematic.background.groupAnimator.SetTrigger(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER);
 
                     customAnimatorState = string.Format(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_STATE_FORMAT, "Out");
 
@@ -123,16 +123,16 @@ namespace TaleUtil
                 }
                 case State.CUSTOM_TRANSITION_OUT:
                 {
-                    AnimatorStateInfo customOutInfo = Props.cinematic.background.groupAnimator.GetCurrentAnimatorStateInfo(0);
+                    AnimatorStateInfo customOutInfo = master.Props.cinematic.background.groupAnimator.GetCurrentAnimatorStateInfo(0);
 
                     if(!customOutInfo.IsName(customAnimatorState) || customOutInfo.normalizedTime < 1f)
                         break;
 
-                    Props.cinematic.background.GetActiveImage().color = new Color32(255, 255, 255, 255);
-                    Props.cinematic.background.GetActiveImage().sprite = LoadSprite();
+                    master.Props.cinematic.background.GetActiveImage().color = new Color32(255, 255, 255, 255);
+                    master.Props.cinematic.background.GetActiveImage().sprite = LoadSprite();
 
-                    Props.cinematic.background.groupAnimator.speed = 1f;
-                    Props.cinematic.background.groupAnimator.SetTrigger(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER);
+                    master.Props.cinematic.background.groupAnimator.speed = 1f;
+                    master.Props.cinematic.background.groupAnimator.SetTrigger(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_TRIGGER);
 
                     customAnimatorState = string.Format(TaleUtil.Config.Editor.CINEMATIC_BACKGROUND_ANIMATOR_STATE_FORMAT, "In");
 
@@ -142,12 +142,12 @@ namespace TaleUtil
                 }
                 case State.CUSTOM_TRANSITION_IN:
                 {
-                    AnimatorStateInfo customInInfo = Props.cinematic.background.groupAnimator.GetCurrentAnimatorStateInfo(0);
+                    AnimatorStateInfo customInInfo = master.Props.cinematic.background.groupAnimator.GetCurrentAnimatorStateInfo(0);
 
                     if (!customInInfo.IsName(customAnimatorState) || customInInfo.normalizedTime < 1f)
                         break;
 
-                    Props.cinematic.background.groupAnimator.speed = 1f;
+                    master.Props.cinematic.background.groupAnimator.speed = 1f;
                     return true;
                 }
             }

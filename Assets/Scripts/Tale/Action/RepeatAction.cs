@@ -79,7 +79,7 @@ namespace TaleUtil
         {
             string left = (count == 0 ? "loop" : count.ToString() + " left");
 
-            return string.Format("RepeatAction ({0}, {1})", left, currentAction.ToString());
+            return string.Format("RepeatAction ({0}, {1})", left, currentAction?.ToString());
         }
     }
 }

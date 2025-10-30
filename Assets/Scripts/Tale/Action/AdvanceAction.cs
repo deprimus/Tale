@@ -14,7 +14,7 @@ namespace TaleUtil
 
         public AdvanceAction Init()
         {
-            Assert.Condition(Props.advanceCanvas != null, string.Format("Advance Canvas is null; did you forget to register it in TaleMaster?"));
+            Assert.Condition(master.Props.advanceCanvas != null, string.Format("Advance Canvas is null; did you forget to register it in TaleMaster?"));
 
             state = State.SETUP;
 
@@ -27,8 +27,8 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    if(!Props.advanceCanvas.activeSelf)
-                        Props.advanceCanvas.SetActive(true);
+                    if(!master.Props.advanceCanvas.activeSelf)
+                        master.Props.advanceCanvas.SetActive(true);
 
                     state = State.WAIT_FOR_INPUT;
 
@@ -36,9 +36,9 @@ namespace TaleUtil
                 }
                 case State.WAIT_FOR_INPUT:
                 {
-                    if (Input.Advance())
+                    if (master.Input.Advance())
                     {
-                        Props.advanceCanvas.SetActive(false);
+                        master.Props.advanceCanvas.SetActive(false);
                         return true;
                     }
 

@@ -1,13 +1,6 @@
-#pragma warning disable 0162 // Disable the 'unreachable code' warning caused by config constants.
-
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
-using System;
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 // TODO: execution order is no longer required since the object is lazy init'ed
 [DefaultExecutionOrder(-1000)]
@@ -15,6 +8,9 @@ public class TaleMaster : MonoBehaviour
 {
     #region Fields
     public TaleUtil.Queue Queue { get; private set; }
+    public TaleUtil.Props Props { get; private set; }
+    public TaleUtil.Config Config { get { return config; } } // TODO: CopyOnWrite
+    public TaleUtil.Input Input { get; private set; }
 
     ulong actionCounter;
     #endregion
@@ -23,20 +19,12 @@ public class TaleMaster : MonoBehaviour
     // Hello Tale!
     void Awake()
     {
-        if(Tale.alive)
-        {
-            Destroy(gameObject); // Prevent multiple master objects from existing at the same time.
-            return;
-        }
-        Tale.alive = true;
-        Tale.config = config;
-
-        if (Tale.config.APPLICATION_RUN_IN_BACKGROUND)
+        if (Config.APPLICATION_RUN_IN_BACKGROUND)
         {
             Application.runInBackground = true;
         }
 
-        if (Tale.config.SHOW_DEBUG_INFO_BY_DEFAULT)
+        if (Config.SHOW_DEBUG_INFO_BY_DEFAULT)
         {
             if (TaleUtil.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object"))
             {
@@ -45,6 +33,8 @@ public class TaleMaster : MonoBehaviour
         }
 
         Queue = new TaleUtil.Queue();
+        Props = new TaleUtil.Props(props);
+        Input = new TaleUtil.Input(this);
 
         actionCounter = 0;
 
@@ -52,22 +42,14 @@ public class TaleMaster : MonoBehaviour
         TaleUtil.Triggers.Init();
         TaleUtil.Hooks.Init();
         TaleUtil.Flags.Init();
-        TaleUtil.Props.Init(props);
-
-        // Events
-        SceneManager.sceneLoaded += TaleUtil.Events.OnSceneLoaded; // This is used to re-assign the camera when the scene changes
 
         DontDestroyOnLoad(gameObject);
-
-#if UNITY_EDITOR
-        EditorApplication.playModeStateChanged += OnExitPlayMode;
-#endif
     }
 
     // The heart of Tale
     void Update()
     {
-        if (Tale.config.SCENE_SELECTOR_ENABLE && Input.GetKeyDown(Tale.config.SCENE_SELECTOR_KEY))
+        if (Config.SCENE_SELECTOR_ENABLE && TaleUtil.Input.GetKeyDown(Config.SCENE_SELECTOR_KEY))
         {
             TriggerSceneSelector();
             return;
@@ -83,16 +65,10 @@ public class TaleMaster : MonoBehaviour
         TaleUtil.Triggers.Update();
     }
 
-#if UNITY_EDITOR
-    // This ensures that Tale works even without domain reloads
-    static void OnExitPlayMode(PlayModeStateChange state) {
-        if (state == PlayModeStateChange.ExitingPlayMode) {
-            EditorApplication.playModeStateChanged -= OnExitPlayMode;
-            SceneManager.sceneLoaded -= TaleUtil.Events.OnSceneLoaded;
-            Tale.alive = false;
-        }
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        // This is used to re-assign the camera when the scene changes
+        Props.ReinitCamera();
     }
-#endif
 
     void TriggerSceneSelector()
     {
@@ -107,7 +83,7 @@ public class TaleMaster : MonoBehaviour
         TaleUtil.Parallel.ForceClear();
 
         Tale.Scene(path);
-        TaleUtil.Props.Reset();
+        Props.Reset();
 
         // Reset() places some transition cleaning actions on the parallel queue; execute all of them
         TaleUtil.Parallel.Run();
@@ -127,7 +103,8 @@ public class TaleMaster : MonoBehaviour
 #if UNITY_EDITOR
     [Space(10)]
 #endif
-    public TaleUtil.Config config;
+    [SerializeField]
+    internal TaleUtil.Config config;
 
     [SerializeField]
     internal InspectorProps props;

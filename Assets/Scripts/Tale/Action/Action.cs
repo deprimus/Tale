@@ -9,7 +9,7 @@ namespace TaleUtil
 
         protected Delegates.DeltaDelegate delta = () => UnityEngine.Time.deltaTime;
 
-        internal Action() { }
+        public Action() { }
 
         public abstract bool Run();
 

@@ -39,8 +39,8 @@ namespace TaleUtil
 
         public CinematicVideoAction Init(string path, float detatchTime, DetatchType detatchType, float speed)
         {
-            Assert.Condition(Props.cinematic.video.group != null, "CinematicVideoAction requires a group object; did you forget to register it in TaleMaster?");
-            Assert.Condition(Props.cinematic.video.player != null, "CinematicVideoAction requires a video player object; did you forget to register it in TaleMaster?");
+            Assert.Condition(master.Props.cinematic.video.group != null, "CinematicVideoAction requires a group object; did you forget to register it in TaleMaster?");
+            Assert.Condition(master.Props.cinematic.video.player != null, "CinematicVideoAction requires a video player object; did you forget to register it in TaleMaster?");
 
             this.path = path;
             this.detatchTime = detatchTime;
@@ -70,14 +70,14 @@ namespace TaleUtil
             {
                 case State.LOAD:
                 {
-                    Props.cinematic.video.group.SetActive(true);
+                    master.Props.cinematic.video.group.SetActive(true);
 
-                    Props.cinematic.video.player.playbackSpeed = speed;
-                    Props.cinematic.video.player.EnableAudioTrack(0, true); // Audio must be set up before Prepare.
-                    Props.cinematic.video.player.SetTargetAudioSource(0, Props.cinematic.video.audio);
+                    master.Props.cinematic.video.player.playbackSpeed = speed;
+                    master.Props.cinematic.video.player.EnableAudioTrack(0, true); // Audio must be set up before Prepare.
+                    master.Props.cinematic.video.player.SetTargetAudioSource(0, master.Props.cinematic.video.audio);
 
-                    Props.cinematic.video.player.clip = LoadVideo();
-                    Props.cinematic.video.player.Prepare();
+                    master.Props.cinematic.video.player.clip = LoadVideo();
+                    master.Props.cinematic.video.player.Prepare();
 
                     state = State.WAIT_FOR_PREPARATION;
 
@@ -85,7 +85,7 @@ namespace TaleUtil
                 }
                 case State.WAIT_FOR_PREPARATION:
                 {
-                    if(Props.cinematic.video.player.isPrepared)
+                    if(master.Props.cinematic.video.player.isPrepared)
                     {
                         state = State.PLAY;
                     }
@@ -94,7 +94,7 @@ namespace TaleUtil
                 }
                 case State.PLAY:
                 {
-                    Props.cinematic.video.player.Play();
+                    master.Props.cinematic.video.player.Play();
 
                     if(detatchTime < 0f)
                         return true;
@@ -106,7 +106,7 @@ namespace TaleUtil
                             break;
                         case DetatchType.AFTER:
                             state = State.WAIT_WITH_DETATCH_AFTER;
-                            startTime = Props.cinematic.video.player.time;
+                            startTime = master.Props.cinematic.video.player.time;
                             break;
                         case DetatchType.FIXED:
                             state = State.WAIT_WITH_DETATCH_FIXED;
@@ -118,7 +118,7 @@ namespace TaleUtil
                 case State.WAIT_WITH_DETATCH_BEFORE:
                 {
                     // Less than (or equal to) detatchTime seconds left, or the video stopped by reaching the end.
-                    if (Props.cinematic.video.player.time >= Props.cinematic.video.player.length - detatchTime * Props.cinematic.video.player.playbackSpeed || (!Props.cinematic.video.player.isPlaying))
+                    if (master.Props.cinematic.video.player.time >= master.Props.cinematic.video.player.length - detatchTime * master.Props.cinematic.video.player.playbackSpeed || (!master.Props.cinematic.video.player.isPlaying))
                     {
                         return true;
                     }
@@ -128,7 +128,7 @@ namespace TaleUtil
                 case State.WAIT_WITH_DETATCH_AFTER:
                 {
                     // At least detatchTime seconds passed, or the video stopped by reaching the end.
-                    if (Props.cinematic.video.player.time - startTime >= detatchTime * Props.cinematic.video.player.playbackSpeed || (!Props.cinematic.video.player.isPlaying))
+                    if (master.Props.cinematic.video.player.time - startTime >= detatchTime * master.Props.cinematic.video.player.playbackSpeed || (!master.Props.cinematic.video.player.isPlaying))
                     {
                         return true;
                     }
@@ -138,7 +138,7 @@ namespace TaleUtil
                 case State.WAIT_WITH_DETATCH_FIXED:
                 {
                     // Time reached, or the video stopped by reaching the end.
-                    if(Props.cinematic.video.player.time >= detatchTime || (!Props.cinematic.video.player.isPlaying))
+                    if(master.Props.cinematic.video.player.time >= detatchTime || (!master.Props.cinematic.video.player.isPlaying))
                     {
                         return true;
                     }

@@ -33,7 +33,7 @@ namespace TaleUtil
 
         public BloomAction(TaleMaster master, float intensity, float transitionDuration, Color? color, float threshold, float diffusion, float anamorphicRatio, Delegates.InterpolationDelegate interpolation) : base(master)
         {
-            Assert.Condition(Props.postProcessing.bloom != null, "BloomAction requires a bloom object (and, therefore, a PostProcessVolume component on the main camera)");
+            Assert.Condition(master.Props.postProcessing.bloom != null, "BloomAction requires a bloom object (and, therefore, a PostProcessVolume component on the main camera)");
 
             Assert.Condition(intensity == float.MinValue || intensity >= 0f, "Bloom intensity must be at least 0");
             Assert.Condition(threshold == float.MinValue || threshold >= 0f, "Bloom threshold must be at least 0");
@@ -76,17 +76,17 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    Props.postProcessing.bloom.intensity.overrideState       = true;
-                    Props.postProcessing.bloom.color.overrideState           = true;
-                    Props.postProcessing.bloom.threshold.overrideState       = true;
-                    Props.postProcessing.bloom.diffusion.overrideState       = true;
-                    Props.postProcessing.bloom.anamorphicRatio.overrideState = true;
+                    master.Props.postProcessing.bloom.intensity.overrideState       = true;
+                    master.Props.postProcessing.bloom.color.overrideState           = true;
+                    master.Props.postProcessing.bloom.threshold.overrideState       = true;
+                    master.Props.postProcessing.bloom.diffusion.overrideState       = true;
+                    master.Props.postProcessing.bloom.anamorphicRatio.overrideState = true;
 
-                    initialIntensity       = Props.postProcessing.bloom.intensity.value;
-                    initialColor           = Props.postProcessing.bloom.color.value;
-                    initialThreshold       = Props.postProcessing.bloom.threshold.value;
-                    initialDiffusion       = Props.postProcessing.bloom.diffusion.value;
-                    initialAnamorphicRatio = Props.postProcessing.bloom.anamorphicRatio.value;
+                    initialIntensity       = master.Props.postProcessing.bloom.intensity.value;
+                    initialColor           = master.Props.postProcessing.bloom.color.value;
+                    initialThreshold       = master.Props.postProcessing.bloom.threshold.value;
+                    initialDiffusion       = master.Props.postProcessing.bloom.diffusion.value;
+                    initialAnamorphicRatio = master.Props.postProcessing.bloom.anamorphicRatio.value;
 
                     if(intensity == float.MinValue)
                         intensity = initialIntensity;
@@ -112,11 +112,11 @@ namespace TaleUtil
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
-                    Props.postProcessing.bloom.intensity.value       = Math.Interpolate(initialIntensity, intensity, interpolationFactor);
-                    Props.postProcessing.bloom.color.value           = Math.Interpolate(initialColor, (Color)color, interpolationFactor);
-                    Props.postProcessing.bloom.threshold.value       = Math.Interpolate(initialThreshold, threshold, interpolationFactor);
-                    Props.postProcessing.bloom.diffusion.value       = Math.Interpolate(initialDiffusion, diffusion, interpolationFactor);
-                    Props.postProcessing.bloom.anamorphicRatio.value = Math.Interpolate(initialAnamorphicRatio, anamorphicRatio, interpolationFactor);
+                    master.Props.postProcessing.bloom.intensity.value       = Math.Interpolate(initialIntensity, intensity, interpolationFactor);
+                    master.Props.postProcessing.bloom.color.value           = Math.Interpolate(initialColor, (Color)color, interpolationFactor);
+                    master.Props.postProcessing.bloom.threshold.value       = Math.Interpolate(initialThreshold, threshold, interpolationFactor);
+                    master.Props.postProcessing.bloom.diffusion.value       = Math.Interpolate(initialDiffusion, diffusion, interpolationFactor);
+                    master.Props.postProcessing.bloom.anamorphicRatio.value = Math.Interpolate(initialAnamorphicRatio, anamorphicRatio, interpolationFactor);
 
                     if(clock == transitionDuration)
                         return true;

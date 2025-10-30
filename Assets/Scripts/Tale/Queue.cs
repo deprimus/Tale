@@ -5,6 +5,7 @@ namespace TaleUtil
 {
     public class Queue
     {
+        // TODO: use a list
         private LinkedList<TaleUtil.Action> data;
 
         private ulong totalActionCount = 0;
@@ -30,9 +31,6 @@ namespace TaleUtil
 
         public void ForceClear() =>
             data.Clear();
-
-        public void Remove(TaleUtil.Action action) =>
-            data.Remove(action);
 
         // If the queue has actions, and the last action is this one, remove it.
         // This is used by multiple actions, such as QueueAction, which handle the
@@ -66,7 +64,7 @@ namespace TaleUtil
 
         public bool Run()
         {
-            if(data.Count > 0 && data.First.Value.Run())
+            if (data.Count > 0 && data.First.Value.Run())
                 Dequeue(); // Run if queue is not empty. After running, if the action is done, dequeue.
 
             return data.Count == 0;

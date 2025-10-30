@@ -11,7 +11,7 @@ namespace TaleUtil
             TRANSITION
         }
 
-        Props.Transformable transformable;
+        TaleUtil.Props.Transformable transformable;
         Vector3 rotation;
         float transitionDuration;
         Delegates.InterpolationDelegate interpolation;
@@ -23,7 +23,7 @@ namespace TaleUtil
 
         State state;
 
-        public TransformRotateAction Init(Props.Transformable transformable, Vector3 rotation, float transitionDuration, Delegates.InterpolationDelegate interpolation, bool relative)
+        public TransformRotateAction Init(TaleUtil.Props.Transformable transformable, Vector3 rotation, float transitionDuration, Delegates.InterpolationDelegate interpolation, bool relative)
         {
             this.transformable = transformable;
             this.rotation = rotation;
@@ -47,7 +47,7 @@ namespace TaleUtil
         }
 
         public TransformRotateAction Init(Transform transform, Vector3 rotation, float transitionDuration, Delegates.InterpolationDelegate interpolation, bool relative) =>
-            Init(new Props.Transformable(transform), rotation, transitionDuration, interpolation, relative);
+            Init(new TaleUtil.Props.Transformable(transform), rotation, transitionDuration, interpolation, relative);
 
         public override bool Run()
         {

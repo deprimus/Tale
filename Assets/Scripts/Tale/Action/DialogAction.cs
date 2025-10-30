@@ -65,7 +65,7 @@ namespace TaleUtil
         public DialogAction Init(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb, bool keepOpen, TaleUtil.Action action) {
             if (content != null)
             {
-                SoftAssert.Condition(Props.dialog.content != null,
+                SoftAssert.Condition(master.Props.dialog.content != null,
                     "DialogAction requires a content object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
             }
             else
@@ -75,16 +75,16 @@ namespace TaleUtil
 
             if (actor != null)
             {
-                SoftAssert.Condition(Props.dialog.actor != null,
+                SoftAssert.Condition(master.Props.dialog.actor != null,
                     "DialogAction requires an actor object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
             }
 
             if (voice != null)
             {
-                if (!SoftAssert.Condition(Props.audio.group != null,
+                if (!SoftAssert.Condition(master.Props.audio.group != null,
                         "A voice clip was passed to the dialog action, but no audio group prop is available; voice will be disabled")
                 ||
-                    !SoftAssert.Condition(Props.audio.voice != null,
+                    !SoftAssert.Condition(master.Props.audio.voice != null,
                         "A voice clip was passed to the dialog action, but no audio voice prop is available; voice will be disabled"))
                 {
                     voice = null;
@@ -101,7 +101,7 @@ namespace TaleUtil
 
             if (reverb)
             {
-                if (!SoftAssert.Condition(Props.audio.voiceReverb != null,
+                if (!SoftAssert.Condition(master.Props.audio.voiceReverb != null,
                     "Dialog action has Reverb set to true, but there is no AudioReverbFilter component on the Audio Voice object; reverb will be disabled"))
                 {
                     reverb = false;
@@ -120,8 +120,8 @@ namespace TaleUtil
             type = additive ? Type.ADDITIVE : Type.OVERRIDE;
             ChangeState(State.SETUP);
 
-            if(Tale.config.DIALOG_CPS > 0)
-                timePerChar = 1f / Tale.config.DIALOG_CPS;
+            if(master.Config.DIALOG_CPS > 0)
+                timePerChar = 1f / master.Config.DIALOG_CPS;
             else timePerChar = 0f;
 
             clock = 0f;
@@ -182,7 +182,7 @@ namespace TaleUtil
         {
             // Note: This way of repositioning the CTC only works when the TextMeshProUGUI object has the horizontal alignment set to "Left" and the vertical alignment set to "Top".
             TMP_CharacterInfo lastCharInfo = textInfo.characterInfo[contentInfo.characterCount - 1];
-            RectTransform contentTransform = Props.dialog.content.rectTransform;
+            RectTransform contentTransform = master.Props.dialog.content.rectTransform;
 
             Vector3 bottomRight = contentTransform.TransformPoint(lastCharInfo.bottomRight);
 
@@ -205,12 +205,12 @@ namespace TaleUtil
 
         bool HasAnimation()
         {
-            if (Props.dialog.animator == null)
+            if (master.Props.dialog.animator == null)
             {
                 return false;
             }
 
-            if (!Props.dialog.animator.HasStates(
+            if (!master.Props.dialog.animator.HasStates(
                 "Dialog",
                 "Canvas animator doesn't have a state named {0} (this is needed for Tale)",
                 TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_IN,
@@ -220,7 +220,7 @@ namespace TaleUtil
                 return false;
             }
 
-            if (!Props.dialog.animator.HasTriggers(
+            if (!master.Props.dialog.animator.HasTriggers(
                 "Dialog",
                 "Canvas animator doesn't have a trigger named {0} (this is needed for Tale)",
                 TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_IN,
@@ -236,12 +236,12 @@ namespace TaleUtil
 
         bool HasAnimateableAvatar()
         {
-            if (avatar == null || Props.dialog.avatar == null || Props.dialog.avatarAnimator == null)
+            if (avatar == null || master.Props.dialog.avatar == null || master.Props.dialog.avatarAnimator == null)
             {
                 return false;
             }
 
-            if (!Props.dialog.avatarAnimator.HasStates(
+            if (!master.Props.dialog.avatarAnimator.HasStates(
                 "Dialog",
                 "Avatar animator doesn't have a state named {0} (this is needed for Tale)",
                 TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_IN,
@@ -251,7 +251,7 @@ namespace TaleUtil
                 return false;
             }
 
-            if (!Props.dialog.avatarAnimator.HasTriggers(
+            if (!master.Props.dialog.avatarAnimator.HasTriggers(
                 "Dialog",
                 "Avatar animator doesn't have a trigger named {0} (this is needed for Tale)",
                 TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_IN,
@@ -269,7 +269,7 @@ namespace TaleUtil
         {
             if (hasAnimation)
             {
-                Props.dialog.animator.SetTrigger(state);
+                master.Props.dialog.animator.SetTrigger(state);
                 return true;
             }
 
@@ -280,7 +280,7 @@ namespace TaleUtil
         {
             if (hasAvatarAnimation)
             {
-                Props.dialog.avatarAnimator.SetTrigger(state);
+                master.Props.dialog.avatarAnimator.SetTrigger(state);
                 return true;
             }
 
@@ -301,11 +301,11 @@ namespace TaleUtil
         {
             if (hasAnimation)
             {
-                switch (Tale.config.DIALOG_ANIMATION_IN_MODE)
+                switch (master.Config.DIALOG_ANIMATION_IN_MODE)
                 {
                     case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_TEXT:
                     case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_TEXT:
-                        Props.dialog.animator.SetTrigger(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
+                        master.Props.dialog.animator.SetTrigger(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
                         break;
                     default:
                         break;
@@ -315,13 +315,13 @@ namespace TaleUtil
 
         void ActivateAvatarAnimationNeutral()
         {
-            if (Props.dialog.avatarAnimator != null)
+            if (master.Props.dialog.avatarAnimator != null)
             {
-                switch (Tale.config.DIALOG_ANIMATION_IN_MODE)
+                switch (master.Config.DIALOG_ANIMATION_IN_MODE)
                 {
                     case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_TEXT:
                     case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_TEXT:
-                        Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
+                        master.Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
                         break;
                     default:
                         break;
@@ -334,10 +334,10 @@ namespace TaleUtil
             // TODO: instead of using a hook, do this:
             // - ForceMeshUpdate() in BEGIN_WRITE
             // - get rid of maxVisibleCharacters
-            // - after the magic below: call Props.dialog.content.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32)
+            // - after the magic below: call master.Props.dialog.content.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32)
             // That should be way more efficient, since it doesn't force a mesh update for every single character
 
-            for (int i = System.Math.Max(Props.dialog.content.maxVisibleCharacters - (int) Tale.config.DIALOG_FADE_FACTOR, fadeStartIndex); i < Props.dialog.content.maxVisibleCharacters; ++i)
+            for (int i = System.Math.Max(master.Props.dialog.content.maxVisibleCharacters - (int) master.Config.DIALOG_FADE_FACTOR, fadeStartIndex); i < master.Props.dialog.content.maxVisibleCharacters; ++i)
             {
                 if (!textInfo.characterInfo[i].isVisible)
                 {
@@ -349,7 +349,7 @@ namespace TaleUtil
                 int vertexIndex = textInfo.characterInfo[i].vertexIndex;
 
                 Color color = textInfo.meshInfo[materialIndex].colors32[vertexIndex];
-                color.a = Mathf.Clamp01((1f / Tale.config.DIALOG_FADE_FACTOR) * (fadeEndIndex - i));
+                color.a = Mathf.Clamp01((1f / master.Config.DIALOG_FADE_FACTOR) * (fadeEndIndex - i));
 
                 textInfo.meshInfo[materialIndex].colors32[vertexIndex + 0] = color;
                 textInfo.meshInfo[materialIndex].colors32[vertexIndex + 1] = color;
@@ -362,7 +362,7 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            if (UnityEngine.Input.GetKeyDown(Tale.config.DIALOG_KEY_AUTO))
+            if (TaleUtil.Input.GetKeyDown(master.Config.DIALOG_KEY_AUTO))
             {
                 autoMode = !autoMode;
 
@@ -384,35 +384,35 @@ namespace TaleUtil
                 {
                     if (voice != null)
                     {
-                        if (Props.audio.group != null && !Props.audio.group.activeSelf)
+                        if (master.Props.audio.group != null && !master.Props.audio.group.activeSelf)
                         {
-                            Props.audio.group.SetActive(true);
+                            master.Props.audio.group.SetActive(true);
                         }
 
-                        if (Props.audio.voice != null && !Props.audio.voice.gameObject.activeSelf)
+                        if (master.Props.audio.voice != null && !master.Props.audio.voice.gameObject.activeSelf)
                         {
-                            Props.audio.voice.gameObject.SetActive(true);
+                            master.Props.audio.voice.gameObject.SetActive(true);
                         }
 
-                        if (Props.audio.voiceReverb != null)
+                        if (master.Props.audio.voiceReverb != null)
                         {
-                            Props.audio.voiceReverb.enabled = reverb;
+                            master.Props.audio.voiceReverb.enabled = reverb;
                         }
 
-                        Props.audio.voice.clip = Resources.Load<AudioClip>(voice);
+                        master.Props.audio.voice.clip = Resources.Load<AudioClip>(voice);
 
-                        SoftAssert.Condition(Props.audio.voice != null, "The voice audio clip '" + voice + "' is missing");
+                        SoftAssert.Condition(master.Props.audio.voice != null, "The voice audio clip '" + voice + "' is missing");
 
-                        Props.audio.voice.loop = loopVoice;
+                        master.Props.audio.voice.loop = loopVoice;
                     }
 
                     // Dialog canvas is active; previous action was a Dialog action
-                    if (Props.dialog.canvas.enabled)
+                    if (master.Props.dialog.canvas.enabled)
                     {
                         if(type == Type.ADDITIVE)
                         {
-                            content = Props.dialog.content.text + Tale.config.DIALOG_ADDITIVE_SEPARATOR + content;
-                            index += Props.dialog.content.text.Length + Tale.config.DIALOG_ADDITIVE_SEPARATOR.Length;
+                            content = master.Props.dialog.content.text + master.Config.DIALOG_ADDITIVE_SEPARATOR + content;
+                            index += master.Props.dialog.content.text.Length + master.Config.DIALOG_ADDITIVE_SEPARATOR.Length;
                         }
 
                         ChangeState(State.BEGIN_WRITE);
@@ -427,14 +427,14 @@ namespace TaleUtil
 
                         if(actor != null)
                         {
-                            Props.dialog.actor.text = "";
+                            master.Props.dialog.actor.text = "";
                         }
 
-                        Props.dialog.content.text = "";
-                        Props.dialog.canvas.enabled = true;
+                        master.Props.dialog.content.text = "";
+                        master.Props.dialog.canvas.enabled = true;
 
-                        // Activate the animations, in the order specified in the Tale.config.
-                        switch(Tale.config.DIALOG_ANIMATION_IN_MODE)
+                        // Activate the animations, in the order specified in the master.Config.
+                        switch(master.Config.DIALOG_ANIMATION_IN_MODE)
                         {
                             case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_THEN_TEXT:
                                 if(ActivateCanvasAnimationIn())
@@ -530,43 +530,43 @@ namespace TaleUtil
 
                     if (avatar != null)
                     {
-                        SoftAssert.Condition(Props.dialog.avatar != null,
+                        SoftAssert.Condition(master.Props.dialog.avatar != null,
                             "An avatar was passed to the dialog action, but no avatar prop is available");
 
-                        Props.dialog.avatar.sprite = (Sprite) Resources.Load<Sprite>(avatar);
+                        master.Props.dialog.avatar.sprite = (Sprite) Resources.Load<Sprite>(avatar);
 
-                        SoftAssert.Condition(Props.dialog.avatar.sprite != null, "The avatar '" + avatar + "' is missing");
+                        SoftAssert.Condition(master.Props.dialog.avatar.sprite != null, "The avatar '" + avatar + "' is missing");
                     }
 
-                    if (Tale.config.DIALOG_FADE_FACTOR > 0)
+                    if (master.Config.DIALOG_FADE_FACTOR > 0)
                     {
-                        Props.dialog.content.OnPreRenderText += OnPreRenderContentAlpha;
+                        master.Props.dialog.content.OnPreRenderText += OnPreRenderContentAlpha;
                     }
 
                     break;
                 }
                 case State.TRANSITION_IN:
                 {
-                    if (Input.Advance())
+                    if (master.Input.Advance())
                     {
-                        Props.dialog.animator.speed = Tale.config.TRANSITION_SKIP_SPEED;
+                        master.Props.dialog.animator.speed = master.Config.TRANSITION_SKIP_SPEED;
                     }
 
-                    if(!Props.dialog.animator.StateFinished(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_IN))
+                    if(!master.Props.dialog.animator.StateFinished(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_IN))
                     {
                         break;
                     }
 
-                    Props.dialog.animator.speed = 1f;
-                    Props.dialog.animator.SetTrigger(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
+                    master.Props.dialog.animator.speed = 1f;
+                    master.Props.dialog.animator.SetTrigger(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
 
-                    if (Props.dialog.avatarAnimator == null)
+                    if (master.Props.dialog.avatarAnimator == null)
                     {
                         ChangeState(State.BEGIN_WRITE);
                         break;
                     }
 
-                    switch (Tale.config.DIALOG_ANIMATION_IN_MODE)
+                    switch (master.Config.DIALOG_ANIMATION_IN_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_THEN_TEXT:
                             ChangeState(State.BEGIN_WRITE);
@@ -606,24 +606,24 @@ namespace TaleUtil
                 }
                 case State.AVATAR_TRANSITION_IN:
                 {
-                    if (Input.Advance())
+                    if (master.Input.Advance())
                     {
-                        Props.dialog.avatarAnimator.speed = Tale.config.TRANSITION_SKIP_SPEED;
+                        master.Props.dialog.avatarAnimator.speed = master.Config.TRANSITION_SKIP_SPEED;
                     }
 
-                    if (!Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_IN))
+                    if (!master.Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_IN))
                         break;
 
-                    Props.dialog.avatarAnimator.speed = 1f;
-                    Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
+                    master.Props.dialog.avatarAnimator.speed = 1f;
+                    master.Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
 
-                    if(Props.dialog.animator == null)
+                    if(master.Props.dialog.animator == null)
                     {
                         ChangeState(State.BEGIN_WRITE);
                         break;
                     }
 
-                    switch(Tale.config.DIALOG_ANIMATION_IN_MODE)
+                    switch(master.Config.DIALOG_ANIMATION_IN_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_THEN_TEXT:
                             ChangeState(State.BEGIN_WRITE);
@@ -657,20 +657,20 @@ namespace TaleUtil
                 {
                     if (actor != null)
                     {
-                        Props.dialog.actor.text = actor;
+                        master.Props.dialog.actor.text = actor;
                     }
 
-                    Props.dialog.content.text = content;
+                    master.Props.dialog.content.text = content;
 
-                    contentInfo = Props.dialog.content.textInfo;
+                    contentInfo = master.Props.dialog.content.textInfo;
 
-                    Props.dialog.content.maxVisibleCharacters = index;
+                    master.Props.dialog.content.maxVisibleCharacters = index;
                     fadeStartIndex = index;
                     fadeEndIndex = index;
 
                     if (voice != null)
                     {
-                        Props.audio.voice.Play();
+                        master.Props.audio.voice.Play();
                     }
 
                     ChangeState(State.WRITE);
@@ -679,15 +679,15 @@ namespace TaleUtil
                 }
                 case State.WRITE:
                 {
-                    if(fadeEndIndex < contentInfo.characterCount + Tale.config.DIALOG_FADE_FACTOR)
+                    if(fadeEndIndex < contentInfo.characterCount + master.Config.DIALOG_FADE_FACTOR)
                     {
                         clock += delta();
 
                         int numChars;
 
-                        if (Input.Advance())
+                        if (master.Input.Advance())
                         {
-                            numChars = content.Length - index + (int) Tale.config.DIALOG_FADE_FACTOR;
+                            numChars = content.Length - index + (int) master.Config.DIALOG_FADE_FACTOR;
                         }
                         else
                         {
@@ -699,24 +699,24 @@ namespace TaleUtil
                             clock = clock % timePerChar;
                             index = Mathf.Min(index + numChars, contentInfo.characterCount);
 
-                            fadeEndIndex = System.Math.Min(fadeEndIndex + numChars, contentInfo.characterCount + (int) Tale.config.DIALOG_FADE_FACTOR);
+                            fadeEndIndex = System.Math.Min(fadeEndIndex + numChars, contentInfo.characterCount + (int) master.Config.DIALOG_FADE_FACTOR);
 
-                            if (Props.dialog.content.maxVisibleCharacters == contentInfo.characterCount)
+                            if (master.Props.dialog.content.maxVisibleCharacters == contentInfo.characterCount)
                             {
                                 // Done writing; wait for the fade effect to finish
-                                Props.dialog.content.ForceMeshUpdate();
+                                master.Props.dialog.content.ForceMeshUpdate();
                             }
                             else
                             {
-                                Props.dialog.content.maxVisibleCharacters = index;
+                                master.Props.dialog.content.maxVisibleCharacters = index;
                             }
                         }
                     }
                     else
                     {
-                        if(loopVoice && Props.audio.voice != null)
+                        if(loopVoice && master.Props.audio.voice != null)
                         {
-                            Props.audio.voice.loop = false;
+                            master.Props.audio.voice.loop = false;
                         }
 
                         clock = 0f;
@@ -734,32 +734,32 @@ namespace TaleUtil
 
                         if(nextDialog != null && nextDialog.type == Type.ADDITIVE)
                         {
-                            if (Props.dialog.actc != null)
+                            if (master.Props.dialog.actc != null)
                             {
                                 RepositionCTC(
                                     contentInfo,
-                                    Props.dialog.actcTransform,
-                                    Tale.config.DIALOG_CTC_ADDITIVE_OFFSET.x,
-                                    Tale.config.DIALOG_CTC_ADDITIVE_OFFSET.y,
-                                    Tale.config.DIALOG_CTC_ADDITIVE_ALIGNMENT);
+                                    master.Props.dialog.actcTransform,
+                                    master.Config.DIALOG_CTC_ADDITIVE_OFFSET.x,
+                                    master.Config.DIALOG_CTC_ADDITIVE_OFFSET.y,
+                                    master.Config.DIALOG_CTC_ADDITIVE_ALIGNMENT);
 
-                                Props.dialog.actc.SetActive(true);
+                                master.Props.dialog.actc.SetActive(true);
                             }
 
                             ChangeState(State.WAIT_FOR_INPUT_ADDITIVE);
                         }
                         else
                         {
-                            if(Props.dialog.ctc != null)
+                            if(master.Props.dialog.ctc != null)
                             {
                                 RepositionCTC(
                                     contentInfo,
-                                    Props.dialog.ctcTransform,
-                                    Tale.config.DIALOG_CTC_OVERRIDE_OFFSET.x,
-                                    Tale.config.DIALOG_CTC_OVERRIDE_OFFSET.y,
-                                    Tale.config.DIALOG_CTC_OVERRIDE_ALIGNMENT);
+                                    master.Props.dialog.ctcTransform,
+                                    master.Config.DIALOG_CTC_OVERRIDE_OFFSET.x,
+                                    master.Config.DIALOG_CTC_OVERRIDE_OFFSET.y,
+                                    master.Config.DIALOG_CTC_OVERRIDE_ALIGNMENT);
                                 
-                                Props.dialog.ctc.SetActive(true);
+                                master.Props.dialog.ctc.SetActive(true);
                             }
 
                             ChangeState(State.WAIT_FOR_INPUT_OVERRIDE);
@@ -775,11 +775,11 @@ namespace TaleUtil
                         clock += delta();
                     }
 
-                    if(Input.Advance() || autoMode && clock >= Tale.config.DIALOG_AUTO_DELAY)
+                    if(master.Input.Advance() || autoMode && clock >= master.Config.DIALOG_AUTO_DELAY)
                     {
-                        if (Props.dialog.ctc != null)
+                        if (master.Props.dialog.ctc != null)
                         {
-                            Props.dialog.ctc.SetActive(false);
+                            master.Props.dialog.ctc.SetActive(false);
                         }
                         ChangeState(State.END_WRITE);
 
@@ -798,11 +798,11 @@ namespace TaleUtil
                         clock += delta();
                     }
 
-                    if (Input.Advance() || autoMode && clock >= Tale.config.DIALOG_AUTO_DELAY)
+                    if (master.Input.Advance() || autoMode && clock >= master.Config.DIALOG_AUTO_DELAY)
                     {
-                        if (Props.dialog.actc != null)
+                        if (master.Props.dialog.actc != null)
                         {
-                            Props.dialog.actc.SetActive(false);
+                            master.Props.dialog.actc.SetActive(false);
                         }
                         ChangeState(State.END_WRITE);
 
@@ -826,18 +826,18 @@ namespace TaleUtil
                 case State.END_WRITE:
                 {
                     // Disable the voice object and audio group
-                    if (voice != null && Props.audio.voice != null && Props.audio.group != null)
+                    if (voice != null && master.Props.audio.voice != null && master.Props.audio.group != null)
                     {
-                        Props.audio.voice.Stop();
-                        Props.audio.voice.gameObject.SetActive(false);
+                        master.Props.audio.voice.Stop();
+                        master.Props.audio.voice.gameObject.SetActive(false);
 
                         bool areSoundChannelsInactive = true;
 
-                        if (Props.audio.sound != null)
+                        if (master.Props.audio.sound != null)
                         {
-                            for (int i = 0; i < Props.audio.sound.Length; ++i)
+                            for (int i = 0; i < master.Props.audio.sound.Length; ++i)
                             {
-                                if (Props.audio.sound[i] != null && Props.audio.sound[i].gameObject.activeSelf)
+                                if (master.Props.audio.sound[i] != null && master.Props.audio.sound[i].gameObject.activeSelf)
                                 {
                                     areSoundChannelsInactive = false;
                                     break;
@@ -847,16 +847,16 @@ namespace TaleUtil
 
                         if (areSoundChannelsInactive)
                         {
-                            if (Props.audio.soundGroup != null)
+                            if (master.Props.audio.soundGroup != null)
                             {
                                 // Deactivate the sound group.
-                                Props.audio.soundGroup.SetActive(false);
+                                master.Props.audio.soundGroup.SetActive(false);
                             }
 
                             // Deactivate the audio group.
-                            if (Props.audio.music == null || !Props.audio.music.gameObject.activeSelf)
+                            if (master.Props.audio.music == null || !master.Props.audio.music.gameObject.activeSelf)
                             {
-                                Props.audio.group.SetActive(false);
+                                master.Props.audio.group.SetActive(false);
                             }
                         }
                     }
@@ -864,9 +864,9 @@ namespace TaleUtil
                     // Keep the dialog open
                     if (keepOpen) {
                         if (actor != null) {
-                            Props.dialog.actor.text = "";
+                            master.Props.dialog.actor.text = "";
                         }
-                        Props.dialog.content.text = "";
+                        master.Props.dialog.content.text = "";
 
                         ChangeState(State.END);
                         return true;
@@ -881,9 +881,9 @@ namespace TaleUtil
                         {
                             if (actor != null)
                             {
-                                Props.dialog.actor.text = "";
+                                master.Props.dialog.actor.text = "";
                             }
-                            Props.dialog.content.text = "";
+                            master.Props.dialog.content.text = "";
                         }
 
                         ChangeState(State.END);
@@ -892,12 +892,12 @@ namespace TaleUtil
 
                     if (actor != null)
                     {
-                        Props.dialog.actor.text = "";
+                        master.Props.dialog.actor.text = "";
                     }
-                    Props.dialog.content.text = "";
+                    master.Props.dialog.content.text = "";
 
-                    // Activate the OUT animations in the order specified in the Tale.config.
-                    switch(Tale.config.DIALOG_ANIMATION_OUT_MODE)
+                    // Activate the OUT animations in the order specified in the master.Config.
+                    switch(master.Config.DIALOG_ANIMATION_OUT_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationOutMode.CANVAS_THEN_AVATAR:
                             if(ActivateCanvasAnimationOut())
@@ -952,7 +952,7 @@ namespace TaleUtil
                             break;
                         }
                         default:
-                            Props.dialog.canvas.enabled = false;
+                            master.Props.dialog.canvas.enabled = false;
                             ChangeState(State.END);
                             return true;
                     }
@@ -961,27 +961,27 @@ namespace TaleUtil
                 }
                 case State.TRANSITION_OUT:
                 {
-                    if (Input.Advance())
+                    if (master.Input.Advance())
                     {
-                        Props.dialog.animator.speed = Tale.config.TRANSITION_SKIP_SPEED;
+                        master.Props.dialog.animator.speed = master.Config.TRANSITION_SKIP_SPEED;
                     }
 
-                    if(!Props.dialog.animator.StateFinished(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_OUT))
+                    if(!master.Props.dialog.animator.StateFinished(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_OUT))
                     {
                         break;
                     }
 
-                    Props.dialog.animator.speed = 1f;
-                    Props.dialog.animator.SetTrigger(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
+                    master.Props.dialog.animator.speed = 1f;
+                    master.Props.dialog.animator.SetTrigger(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_TRIGGER_NEUTRAL);
 
-                    if(Props.dialog.avatarAnimator == null)
+                    if(master.Props.dialog.avatarAnimator == null)
                     {
-                        Props.dialog.canvas.enabled = false;
+                        master.Props.dialog.canvas.enabled = false;
                         ChangeState(State.END);
                         return true;
                     }
 
-                    switch (Tale.config.DIALOG_ANIMATION_OUT_MODE)
+                    switch (master.Config.DIALOG_ANIMATION_OUT_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationOutMode.CANVAS_THEN_AVATAR:
                             if (ActivateAvatarAnimationOut())
@@ -1007,7 +1007,7 @@ namespace TaleUtil
                         case TaleUtil.Config.DialogAnimationOutMode.AVATAR_THEN_CANVAS:
                             // Fallthrough
                         default:
-                            Props.dialog.canvas.enabled = false;
+                            master.Props.dialog.canvas.enabled = false;
                             ChangeState(State.END);
                             return true;
                     }
@@ -1016,20 +1016,20 @@ namespace TaleUtil
                 }
                 case State.AVATAR_TRANSITION_OUT:
                 {
-                    if (Input.Advance())
+                    if (master.Input.Advance())
                     {
-                        Props.dialog.avatarAnimator.speed = Tale.config.TRANSITION_SKIP_SPEED;
+                        master.Props.dialog.avatarAnimator.speed = master.Config.TRANSITION_SKIP_SPEED;
                     }
 
-                    if (!Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_OUT))
+                    if (!master.Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_OUT))
                     {
                         break;
                     }
 
-                    Props.dialog.avatarAnimator.speed = 1f;
-                    Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
+                    master.Props.dialog.avatarAnimator.speed = 1f;
+                    master.Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
 
-                    switch (Tale.config.DIALOG_ANIMATION_OUT_MODE)
+                    switch (master.Config.DIALOG_ANIMATION_OUT_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationOutMode.AVATAR_THEN_CANVAS:
                             if (ActivateCanvasAnimationOut())
@@ -1047,7 +1047,7 @@ namespace TaleUtil
                         case TaleUtil.Config.DialogAnimationOutMode.CANVAS_THEN_AVATAR:
                             // Fallthrough
                         default:
-                            Props.dialog.canvas.enabled = false;
+                            master.Props.dialog.canvas.enabled = false;
                             ChangeState(State.END);
                             return true;
                     }
@@ -1075,9 +1075,9 @@ namespace TaleUtil
 
             if (state == State.END)
             {
-                if (Tale.config.DIALOG_FADE_FACTOR > 0)
+                if (master.Config.DIALOG_FADE_FACTOR > 0)
                 {
-                    Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
+                    master.Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                 }
             }
 

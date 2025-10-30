@@ -10,7 +10,7 @@ namespace TaleUtil
             TRANSITION
         }
 
-        Props.Transformable transformable;
+        TaleUtil.Props.Transformable transformable;
         Vector2 magnitude;
         float transitionDuration;
         Delegates.InterpolationDelegate interpolation;
@@ -23,7 +23,7 @@ namespace TaleUtil
         State state;
 
         // For transforms which can have their references changed (e.g. the camera when switching scenes).
-        public TransformShakeAction Init(Props.Transformable transformable, Vector2 magnitude, float transitionDuration, Delegates.InterpolationDelegate interpolation)
+        public TransformShakeAction Init(TaleUtil.Props.Transformable transformable, Vector2 magnitude, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {
             this.transformable = transformable;
             this.magnitude = magnitude;
@@ -38,7 +38,7 @@ namespace TaleUtil
         }
 
         public TransformShakeAction Init(Transform transform, Vector2 magnitude, float transitionDuration, Delegates.InterpolationDelegate interpolation) =>
-            Init(new Props.Transformable(transform), magnitude, transitionDuration, interpolation);
+            Init(new TaleUtil.Props.Transformable(transform), magnitude, transitionDuration, interpolation);
 
         public override bool Run()
         {

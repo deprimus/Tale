@@ -22,7 +22,7 @@ namespace TaleUtil
 
         public CameraZoomAction Init(float factor, float transitionDuration, Delegates.InterpolationDelegate interpolation)
         {
-            Assert.Condition(Props.camera != null, "CameraZoomAction requires a main camera object (which could not be found)");
+            Assert.Condition(master.Props.camera != null, "CameraZoomAction requires a main camera object (which could not be found)");
 
             this.factor = factor;
             this.transitionDuration = transitionDuration;
@@ -41,8 +41,8 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    initialSize = Props.camera.obj.orthographicSize;
-                    factor = (1f / factor) * Props.camera.baseOrthographicSize; // 0.5f zoom = (1f / 0.5f) * base size = 2 * base size
+                    initialSize = master.Props.camera.obj.orthographicSize;
+                    factor = (1f / factor) * master.Props.camera.baseOrthographicSize; // 0.5f zoom = (1f / 0.5f) * base size = 2 * base size
 
                     state = State.TRANSITION;
 
@@ -57,7 +57,7 @@ namespace TaleUtil
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
-                    Props.camera.obj.orthographicSize = Math.Interpolate(initialSize, factor, interpolationFactor);
+                    master.Props.camera.obj.orthographicSize = Math.Interpolate(initialSize, factor, interpolationFactor);
 
                     if(clock == transitionDuration)
                         return true;

@@ -37,15 +37,15 @@ namespace TaleUtil
 
         public CinematicSubtitleAction Init(string content, float ttl, bool showBackground)
         {
-            Assert.Condition(Props.cinematic.subtitlesGroup != null, "CinematicSubtitleAction requires a subtitles group object; did you forget to register it in TaleMaster?");
-            Assert.Condition(Props.cinematic.subtitles != null, "CinematicSubtitleAction requires a subtitles object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
+            Assert.Condition(master.Props.cinematic.subtitlesGroup != null, "CinematicSubtitleAction requires a subtitles group object; did you forget to register it in TaleMaster?");
+            Assert.Condition(master.Props.cinematic.subtitles != null, "CinematicSubtitleAction requires a subtitles object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
 
             this.content = content;
             this.ttl = ttl;
             this.showBackground = showBackground;
 
             if(this.showBackground)
-                Assert.Condition(Props.cinematic.subtitlesBackground != null, "CinematicSubtitleAction with 'show background' requires a subtitle background object with a RectTransform component; did you forget to register it in TaleMaster?");
+                Assert.Condition(master.Props.cinematic.subtitlesBackground != null, "CinematicSubtitleAction with 'show background' requires a subtitle background object with a RectTransform component; did you forget to register it in TaleMaster?");
 
             state = State.SETUP;
 
@@ -60,21 +60,21 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    Props.cinematic.subtitles.text = content;
+                    master.Props.cinematic.subtitles.text = content;
 
-                    if(!Props.cinematic.subtitlesGroup.activeSelf)
-                        Props.cinematic.subtitlesGroup.SetActive(true);
+                    if(!master.Props.cinematic.subtitlesGroup.activeSelf)
+                        master.Props.cinematic.subtitlesGroup.SetActive(true);
 
                     // This forces TMP to update the characterInfo field (and others). Note that it only works when the subtitlesGroup is active.
-                    Props.cinematic.subtitles.ForceMeshUpdate();
+                    master.Props.cinematic.subtitles.ForceMeshUpdate();
 
                     // Rescale subtitles background.
                     if (showBackground)
                     {
                         // Note: If the new text is shorter, characterInfo MAY not change size. This is why characterCount is used instead of info.Length
                         //       This way of rescaling the background only works when the TextMeshProUGUI object has the horizontal alignment set to "Middle" and the vertical one to "Top".
-                        int length = Props.cinematic.subtitles.textInfo.characterCount;
-                        TMP_CharacterInfo[] info = Props.cinematic.subtitles.textInfo.characterInfo;
+                        int length = master.Props.cinematic.subtitles.textInfo.characterCount;
+                        TMP_CharacterInfo[] info = master.Props.cinematic.subtitles.textInfo.characterInfo;
 
                         if(length > 0)
                         {
@@ -94,18 +94,18 @@ namespace TaleUtil
                                 }
                             }
 
-                            bounds.left   -= Tale.config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.x;
-                            bounds.right  += Tale.config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.x;
-                            bounds.top    += Tale.config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.y;
-                            bounds.bottom -= Tale.config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.y;
+                            bounds.left   -= master.Config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.x;
+                            bounds.right  += master.Config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.x;
+                            bounds.top    += master.Config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.y;
+                            bounds.bottom -= master.Config.CINEMATIC_SUBTITLE_BACKGROUND_PADDING.y;
 
                             float width = Mathf.Abs(bounds.right - bounds.left);
                             float height = Mathf.Abs(bounds.top - bounds.bottom);
 
-                            Props.cinematic.subtitlesBackground.sizeDelta = new Vector2(width, height);
+                            master.Props.cinematic.subtitlesBackground.sizeDelta = new Vector2(width, height);
 
                             // Dynamically center the background based on the bounds.
-                            Props.cinematic.subtitlesBackground.anchoredPosition = new Vector2(Props.cinematic.subtitles.rectTransform.anchoredPosition.x + bounds.left + width / 2, Props.cinematic.subtitles.rectTransform.anchoredPosition.y + bounds.bottom + height / 2);
+                            master.Props.cinematic.subtitlesBackground.anchoredPosition = new Vector2(master.Props.cinematic.subtitles.rectTransform.anchoredPosition.x + bounds.left + width / 2, master.Props.cinematic.subtitles.rectTransform.anchoredPosition.y + bounds.bottom + height / 2);
                         }
                     }
 
@@ -121,7 +121,7 @@ namespace TaleUtil
                     {
                         if(!(Tale.Master.Queue.FetchNext() is CinematicSubtitleAction))
                         {
-                            Props.cinematic.subtitlesGroup.SetActive(false);
+                            master.Props.cinematic.subtitlesGroup.SetActive(false);
                         }
 
                         return true;

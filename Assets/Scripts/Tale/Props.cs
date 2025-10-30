@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using TMPro;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 #if UNITY_POST_PROCESSING_STACK_V2
 using UnityEngine.Rendering.PostProcessing;
@@ -11,24 +12,24 @@ using UnityEngine.Rendering.PostProcessing;
 
 namespace TaleUtil
 {
-    public static class Props
+    public class Props
     {
-        public static Transitions transitions;
-        public static Camera camera;
-        public static Dialog dialog;
-        public static Audio audio;
-        public static Choice choice;
-        public static Cinematic cinematic;
+        public Transitions transitions;
+        public Camera camera;
+        public Dialog dialog;
+        public Audio audio;
+        public Choice choice;
+        public Cinematic cinematic;
 
 #if UNITY_POST_PROCESSING_STACK_V2
-        public static PostProcessing postProcessing;
+        public PostProcessing postProcessing;
 #endif
 
-        public static GameObject advanceCanvas;
+        public GameObject advanceCanvas;
 
-        public static Dictionary<string, Texture> cameraEffects;
+        public Dictionary<string, Texture> cameraEffects;
 
-        public static void Init(TaleMaster.InspectorProps props)
+        public Props(TaleMaster.InspectorProps props)
         {
             ReinitCamera();
 
@@ -62,7 +63,7 @@ namespace TaleUtil
 #endif
         }
 
-        public static void Reset()
+        public void Reset()
         {
             if (transitions != null)
             {
@@ -91,7 +92,7 @@ namespace TaleUtil
         public static void Error(string msg) =>
             TaleUtil.Log.Error("PROPS", msg);
 
-        public static void ReinitCamera()
+        public void ReinitCamera()
         {
             // It's important to keep the reference, because the camera actions which use Transformable need a reliable reference,
             // which doesn't change with the scene.
@@ -228,7 +229,7 @@ namespace TaleUtil
 
             public void Reset()
             {
-                if (dialog.canvas != null)
+                if (canvas != null)
                 {
                     if (actor != null)
                     {
@@ -250,7 +251,7 @@ namespace TaleUtil
                         actc.SetActive(false);
                     }
 
-                    dialog.canvas.enabled = false;
+                    canvas.enabled = false;
                 }
             }
         }
@@ -335,10 +336,10 @@ namespace TaleUtil
 
                         if (this.styles.ContainsKey(key))
                         {
-                            Warning("There are two choice styles with the name '{0}'; the last one will take precedence");
+                            Warning(string.Format("There are two choice styles with the name '{0}'; the last one will take precedence", styles[i].name));
                         }
 
-                        this.styles[styles[i].name.ToLowerInvariant()] = styles[i].obj;
+                        this.styles[key] = styles[i].obj;
                     }
                 }
             }
@@ -525,7 +526,7 @@ namespace TaleUtil
 
                 if(this.player != null)
                 {
-                    this.player.loopPointReached += TaleUtil.Events.OnCinematicVideoEnd;
+                    this.player.loopPointReached += OnCinematicVideoEnd;
                 }
             }
 
@@ -542,6 +543,12 @@ namespace TaleUtil
 
                     group.SetActive(false);
                 }
+            }
+
+            public void OnCinematicVideoEnd(VideoPlayer player) {
+                player.Stop();
+                player.targetTexture.Release(); // The RenderTexture holds the last frame from the last video. This clears it.
+                group.SetActive(false);
             }
         }
 
