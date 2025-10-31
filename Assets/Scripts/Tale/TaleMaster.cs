@@ -8,9 +8,13 @@ public class TaleMaster : MonoBehaviour
 {
     #region Fields
     public TaleUtil.Queue Queue { get; private set; }
+    public TaleUtil.Parallel Parallel { get; private set; }
     public TaleUtil.Props Props { get; private set; }
     public TaleUtil.Config Config { get { return config; } } // TODO: CopyOnWrite
     public TaleUtil.Input Input { get; private set; }
+    public TaleUtil.Triggers Triggers { get; private set; }
+    public TaleUtil.Hooks Hooks { get; private set; }
+    public TaleUtil.Flags Flags { get; private set; }
 
     ulong actionCounter;
     #endregion
@@ -33,15 +37,14 @@ public class TaleMaster : MonoBehaviour
         }
 
         Queue = new TaleUtil.Queue();
+        Parallel = new TaleUtil.Parallel();
         Props = new TaleUtil.Props(props);
         Input = new TaleUtil.Input(this);
+        Triggers = new TaleUtil.Triggers(this);
+        Hooks = new TaleUtil.Hooks();
+        Flags = new TaleUtil.Flags();
 
         actionCounter = 0;
-
-        TaleUtil.Parallel.Init();
-        TaleUtil.Triggers.Init();
-        TaleUtil.Hooks.Init();
-        TaleUtil.Flags.Init();
 
         DontDestroyOnLoad(gameObject);
     }
@@ -57,12 +60,12 @@ public class TaleMaster : MonoBehaviour
 
         // That's it.
         Queue.Run();
-        TaleUtil.Parallel.Run();
+        Parallel.Run();
     }
 
     void LateUpdate()
     {
-        TaleUtil.Triggers.Update();
+        Triggers.Update();
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
@@ -80,13 +83,13 @@ public class TaleMaster : MonoBehaviour
         }
 
         Queue.ForceClear();
-        TaleUtil.Parallel.ForceClear();
+        Parallel.ForceClear();
 
         Tale.Scene(path);
         Props.Reset();
 
         // Reset() places some transition cleaning actions on the parallel queue; execute all of them
-        TaleUtil.Parallel.Run();
+        Parallel.Run();
     }
     #endregion
 

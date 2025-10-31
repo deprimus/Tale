@@ -38,7 +38,7 @@ namespace TaleUtil
             {
                 case State.WAIT_FOR_TRIGGER:
                 {
-                    if (TaleUtil.Triggers.Get(trigger))
+                    if (master.Triggers.Get(trigger))
                     {
                         state = State.RUN;
                     }

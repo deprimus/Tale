@@ -21,7 +21,7 @@
 
         public override bool Run()
         {
-            if (Triggers.Get(trigger))
+            if (master.Triggers.Get(trigger))
             {
                 action.OnInterrupt();
                 return true;

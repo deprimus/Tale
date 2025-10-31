@@ -31,7 +31,7 @@ namespace TaleUtil
             {
                 case State.SETUP:
                 {
-                    returned = action(TaleUtil.Flags.Get(flag));
+                    returned = action(master.Flags.Get(flag));
 
                     if (returned == null)
                     {

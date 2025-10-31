@@ -372,9 +372,9 @@ namespace TaleUtil
                     clock = 0f;
                 }
 
-                if (Hooks.OnDialogAutoModeToggle != null)
+                if (master.Hooks.OnDialogAutoModeToggle != null)
                 {
-                    Hooks.OnDialogAutoModeToggle(autoMode);
+                    master.Hooks.OnDialogAutoModeToggle(autoMode);
                 }
             }
 
@@ -1081,9 +1081,9 @@ namespace TaleUtil
                 }
             }
 
-            if (Hooks.OnDialogUpdate != null)
+            if (master.Hooks.OnDialogUpdate != null)
             {
-                Hooks.OnDialogUpdate(this);
+                master.Hooks.OnDialogUpdate(this);
             }
         }
     }

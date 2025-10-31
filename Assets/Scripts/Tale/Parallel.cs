@@ -4,15 +4,20 @@ using UnityEngine;
 
 namespace TaleUtil
 {
-    public static class Parallel
+    public class Parallel
     {
-        private static ulong lastId = 0;
-        private static LinkedList<TaleUtil.Action> data;
+        private ulong lastId = 0;
+        private LinkedList<TaleUtil.Action> data;
 
-        public static LinkedListNode<TaleUtil.Action> Fetch() =>
+        public LinkedListNode<TaleUtil.Action> Fetch() =>
             data.First;
 
-        public static ulong Add(params TaleUtil.Action[] actions)
+
+        public Parallel() {
+            data = new LinkedList<TaleUtil.Action>();
+        }
+
+        public ulong Add(params TaleUtil.Action[] actions)
         {
             if(actions.Length == 0)
                 return 0;
@@ -26,12 +31,12 @@ namespace TaleUtil
             return actions[0].id;
         }
 
-        public static void Remove(ulong id)
+        public void Remove(ulong id)
         {
             Remove(id, 1);
         }
 
-        public static void Remove(ulong id, ulong size)
+        public void Remove(ulong id, ulong size)
         {
             if(size == 0)
                 return;
@@ -58,12 +63,10 @@ namespace TaleUtil
             }
         }
 
-        public static void ForceClear() =>
+        public void ForceClear() =>
             data.Clear();
 
-        public static void Init() => data = new LinkedList<TaleUtil.Action>();
-
-        public static void Run()
+        public void Run()
         {
             LinkedListNode<TaleUtil.Action> node = data.First;
 

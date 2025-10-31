@@ -38,6 +38,12 @@ namespace TaleUtil
                 {
                     var obj = master.Props.choice.styles[style];
 
+                    // TaleUtil.Props.Choice.Reset() disables all styles since it doesn't have access to the ChoiceMaster types,
+                    // so activate the object if it was previously reset.
+                    if (!obj.activeSelf) {
+                        obj.SetActive(true);
+                    }
+
                     var picker = obj.GetComponent<Scripts.Choice.ChoiceMaster<TArgs, TChoice>>();
                     var canvas = obj.GetComponent<Canvas>();
 

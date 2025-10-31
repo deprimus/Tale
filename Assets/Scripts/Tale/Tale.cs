@@ -88,7 +88,7 @@ public static partial class Tale
 
         action.task = task;
 
-        TaleUtil.Parallel.Add(action);
+        Master.Parallel.Add(action);
 
         return task.Task;
     }
@@ -128,7 +128,7 @@ public static partial class Tale
         }));
 
     public static TaleUtil.Action Trigger(string name) =>
-        Master.Queue.Enqueue(Master.CreateAction<ExecAction>().Init(() => TaleUtil.Triggers.Set(name)));
+        Master.Queue.Enqueue(Master.CreateAction<ExecAction>().Init(() => Master.Triggers.Set(name)));
 
     public static TaleUtil.Action Interruptible(string trigger, TaleUtil.Action action) {
         Master.Queue.RemoveLast(action);

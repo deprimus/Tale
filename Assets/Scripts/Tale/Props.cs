@@ -80,6 +80,10 @@ namespace TaleUtil
                 audio.Reset();
             }
 
+            if (choice != null) {
+                choice.Reset();
+            }
+
             if (cinematic != null)
             {
                 cinematic.Reset();
@@ -341,6 +345,12 @@ namespace TaleUtil
 
                         this.styles[key] = styles[i].obj;
                     }
+                }
+            }
+
+            public void Reset() {
+                foreach (var style in styles) {
+                    style.Value.SetActive(false);
                 }
             }
         }

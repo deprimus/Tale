@@ -181,7 +181,7 @@ namespace TaleUtil
                 }
                 case State.WAIT:
                 {
-                    if(Triggers.Get("tale_music_stop"))
+                    if(master.Triggers.Get("tale_music_stop"))
                     {
                         return true;
                     }
@@ -190,7 +190,7 @@ namespace TaleUtil
                     {
                         // The trigger was activated on this frame. Prepare to handle it in the next frame.
                         // Since the music has finished and a trigger was set, there's no point in starting a new song.
-                        if(Triggers.GetImmediate("tale_music_stop"))
+                        if(master.Triggers.GetImmediate("tale_music_stop"))
                             return false;
 
                         if(HasNext())
@@ -246,7 +246,7 @@ namespace TaleUtil
                         // If the music stop action is immediately followed by a music play action, that action
                         // will enter the PLAY state, while this trigger is set. That action shouldn't stop, so
                         // don't check the trigger in the PLAY state.
-                        Triggers.Set("tale_music_stop");
+                        master.Triggers.Set("tale_music_stop");
 
                         master.Props.audio.music.Stop();
 

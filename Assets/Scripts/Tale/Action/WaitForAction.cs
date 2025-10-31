@@ -15,7 +15,7 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            return TaleUtil.Triggers.Get(trigger);
+            return master.Triggers.Get(trigger);
         }
 
         public override string ToString()
