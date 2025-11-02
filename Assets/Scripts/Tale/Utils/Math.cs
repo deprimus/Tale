@@ -6,6 +6,25 @@ namespace TaleUtil
 {
     public static class Math
     {
+        public static bool IsPowerOfTwo(int value) {
+            return value > 0 && (value & (value - 1)) == 0;
+        }
+
+        public static int CeilPowerOfTwo(int value) {
+            if (value < 0) {
+                return 0;
+            }
+
+            --value;
+            value |= value >> 1;
+            value |= value >> 2;
+            value |= value >> 4;
+            value |= value >> 8;
+            value |= value >> 16;
+
+            return value + 1;
+        }
+
         // Maps a value N from [min, max] to [newMin, newMax]
         public static float Map(float n, float min, float max, float newMin, float newMax)
         {

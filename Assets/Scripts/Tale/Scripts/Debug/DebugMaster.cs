@@ -10,7 +10,7 @@ public class DebugMaster : MonoBehaviour
     {
         var config = Tale.Master.Config;
 
-        if (config.DEBUG_INFO_ENABLE && GetKeyDownNoMod(config.DEBUG_INFO_KEY))
+        if (config.Core.DEBUG_INFO_ENABLE && GetKeyDownNoMod(config.Core.DEBUG_INFO_KEY))
         {
             debugInfo.SetActive(!debugInfo.activeSelf);
         }

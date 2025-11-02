@@ -82,40 +82,40 @@ public static partial class Tale
     public static Task Async(TaleUtil.Action action)
     {
         // Async actions are immediately placed on the parallel list
-        Master.Queue.RemoveLast(action);
+        Master.Queue.TakeLast(action);
 
         var task = new TaskCompletionSource<bool>();
 
         action.task = task;
 
-        Master.Parallel.Add(action);
+        Master.Parallel.InsertMany(action);
 
         return task.Task;
     }
 
     public static TaleUtil.Action Multiplex(params TaleUtil.Action[] actions) {
-        Master.Queue.RemoveLast(actions);
+        Master.Queue.TakeLast(actions);
         return Master.Queue.Enqueue(Master.CreateAction<MultiplexAction>().Init(actions));
     }
 
     public static TaleUtil.Action Any(params TaleUtil.Action[] actions) {
-        Master.Queue.RemoveLast(actions);
+        Master.Queue.TakeLast(actions);
         return Master.Queue.Enqueue(Master.CreateAction<AnyAction>().Init(actions));
     }
 
     public static TaleUtil.Action Queue(params TaleUtil.Action[] actions) {
-        Master.Queue.RemoveLast(actions);
+        Master.Queue.TakeLast(actions);
         return Master.Queue.Enqueue(Master.CreateAction<QueueAction>().Init(actions));
     }
 
     public static TaleUtil.Action Parallel(params TaleUtil.Action[] actions) {
-        Master.Queue.RemoveLast(actions);
+        Master.Queue.TakeLast(actions);
         return Master.Queue.Enqueue(Master.CreateAction<ParallelAction>().Init(actions));
     }
 
     public static TaleUtil.Action Bind(TaleUtil.Action primary, TaleUtil.Action secondary) {
-        Master.Queue.RemoveLast(secondary);
-        Master.Queue.RemoveLast(primary);
+        Master.Queue.TakeLast(secondary);
+        Master.Queue.TakeLast(primary);
 
         return Master.Queue.Enqueue(Master.CreateAction<BindAction>().Init(primary, secondary));
     }
@@ -123,7 +123,7 @@ public static partial class Tale
     public static TaleUtil.Action Repeat(ulong count, TaleUtil.Delegates.ActionDelegate actionCallback) =>
         Master.Queue.Enqueue(Master.CreateAction<RepeatAction>().Init(count, () => {
             var act = actionCallback();
-            Master.Queue.RemoveLast(act);
+            Master.Queue.TakeLast(act);
             return act;
         }));
 
@@ -131,7 +131,7 @@ public static partial class Tale
         Master.Queue.Enqueue(Master.CreateAction<ExecAction>().Init(() => Master.Triggers.Set(name)));
 
     public static TaleUtil.Action Interruptible(string trigger, TaleUtil.Action action) {
-        Master.Queue.RemoveLast(action);
+        Master.Queue.TakeLast(action);
         return Master.Queue.Enqueue(Master.CreateAction<InterruptibleAction>().Init(trigger, action));
     }
 
@@ -161,10 +161,10 @@ public static partial class Tale
 
     public static TaleUtil.Action Dialog(string actor, string content, string avatar = null, string voice = null, bool loopVoice = false, bool additive = false, bool reverb = false, bool keepOpen = false, TaleUtil.Action action = null) {
         if (action != null) {
-            Master.Queue.RemoveLast(action);
+            Master.Queue.TakeLast(action);
         }
 
-        return Master.Queue.Enqueue(Master.CreateAction<DialogAction>().Init(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, keepOpen, action));
+        return Master.Queue.Enqueue(Master.CreateAction<DialogAction>().Init(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, keepOpen, action));
     }
 
     public static TaleUtil.Action TransitionIn(float duration = Tale.Default.FLOAT) =>
@@ -189,12 +189,12 @@ public static partial class Tale
         Master.Queue.Enqueue(Master.CreateAction<WaitForAction>().Init(trigger));
 
     public static TaleUtil.Action Delayed(float amount, TaleUtil.Action action) {
-        Master.Queue.RemoveLast(action);
+        Master.Queue.TakeLast(action);
         return Master.Queue.Enqueue(Master.CreateAction<DelayedAction>().Init(amount, action));
     }
 
     public static TaleUtil.Action DelayedBy(string trigger, TaleUtil.Action action) {
-        Master.Queue.RemoveLast(action);
+        Master.Queue.TakeLast(action);
         return Master.Queue.Enqueue(Master.CreateAction<DelayedByAction>().Init(trigger, action));
     }
 
@@ -222,10 +222,16 @@ public static partial class Tale
     public static class Sound
     {
         public static TaleUtil.Action Play(string path, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<SoundAction>().Init(0, TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
+            Parallel(Master.CreateAction<SoundAction>().Init(0, TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_SOUND, path), volume, pitch));
 
         public static TaleUtil.Action Play(int channel, string path, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<SoundAction>().Init(channel, TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_SOUND, path), volume, pitch));
+            Parallel(Master.CreateAction<SoundAction>().Init(channel, TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_SOUND, path), volume, pitch));
+
+        public static TaleUtil.Action PlaySync(string path, float volume = 1f, float pitch = 1f) =>
+            Queue(Play(path, volume, pitch), Sync());
+
+        public static TaleUtil.Action PlaySync(int channel, string path, float volume = 1f, float pitch = 1f) =>
+            Queue(Play(channel, path, volume, pitch), Sync(channel));
 
         public static TaleUtil.Action Stop(int channel = 0) =>
             Master.Queue.Enqueue(Master.CreateAction<SoundAction>().Init(channel, null, 1f, 1f));
@@ -247,13 +253,13 @@ public static partial class Tale
 
         // TODO: Change the asset root to MUSIC.
         public static TaleUtil.Action Play(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            Parallel(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Play(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.AssetRoots.AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Play(List<string> paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, paths), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.AssetRoots.AUDIO_MUSIC, paths), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
 
         public static TaleUtil.Action Stop(float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             Master.Queue.Enqueue(Master.CreateAction<MusicAction>().Init(duration, interpolation));
@@ -264,13 +270,13 @@ public static partial class Tale
         // Async actions
 
         public static Task PlayAsync(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Async(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
+            Async(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
 
         public static Task PlayAsync(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
+            Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.AssetRoots.AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
 
         public static Task PlayAsync(List<string> paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.ASSET_ROOT_AUDIO_MUSIC, paths), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
+            Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.AssetRoots.AUDIO_MUSIC, paths), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
 
         public static Task StopAsync(float duration = 1f, TaleUtil.Delegates.InterpolationDelegate interpolation = null) =>
             Async(Stop(duration, interpolation));
@@ -426,10 +432,10 @@ public static partial class Tale
             Master.Queue.Enqueue(Master.CreateAction<CinematicSubtitleAction>().Init(content, ttl, showBackground));
 
         public static TaleUtil.Action Background(string path, BackgroundTransitionType type = BackgroundTransitionType.INSTANT, float speed = 1f) =>
-            Master.Queue.Enqueue(Master.CreateAction<CinematicBackgroundAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_CINEMATIC_BACKGROUND, path), (TaleUtil.CinematicBackgroundAction.Type) (int) type, speed));
+            Master.Queue.Enqueue(Master.CreateAction<CinematicBackgroundAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.CINEMATIC_BACKGROUND, path), (TaleUtil.CinematicBackgroundAction.Type) (int) type, speed));
 
         public static TaleUtil.Action Video(string path, float detatchValue = 0f, VideoDetatchType detatchType = VideoDetatchType.BEFORE, float speed = 1f) =>
-            Master.Queue.Enqueue(Master.CreateAction<CinematicVideoAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.ASSET_ROOT_CINEMATIC_VIDEO, path), detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int) detatchType, speed));
+            Master.Queue.Enqueue(Master.CreateAction<CinematicVideoAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.CINEMATIC_VIDEO, path), detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int) detatchType, speed));
 
         public static TaleUtil.Action VideoPause() =>
             Master.Queue.Enqueue(Master.CreateAction<CinematicVideoPauseAction>().Init());

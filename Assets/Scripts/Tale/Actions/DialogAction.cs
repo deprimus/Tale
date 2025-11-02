@@ -120,8 +120,8 @@ namespace TaleUtil
             type = additive ? Type.ADDITIVE : Type.OVERRIDE;
             ChangeState(State.SETUP);
 
-            if(master.Config.DIALOG_CPS > 0)
-                timePerChar = 1f / master.Config.DIALOG_CPS;
+            if(master.Config.Dialog.CPS > 0)
+                timePerChar = 1f / master.Config.Dialog.CPS;
             else timePerChar = 0f;
 
             clock = 0f;
@@ -147,12 +147,10 @@ namespace TaleUtil
             {
                 var multi = (MultiplexAction)next;
 
-                foreach (Action act in multi.actions)
-                {
-                    var dialog = GetNextDialogAction(act);
+                for (int i = 0; i < multi.actions.Count; ++i) {
+                    var dialog = GetNextDialogAction(multi.actions[i]);
 
-                    if (dialog != null)
-                    {
+                    if (dialog != null) {
                         return dialog;
                     }
                 }
@@ -301,7 +299,7 @@ namespace TaleUtil
         {
             if (hasAnimation)
             {
-                switch (master.Config.DIALOG_ANIMATION_IN_MODE)
+                switch (master.Config.Dialog.ANIMATION_IN_MODE)
                 {
                     case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_TEXT:
                     case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_TEXT:
@@ -317,7 +315,7 @@ namespace TaleUtil
         {
             if (master.Props.dialog.avatarAnimator != null)
             {
-                switch (master.Config.DIALOG_ANIMATION_IN_MODE)
+                switch (master.Config.Dialog.ANIMATION_IN_MODE)
                 {
                     case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_TEXT:
                     case TaleUtil.Config.DialogAnimationInMode.CANVAS_AVATAR_TEXT:
@@ -337,7 +335,7 @@ namespace TaleUtil
             // - after the magic below: call master.Props.dialog.content.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32)
             // That should be way more efficient, since it doesn't force a mesh update for every single character
 
-            for (int i = System.Math.Max(master.Props.dialog.content.maxVisibleCharacters - (int) master.Config.DIALOG_FADE_FACTOR, fadeStartIndex); i < master.Props.dialog.content.maxVisibleCharacters; ++i)
+            for (int i = System.Math.Max(master.Props.dialog.content.maxVisibleCharacters - (int) master.Config.Dialog.FADE_FACTOR, fadeStartIndex); i < master.Props.dialog.content.maxVisibleCharacters; ++i)
             {
                 if (!textInfo.characterInfo[i].isVisible)
                 {
@@ -349,7 +347,7 @@ namespace TaleUtil
                 int vertexIndex = textInfo.characterInfo[i].vertexIndex;
 
                 Color color = textInfo.meshInfo[materialIndex].colors32[vertexIndex];
-                color.a = Mathf.Clamp01((1f / master.Config.DIALOG_FADE_FACTOR) * (fadeEndIndex - i));
+                color.a = Mathf.Clamp01((1f / master.Config.Dialog.FADE_FACTOR) * (fadeEndIndex - i));
 
                 textInfo.meshInfo[materialIndex].colors32[vertexIndex + 0] = color;
                 textInfo.meshInfo[materialIndex].colors32[vertexIndex + 1] = color;
@@ -362,7 +360,7 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            if (TaleUtil.Input.GetKeyDown(master.Config.DIALOG_KEY_AUTO))
+            if (TaleUtil.Input.GetKeyDown(master.Config.Dialog.KEY_AUTO))
             {
                 autoMode = !autoMode;
 
@@ -411,8 +409,8 @@ namespace TaleUtil
                     {
                         if(type == Type.ADDITIVE)
                         {
-                            content = master.Props.dialog.content.text + master.Config.DIALOG_ADDITIVE_SEPARATOR + content;
-                            index += master.Props.dialog.content.text.Length + master.Config.DIALOG_ADDITIVE_SEPARATOR.Length;
+                            content = master.Props.dialog.content.text + master.Config.Dialog.ADDITIVE_SEPARATOR + content;
+                            index += master.Props.dialog.content.text.Length + master.Config.Dialog.ADDITIVE_SEPARATOR.Length;
                         }
 
                         ChangeState(State.BEGIN_WRITE);
@@ -434,7 +432,7 @@ namespace TaleUtil
                         master.Props.dialog.canvas.enabled = true;
 
                         // Activate the animations, in the order specified in the master.Config.
-                        switch(master.Config.DIALOG_ANIMATION_IN_MODE)
+                        switch(master.Config.Dialog.ANIMATION_IN_MODE)
                         {
                             case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_THEN_TEXT:
                                 if(ActivateCanvasAnimationIn())
@@ -538,7 +536,7 @@ namespace TaleUtil
                         SoftAssert.Condition(master.Props.dialog.avatar.sprite != null, "The avatar '" + avatar + "' is missing");
                     }
 
-                    if (master.Config.DIALOG_FADE_FACTOR > 0)
+                    if (master.Config.Dialog.FADE_FACTOR > 0)
                     {
                         master.Props.dialog.content.OnPreRenderText += OnPreRenderContentAlpha;
                     }
@@ -549,7 +547,7 @@ namespace TaleUtil
                 {
                     if (master.Input.Advance())
                     {
-                        master.Props.dialog.animator.speed = master.Config.TRANSITION_SKIP_SPEED;
+                        master.Props.dialog.animator.speed = master.Config.Transitions.SKIP_SPEED;
                     }
 
                     if(!master.Props.dialog.animator.StateFinished(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_IN))
@@ -566,7 +564,7 @@ namespace TaleUtil
                         break;
                     }
 
-                    switch (master.Config.DIALOG_ANIMATION_IN_MODE)
+                    switch (master.Config.Dialog.ANIMATION_IN_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationInMode.AVATAR_THEN_CANVAS_THEN_TEXT:
                             ChangeState(State.BEGIN_WRITE);
@@ -608,7 +606,7 @@ namespace TaleUtil
                 {
                     if (master.Input.Advance())
                     {
-                        master.Props.dialog.avatarAnimator.speed = master.Config.TRANSITION_SKIP_SPEED;
+                        master.Props.dialog.avatarAnimator.speed = master.Config.Transitions.SKIP_SPEED;
                     }
 
                     if (!master.Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_IN))
@@ -623,7 +621,7 @@ namespace TaleUtil
                         break;
                     }
 
-                    switch(master.Config.DIALOG_ANIMATION_IN_MODE)
+                    switch(master.Config.Dialog.ANIMATION_IN_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationInMode.CANVAS_THEN_AVATAR_THEN_TEXT:
                             ChangeState(State.BEGIN_WRITE);
@@ -679,7 +677,7 @@ namespace TaleUtil
                 }
                 case State.WRITE:
                 {
-                    if(fadeEndIndex < contentInfo.characterCount + master.Config.DIALOG_FADE_FACTOR)
+                    if(fadeEndIndex < contentInfo.characterCount + master.Config.Dialog.FADE_FACTOR)
                     {
                         clock += delta();
 
@@ -687,7 +685,7 @@ namespace TaleUtil
 
                         if (master.Input.Advance())
                         {
-                            numChars = content.Length - index + (int) master.Config.DIALOG_FADE_FACTOR;
+                            numChars = content.Length - index + (int) master.Config.Dialog.FADE_FACTOR;
                         }
                         else
                         {
@@ -699,7 +697,7 @@ namespace TaleUtil
                             clock = clock % timePerChar;
                             index = Mathf.Min(index + numChars, contentInfo.characterCount);
 
-                            fadeEndIndex = System.Math.Min(fadeEndIndex + numChars, contentInfo.characterCount + (int) master.Config.DIALOG_FADE_FACTOR);
+                            fadeEndIndex = System.Math.Min(fadeEndIndex + numChars, contentInfo.characterCount + (int) master.Config.Dialog.FADE_FACTOR);
 
                             if (master.Props.dialog.content.maxVisibleCharacters == contentInfo.characterCount)
                             {
@@ -739,9 +737,9 @@ namespace TaleUtil
                                 RepositionCTC(
                                     contentInfo,
                                     master.Props.dialog.actcTransform,
-                                    master.Config.DIALOG_CTC_ADDITIVE_OFFSET.x,
-                                    master.Config.DIALOG_CTC_ADDITIVE_OFFSET.y,
-                                    master.Config.DIALOG_CTC_ADDITIVE_ALIGNMENT);
+                                    master.Config.Dialog.CTC_ADDITIVE_OFFSET.x,
+                                    master.Config.Dialog.CTC_ADDITIVE_OFFSET.y,
+                                    master.Config.Dialog.CTC_ADDITIVE_ALIGNMENT);
 
                                 master.Props.dialog.actc.SetActive(true);
                             }
@@ -755,9 +753,9 @@ namespace TaleUtil
                                 RepositionCTC(
                                     contentInfo,
                                     master.Props.dialog.ctcTransform,
-                                    master.Config.DIALOG_CTC_OVERRIDE_OFFSET.x,
-                                    master.Config.DIALOG_CTC_OVERRIDE_OFFSET.y,
-                                    master.Config.DIALOG_CTC_OVERRIDE_ALIGNMENT);
+                                    master.Config.Dialog.CTC_OVERRIDE_OFFSET.x,
+                                    master.Config.Dialog.CTC_OVERRIDE_OFFSET.y,
+                                    master.Config.Dialog.CTC_OVERRIDE_ALIGNMENT);
                                 
                                 master.Props.dialog.ctc.SetActive(true);
                             }
@@ -775,7 +773,7 @@ namespace TaleUtil
                         clock += delta();
                     }
 
-                    if(master.Input.Advance() || autoMode && clock >= master.Config.DIALOG_AUTO_DELAY)
+                    if(master.Input.Advance() || autoMode && clock >= master.Config.Dialog.AUTO_DELAY)
                     {
                         if (master.Props.dialog.ctc != null)
                         {
@@ -798,7 +796,7 @@ namespace TaleUtil
                         clock += delta();
                     }
 
-                    if (master.Input.Advance() || autoMode && clock >= master.Config.DIALOG_AUTO_DELAY)
+                    if (master.Input.Advance() || autoMode && clock >= master.Config.Dialog.AUTO_DELAY)
                     {
                         if (master.Props.dialog.actc != null)
                         {
@@ -897,7 +895,7 @@ namespace TaleUtil
                     master.Props.dialog.content.text = "";
 
                     // Activate the OUT animations in the order specified in the master.Config.
-                    switch(master.Config.DIALOG_ANIMATION_OUT_MODE)
+                    switch(master.Config.Dialog.ANIMATION_OUT_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationOutMode.CANVAS_THEN_AVATAR:
                             if(ActivateCanvasAnimationOut())
@@ -963,7 +961,7 @@ namespace TaleUtil
                 {
                     if (master.Input.Advance())
                     {
-                        master.Props.dialog.animator.speed = master.Config.TRANSITION_SKIP_SPEED;
+                        master.Props.dialog.animator.speed = master.Config.Transitions.SKIP_SPEED;
                     }
 
                     if(!master.Props.dialog.animator.StateFinished(TaleUtil.Config.Editor.DIALOG_CANVAS_ANIMATOR_STATE_OUT))
@@ -981,7 +979,7 @@ namespace TaleUtil
                         return true;
                     }
 
-                    switch (master.Config.DIALOG_ANIMATION_OUT_MODE)
+                    switch (master.Config.Dialog.ANIMATION_OUT_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationOutMode.CANVAS_THEN_AVATAR:
                             if (ActivateAvatarAnimationOut())
@@ -1018,7 +1016,7 @@ namespace TaleUtil
                 {
                     if (master.Input.Advance())
                     {
-                        master.Props.dialog.avatarAnimator.speed = master.Config.TRANSITION_SKIP_SPEED;
+                        master.Props.dialog.avatarAnimator.speed = master.Config.Transitions.SKIP_SPEED;
                     }
 
                     if (!master.Props.dialog.avatarAnimator.StateFinished(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_STATE_OUT))
@@ -1029,7 +1027,7 @@ namespace TaleUtil
                     master.Props.dialog.avatarAnimator.speed = 1f;
                     master.Props.dialog.avatarAnimator.SetTrigger(TaleUtil.Config.Editor.DIALOG_AVATAR_ANIMATOR_TRIGGER_NEUTRAL);
 
-                    switch (master.Config.DIALOG_ANIMATION_OUT_MODE)
+                    switch (master.Config.Dialog.ANIMATION_OUT_MODE)
                     {
                         case TaleUtil.Config.DialogAnimationOutMode.AVATAR_THEN_CANVAS:
                             if (ActivateCanvasAnimationOut())
@@ -1075,7 +1073,7 @@ namespace TaleUtil
 
             if (state == State.END)
             {
-                if (master.Config.DIALOG_FADE_FACTOR > 0)
+                if (master.Config.Dialog.FADE_FACTOR > 0)
                 {
                     master.Props.dialog.content.OnPreRenderText -= OnPreRenderContentAlpha;
                 }

@@ -12,12 +12,10 @@ namespace TaleUtil
     }
 
     // These don't stop the execution, and also aren't removed in release builds
-    public static class SoftAssert
-    {
+    public static class SoftAssert {
         public static bool Condition(bool condition, string msg)
         {
-            if (!condition)
-            {
+            if (!condition) {
                 Log.Warning(msg);
             }
 

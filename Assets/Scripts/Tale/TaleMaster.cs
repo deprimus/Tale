@@ -23,12 +23,14 @@ public class TaleMaster : MonoBehaviour
     // Hello Tale!
     void Awake()
     {
-        if (Config.APPLICATION_RUN_IN_BACKGROUND)
+        Config.SanityCheck();
+
+        if (Config.Core.APPLICATION_RUN_IN_BACKGROUND)
         {
             Application.runInBackground = true;
         }
 
-        if (Config.SHOW_DEBUG_INFO_BY_DEFAULT)
+        if (Config.Core.SHOW_DEBUG_INFO_BY_DEFAULT)
         {
             if (TaleUtil.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object"))
             {
@@ -36,8 +38,8 @@ public class TaleMaster : MonoBehaviour
             }
         }
 
-        Queue = new TaleUtil.Queue();
-        Parallel = new TaleUtil.Parallel();
+        Queue = new TaleUtil.Queue(Config.Core.QUEUE_BASE_CAPACITY);
+        Parallel = new TaleUtil.Parallel(Config.Core.PARALLEL_BASE_CAPACITY);
         Props = new TaleUtil.Props(props);
         Input = new TaleUtil.Input(this);
         Triggers = new TaleUtil.Triggers(this);
@@ -52,7 +54,7 @@ public class TaleMaster : MonoBehaviour
     // The heart of Tale
     void Update()
     {
-        if (Config.SCENE_SELECTOR_ENABLE && TaleUtil.Input.GetKeyDown(Config.SCENE_SELECTOR_KEY))
+        if (Config.SceneSelector.ENABLE && TaleUtil.Input.GetKeyDown(Config.SceneSelector.KEY))
         {
             TriggerSceneSelector();
             return;
@@ -69,8 +71,22 @@ public class TaleMaster : MonoBehaviour
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-        // This is used to re-assign the camera when the scene changes
         Props.ReinitCamera();
+
+        var config = Config.Core;
+
+        if (config.QUEUE_VACUUM) {
+            if (Queue.Count < (Queue.Capacity / config.QUEUE_VACUUM_FACTOR) && Queue.Capacity >= config.QUEUE_VACUUM_CAPACITY) {
+                Queue.Vacuum();
+            }
+        }
+
+        if (config.PARALLEL_VACUUM) {
+            if (Parallel.Count < (Parallel.Capacity / config.PARALLEL_VACUUM_FACTOR) && Parallel.Capacity >= config.PARALLEL_VACUUM_CAPACITY) {
+                Parallel.Vacuum();
+            }
+        }
+
     }
 
     void TriggerSceneSelector()
@@ -99,6 +115,9 @@ public class TaleMaster : MonoBehaviour
         act.Prime(this, actionCounter++);
 
         return act;
+    }
+    public ulong GetTotalActionCount() {
+        return actionCounter;
     }
     #endregion
 

@@ -90,7 +90,7 @@ namespace TaleUtil
                         data.canvas.SetActive(true);
 
                     if(duration == 0f)
-                        data.animator.speed = master.Config.TRANSITION_INSTANT_SPEED;
+                        data.animator.speed = master.Config.Transitions.INSTANT_SPEED;
                     else data.animator.speed = 1f / duration;
 
                     data.animator.SetTrigger(trigger);

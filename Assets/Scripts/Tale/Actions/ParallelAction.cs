@@ -24,7 +24,7 @@ namespace TaleUtil
 
         public override bool Run()
         {
-            master.Parallel.Add(actions);
+            master.Parallel.InsertMany(actions);
             return true;
         }
 

@@ -189,7 +189,7 @@ namespace TaleUtil
             tform.anchoredPosition = new Vector2(0f, 0f);
 
             obj = new GameObject("Splash Master");
-            var splash = obj.AddComponent<Splash>();
+            var splash = obj.AddComponent<TaleUtil.Scripts.Splash>();
 
             if (soundVariants != null) {
                 List<string> variants = new List<string>();
@@ -203,8 +203,6 @@ namespace TaleUtil
             }
 
             splash.curtain = curtain;
-
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB));
 
             AddSceneToBuild(scenePath, buildIndex);
 

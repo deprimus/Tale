@@ -19,11 +19,11 @@ namespace TaleUtil
         {
             var config = master.Config;
 
-            if (GetMouseButtonUp(0) || GetKey(config.DIALOG_KEY_SKIP))
+            if (GetMouseButtonUp(0) || GetKey(config.Dialog.KEY_SKIP))
                 return true;
 
-            for (int i = 0; i < config.DIALOG_KEY_NEXT.Length; ++i)
-                if (GetKeyDown(config.DIALOG_KEY_NEXT[i]))
+            for (int i = 0; i < config.Dialog.KEY_NEXT.Length; ++i)
+                if (GetKeyDown(config.Dialog.KEY_NEXT[i]))
                     return true;
 
             return false;

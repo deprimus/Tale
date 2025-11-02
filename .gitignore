@@ -11,12 +11,13 @@ UserSettings/
 .vs/
 
 Assets/*
-!Assets/Scripts/Tale/*
-!Assets/Scripts/Tale/**/*
-!Assets/Animations/Tale/*
-!Assets/Animations/Tale/**/*
-!Assets/Resources/Tale/*
-!Assets/Resources/Tale/**/*
+!Assets/Scripts/
+Assets/Scripts/*
+!Assets/Resources/
+Assets/Resources/*
+
+!Assets/Scripts/Tale/
+!Assets/Resources/Tale/
 
 *.meta
 !Assets/Resources/Tale/Logo.meta

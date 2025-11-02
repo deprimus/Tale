@@ -58,6 +58,6 @@ public class DebugInfo : MonoBehaviour
 
     void UpdateActionCount()
     {
-        actionCountInfo.text = Tale.Master.Queue.GetTotalActionCount().ToString();
+        actionCountInfo.text = Tale.Master.GetTotalActionCount().ToString();
     }
 }
