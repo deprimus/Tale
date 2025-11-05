@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace TaleUtil {
     public class MultiplexAction : Action
     {
@@ -27,25 +30,10 @@ namespace TaleUtil {
             return actions.Count == 0; // Finish when all actions are done.
         }
 
-        public override void OnInterrupt()
-        {
-            while (actions.Count > 0) {
-                actions[0].OnInterrupt();
-                actions.Remove(0);
-            }
-        }
+        public override IEnumerable<Action> GetSubactions() =>
+            actions;
 
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback) {
-            base.SetDeltaCallback(callback);
-
-            for (int i = 0; i < actions.Count; ++i) {
-                actions[i].SetDeltaCallback(callback);
-            }
-        }
-
-        public override string ToString()
-        {
-            return "MultiplexAction";
-        }
+        public override string ToString() =>
+            string.Format("MultiplexAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), actions.Count);
     }
 }

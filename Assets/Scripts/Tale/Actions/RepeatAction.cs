@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace TaleUtil
 {
     public class RepeatAction : Action
@@ -67,19 +70,18 @@ namespace TaleUtil
             return false;
         }
 
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback) {
-            base.SetDeltaCallback(callback);
-
-            if (currentAction != null) {
-                currentAction.SetDeltaCallback(callback);
+        public override IEnumerable<Action> GetSubactions() {
+            if (currentAction == null) {
+                yield break;
             }
+
+            yield return currentAction;
         }
 
-        public override string ToString()
-        {
-            string left = (count == 0 ? "loop" : count.ToString() + " left");
+        public override string ToString() {
+            string left = (count == 0 ? "loop" : string.Format("<color=#{0}>{1}</color> time{2}", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), count.ToString(), (count > 1 ? "s" : "")));
 
-            return string.Format("RepeatAction ({0}, {1})", left, currentAction?.ToString());
+            return string.Format("RepeatAction ({0})", left);
         }
     }
 }

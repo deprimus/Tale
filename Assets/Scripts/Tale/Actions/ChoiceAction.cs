@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Unity.IO.LowLevel.Unsafe.AsyncReadManagerMetrics;
 
 namespace TaleUtil
 {
@@ -84,10 +85,7 @@ namespace TaleUtil
 
             return true;
         }
-
-        public override string ToString()
-        {
-            return string.Format("ChoiceAction ({0})", style);
-        }
+        public override string ToString() =>
+            string.Format("ChoiceAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.Config.Core.DEBUG_ACCENT_COLOR_SECONDARY), style);
     }
 }

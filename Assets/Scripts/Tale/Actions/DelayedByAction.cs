@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil
@@ -24,12 +25,6 @@ namespace TaleUtil
             state = State.WAIT_FOR_TRIGGER;
 
             return this;
-        }
-
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
-        {
-            base.SetDeltaCallback(callback);
-            action.SetDeltaCallback(callback);
         }
 
         public override bool Run()
@@ -65,18 +60,11 @@ namespace TaleUtil
             return false;
         }
 
-        public override void OnInterrupt()
-        {
-            if (state != State.END)
-            {
-                state = State.END;
-                action.OnInterrupt();
-            }
+        public override IEnumerable<Action> GetSubactions() {
+            yield return action;
         }
 
-        public override string ToString()
-        {
-            return string.Format("DelayedByAction ({0}, {1})", state.ToString(), trigger);
-        }
+        public override string ToString() =>
+            string.Format("DelayedByAction ({0}, {1})", state.ToString(), trigger);
     }
 }

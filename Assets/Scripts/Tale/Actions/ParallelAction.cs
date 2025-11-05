@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace TaleUtil
 {
     public class ParallelAction : Action
@@ -11,26 +13,15 @@ namespace TaleUtil
             return this;
         }
 
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
-        {
-            base.SetDeltaCallback(callback);
-
-            // Change the delta callback for all children
-            for (int i = 0; i < actions.Length; ++i)
-            {
-                actions[i].SetDeltaCallback(callback);
-            }
-        }
-
-        public override bool Run()
-        {
+        public override bool Run() {
             master.Parallel.InsertMany(actions);
             return true;
         }
 
-        public override string ToString()
-        {
-            return "ParallelAction";
-        }
+        public override IEnumerable<Action> GetSubactions() =>
+            actions;
+
+        public override string ToString() =>
+            "ParallelAction";
     }
 }

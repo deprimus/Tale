@@ -90,14 +90,11 @@ namespace TaleUtil
 
         public override void OnInterrupt()
         {
-            // Rotate the transform to its final rotation
             clock = transitionDuration;
             Run();
         }
 
-        public override string ToString()
-        {
-            return string.Format("InterpolationAction ({0})", state.ToString());
-        }
+        public override string ToString() =>
+            string.Format("InterpolationAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
     }
 }

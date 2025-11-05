@@ -13,15 +13,6 @@ namespace TaleUtil
             return this;
         }
 
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
-        {
-            base.SetDeltaCallback(callback);
-
-            for (int i = 0; i < actions.Length; i++) {
-                actions[i].SetDeltaCallback(callback);
-            }
-        }
-
         public override bool Run()
         {
             for (int i = 0; i < actions.Length; i++) {
@@ -34,16 +25,10 @@ namespace TaleUtil
             return false;
         }
 
-        public override void OnInterrupt()
-        {
-            for (int i = 0; i < actions.Length; i++) {
-                actions[i].OnInterrupt();
-            }
-        }
+        public override IEnumerable<Action> GetSubactions() =>
+            actions;
 
-        public override string ToString()
-        {
-            return "AnyAction";
-        }
+        public override string ToString() =>
+            "AnyAction";
     }
 }

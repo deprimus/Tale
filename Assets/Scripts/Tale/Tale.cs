@@ -205,7 +205,12 @@ public static partial class Tale
         Master.Queue.Enqueue(Master.CreateAction<ExecAction>().Init(action));
 
     public static TaleUtil.Action Branch(string flag, TaleUtil.Delegates.BranchDelegate<ulong> action) =>
-        Master.Queue.Enqueue(Master.CreateAction<BranchAction>().Init(flag, action));
+        Master.Queue.Enqueue(Master.CreateAction<BranchAction>().Init(flag, (value) => {
+            var act = action(value);
+            Master.Queue.TakeLast(act);
+
+            return act;
+        }));
 
     public static TaleUtil.Action Cinematic() =>
         Master.Queue.Enqueue(Master.CreateAction<CinematicToggleAction>().Init());

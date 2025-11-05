@@ -49,9 +49,7 @@ namespace TaleUtil
             return false;
         }
 
-        public override string ToString()
-        {
-            return string.Format("AdvanceAction ({0})", state.ToString());
-        }
+        public override string ToString() =>
+            string.Format("AdvanceAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
     }
 }

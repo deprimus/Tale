@@ -24,6 +24,7 @@ Assets/Resources/*
 
 *.prefab
 *.asset
+*.mat
 
 .vsconfig
 UpgradeLog.htm

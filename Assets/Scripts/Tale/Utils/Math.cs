@@ -11,8 +11,8 @@ namespace TaleUtil
         }
 
         public static int CeilPowerOfTwo(int value) {
-            if (value < 0) {
-                return 0;
+            if (value <= 0) {
+                return 1;
             }
 
             --value;

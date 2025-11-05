@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace TaleUtil
 {
     public class BranchAction : Action
@@ -57,22 +60,15 @@ namespace TaleUtil
             return false;
         }
 
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback) {
-            base.SetDeltaCallback(callback);
-
-            if (returned != null) {
-                returned.SetDeltaCallback(callback);
+        public override IEnumerable<Action> GetSubactions() {
+            if (returned == null) {
+                yield break;
             }
+
+            yield return returned;
         }
 
-        public override void OnInterrupt()
-        {
-            state = State.END; // TODO: Implement this properly
-        }
-
-        public override string ToString()
-        {
-            return string.Format("BranchAction ({0}, {1})", flag, state.ToString());
-        }
+        public override string ToString() =>
+            string.Format("BranchAction (<color=#{0}>{1}</color>, <color=#{2}>{3}</color>)", ColorUtility.ToHtmlStringRGB(master.Config.Core.DEBUG_ACCENT_COLOR_SECONDARY), flag, ColorUtility.ToHtmlStringRGB(master.Config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
     }
 }

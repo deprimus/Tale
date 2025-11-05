@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace TaleUtil
 {
@@ -19,35 +20,21 @@ namespace TaleUtil
             return this;
         }
 
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback)
-        {
-            base.SetDeltaCallback(callback);
-            action.SetDeltaCallback(callback);
-        }
-
-        public override bool Run()
-        {
-            if (clock >= amount)
-            {
+        public override bool Run() {
+            if (clock >= amount) {
                 return action.Run();
-            }
-            else
-            {
+            } else {
                 clock += delta();
 
                 return false;
             }
         }
 
-        public override void OnInterrupt()
-        {
-            clock = amount;
-            action.OnInterrupt();
+        public override IEnumerable<Action> GetSubactions() {
+            yield return action;
         }
 
-        public override string ToString()
-        {
-            return string.Format("DelayedAction ({0} left)", Mathf.Max(0f, amount - clock).ToString("0.0"));
-        }
+        public override string ToString() =>
+            string.Format("DelayedAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), Mathf.Max(0f, amount - clock).ToString("0.0"));
     }
 }

@@ -9,23 +9,6 @@ namespace TaleUtil
 
         bool secondaryDone;
 
-        // How this works:
-        //
-        // The Tale.* methods add actions to the queue.
-        // In order for Tale.Bind(Tale.*, Tale.*) to work, the actions need to be removed from the queue,
-        // and to be stored here.
-        // This way, the user can write both:
-        //
-        // Tale.Dialog();
-        // Tale.Transition();
-        //
-        // and
-        //
-        // Tale.Bind(
-        //     Tale.Dialog(),
-        //     Tale.Transition()
-        // );
-
         public BindAction Init(Action primary, Action secondary)
         {
             this.primary = primary;
@@ -40,31 +23,25 @@ namespace TaleUtil
         {
             if (primary.Run())
             {
-                if (!secondaryDone)
-                {
+                if (!secondaryDone) {
                     secondary.OnInterrupt();
                 }
                 return true;
             }
 
-            if (!secondaryDone)
-            {
+            if (!secondaryDone) {
                 secondaryDone = secondary.Run();
             }
 
             return false;
         }
 
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback) {
-            base.SetDeltaCallback(callback);
-
-            primary.SetDeltaCallback(callback);
-            secondary.SetDeltaCallback(callback);
+        public override IEnumerable<Action> GetSubactions() {
+            yield return primary;
+            yield return secondary;
         }
 
-        public override string ToString()
-        {
-            return "BindAction";
-        }
+        public override string ToString() =>
+            "BindAction";
     }
 }

@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace TaleUtil
 {
     public abstract class Action
@@ -13,7 +16,13 @@ namespace TaleUtil
 
         public abstract bool Run();
 
-        public virtual void OnInterrupt() { }
+        public virtual IEnumerable<Action> GetSubactions() { return Enumerable.Empty<Action>(); }
+
+        public virtual void OnInterrupt() {
+            foreach (var action in GetSubactions()) {
+                action.OnInterrupt();
+            }
+        }
 
         // The callback retrieves the current delta time.
         // By changing the callback, you can decide if you want the action to use
@@ -22,10 +31,15 @@ namespace TaleUtil
         // equal to () => Time.unscaledDeltaTime, such that the duration isn't affected by the time scale.
         //
         // This is used by Tale.Unscaled to tell actions to use unscaled delta time.
-        public virtual void SetDeltaCallback(Delegates.DeltaDelegate callback) =>
+        public virtual void SetDeltaCallback(Delegates.DeltaDelegate callback) {
             delta = callback;
 
-        internal void Prime(TaleMaster master, ulong id) {
+            foreach (var action in GetSubactions()) {
+                action.SetDeltaCallback(callback);
+            }
+        }
+
+        internal void Inject(TaleMaster master, ulong id) {
             this.id = id;
             this.master = master;
         }

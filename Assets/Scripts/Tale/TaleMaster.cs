@@ -86,7 +86,6 @@ public class TaleMaster : MonoBehaviour
                 Parallel.Vacuum();
             }
         }
-
     }
 
     void TriggerSceneSelector()
@@ -112,7 +111,7 @@ public class TaleMaster : MonoBehaviour
     #region Publics
     public T CreateAction<T>() where T : TaleUtil.Action, new() {
         var act = new T();
-        act.Prime(this, actionCounter++);
+        act.Inject(this, actionCounter++);
 
         return act;
     }

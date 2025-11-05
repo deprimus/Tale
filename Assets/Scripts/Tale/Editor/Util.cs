@@ -32,16 +32,6 @@ namespace TaleUtil
             return GameObject.FindGameObjectWithTag("TaleMaster");
         }
 
-        static GameObject GetTaleMasterPrefab()
-        {
-            if (!TaleWasSetUp())
-            {
-                return null;
-            }
-
-            return AssetDatabase.LoadAssetAtPath<GameObject>(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB);
-        }
-
         static void CreatePrefab(GameObject obj, string path)
         {
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
@@ -122,7 +112,8 @@ namespace TaleUtil
 
             TextMeshProUGUI text = obj.AddComponent<TextMeshProUGUI>();
             text.fontSize = 12f;
-            text.color = new Color32(200, 200, 200, 255);
+            text.fontStyle = FontStyles.Bold;
+            text.color = Color.white;
             text.alignment = alignment;
             text.overflowMode = TextOverflowModes.Ellipsis;
 
@@ -132,6 +123,20 @@ namespace TaleUtil
             tform.pivot = new Vector2(0.5f, 0.5f);
             tform.sizeDelta = size;
             tform.anchoredPosition = pos;
+
+            Material material;
+
+            if (File.Exists(Config.Editor.RESOURCE_DEBUG_INFO_MATERIAL)) {
+                material = AssetDatabase.LoadAssetAtPath<Material>(Config.Editor.RESOURCE_DEBUG_INFO_MATERIAL);
+            } else {
+                material = new Material(text.fontMaterial);
+                material.SetColor("_OutlineColor", Color.black);
+                material.SetFloat("_OutlineWidth", 0.3f);
+                material.EnableKeyword("OUTLINE_ON");
+                AssetDatabase.CreateAsset(material, TaleUtil.Config.Editor.RESOURCE_DEBUG_INFO_MATERIAL);
+            }
+
+            text.fontMaterial = material;
 
             return text;
         }

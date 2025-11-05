@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace TaleUtil.Collections {
     // Unordered list in contiguous memory, designed for bulk-insert-once read/remove-many.
     // O(1) read & remove, amortized O(1) insert.
-    public class FastUnorderedList<T> where T : class {
+    public class FastUnorderedList<T> : IEnumerable<T> where T : class {
         T[] data;
 
         int count;
@@ -42,8 +44,8 @@ namespace TaleUtil.Collections {
         }
 
         public void Vacuum() {
-            if (data.Length > baseCapacity && count <= data.Length / 2) {
-                Resize(data.Length / 2);
+            if (Capacity > baseCapacity && count <= Capacity / 2) {
+                Resize(Capacity / 2);
             }
         }
 
@@ -67,6 +69,16 @@ namespace TaleUtil.Collections {
             }
 
             data = buff;
+        }
+
+        public IEnumerator<T> GetEnumerator() {
+            for (int i = 0; i < Count; ++i) {
+                yield return data[i];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
         }
     }
 }

@@ -73,6 +73,7 @@ namespace TaleUtil
             public const string RESOURCE_MASTER_PREFAB = "Assets/Resources/Tale/Tale Master.prefab";
             public const string RESOURCE_SCENE_SELECTOR_ITEM_PREFAB = "Assets/Resources/Tale/TaleSceneSelectorItem.prefab";
             public const string RESOURCE_CONFIG = "Assets/Resources/Tale/TaleConfig.asset";
+            public const string RESOURCE_DEBUG_INFO_MATERIAL = "Assets/Resources/Tale/TaleDebugInfo.mat";
 
             public const string ASSET_ROOT_SCENE = "Scenes/";
             public const string SPLASH_SCENE_DIR = "Splash";
@@ -321,6 +322,18 @@ namespace TaleUtil
             [Tooltip("Show in-game Tale debug info by default.")]
 #endif
             public bool SHOW_DEBUG_INFO_BY_DEFAULT = false;
+
+#if UNITY_EDITOR
+            [Rename("Accent Color 1")]
+            [Tooltip("Primary accent color for debug info.")]
+#endif
+            public Color DEBUG_ACCENT_COLOR_PRIMARY = new Color(1f, 1f, 0f);
+
+#if UNITY_EDITOR
+            [Rename("Accent Color 2")]
+            [Tooltip("Secondary accent color for debug info.")]
+#endif
+            public Color DEBUG_ACCENT_COLOR_SECONDARY = new Color(0f, 1f, 1f);
 
 #if UNITY_EDITOR
             [Header("Queue")]

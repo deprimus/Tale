@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
 
 namespace TaleUtil
 {
@@ -1062,10 +1063,16 @@ namespace TaleUtil
             return false;
         }
 
-        public override string ToString()
-        {
-            return string.Format("DialogAction ({0})", state.ToString());
+        public override IEnumerable<Action> GetSubactions() {
+            if (action == null) {
+                yield break;
+            }
+
+            yield return action;
         }
+
+        public override string ToString() =>
+            string.Format("DialogAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
 
         void ChangeState(State state)
         {
