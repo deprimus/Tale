@@ -16,11 +16,10 @@ namespace TaleUtil {
                 if (actions[i].Execute()) {
                     for (int j = 0; j < actions.Length; ++j) {
                         if (j != i) {
-                            // Since these actions returned false in Execute(), or were never even executed,
-                            // they need to be interrupted so they return to the action pool.
                             actions[j].Interrupt();
                         }
                     }
+
                     return true;
                 }
             }

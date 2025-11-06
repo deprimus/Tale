@@ -3,12 +3,24 @@ using System.Linq;
 
 namespace TaleUtil {
     /// <summary>
-    /// The most important object in Tale :)
-    /// </summary>
-    /// <remarks>
-    /// Whenever you work directly with an action, you must either call <c>Execute()</c> until it returns <c>true</c>, or you must call <c>Interrupt()</c> once.
+    /// The most important object in Tale. Extend it and create your own custom actions :)
+    /// 
+    /// <para><b>Examples</b></para>
+    /// Basic example: <see cref="TaleUtil.WaitAction">WaitAction</see>
     /// <para/>
-    /// The action must not be used after that.
+    /// Executing subactions: <see cref="TaleUtil.QueueAction">QueueAction</see>, <see cref="TaleUtil.MultiplexAction">MultiplexAction</see>, <see cref="TaleUtil.AnyAction">AnyAction</see>
+    /// <para/>
+    /// Working with subactions (without executing): <see cref="TaleUtil.ParallelAction">ParallelAction</see>
+    /// <para/>
+    /// </summary>
+    /// 
+    /// <remarks>
+    /// <para><b>Subactions</b></para>
+    /// Whenever you work with other actions inside your custom <c>Action</c>, you must return them in <c>GetSubactions()</c>.
+    /// <para/>
+    /// If you intend to execute subactions, you must either call <c>Execute()</c> until it returns <c>true</c>, or you must call <c>Interrupt()</c> once.
+    /// <para/>
+    /// Whenever an action's <c>Execute()</c> returns <c>true</c>, or its <c>Interrupt()</c> is called, the action must not be used in any way afterwards.
     /// </remarks>
     public abstract class Action {
         #region API
@@ -89,7 +101,10 @@ namespace TaleUtil {
         }
 
         public virtual void Interrupt() {
-            SoftAssert.Condition(execState != ExecutionState.FINISHED, "Interrupt() called on a finished action");
+            if (execState == ExecutionState.FINISHED) {
+                Log.Warning("Interrupt() called on a finished action");
+                return;
+            }
 
             OnInterrupt();
 
