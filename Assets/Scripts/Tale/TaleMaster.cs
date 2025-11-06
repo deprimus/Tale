@@ -109,8 +109,6 @@ public class TaleMaster : MonoBehaviour {
 
         if (!pool.TryPop(out var act)) {
             act = new T();
-        } else {
-            Debug.Log("HEY I GOT A " + typeof(T).ToString());
         }
 
         act.Inject(this, actionCounter++);
