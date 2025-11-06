@@ -4,7 +4,7 @@ namespace TaleUtil {
 
         public void Run() {
             for (int i = 0; i < Count;) {
-                if (this[i].Run()) {
+                if (this[i].Execute()) {
                     Remove(i);
                 } else {
                     ++i;

@@ -311,7 +311,7 @@ namespace TaleUtil {
             }
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             if (TaleUtil.Input.GetKeyDown(master.Config.Dialog.KEY_AUTO)) {
                 autoMode = !autoMode;
 
@@ -676,7 +676,7 @@ namespace TaleUtil {
                     break;
                 }
                 case State.WAIT_FOR_ACTION: {
-                    if (action.Run()) {
+                    if (action.Execute()) {
                         state = State.END_WRITE;
                     }
 
@@ -884,7 +884,7 @@ namespace TaleUtil {
         }
 
         public override string ToString() =>
-            string.Format("DialogAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
+            string.Format("DialogAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
 
         void ChangeState(State state) {
             this.state = state;

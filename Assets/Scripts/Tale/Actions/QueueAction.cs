@@ -12,8 +12,8 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
-            if (index < actions.Length && actions[index].Run()) {
+        protected override bool Run() {
+            if (index < actions.Length && actions[index].Execute()) {
                 ++index;
             }
 

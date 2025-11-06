@@ -10,7 +10,7 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             return master.Triggers.Get(trigger);
         }
 

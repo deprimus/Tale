@@ -23,7 +23,7 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             switch (state) {
                 case State.WAIT_FOR_TRIGGER: {
                     if (master.Triggers.Get(trigger)) {
@@ -32,7 +32,7 @@ namespace TaleUtil {
                     break;
                 }
                 case State.RUN: {
-                    bool done = action.Run();
+                    bool done = action.Execute();
 
                     if (done) {
                         state = State.END;

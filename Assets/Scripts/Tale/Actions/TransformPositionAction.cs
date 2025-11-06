@@ -38,7 +38,7 @@ namespace TaleUtil {
         public TransformPositionAction Init(Transform transform, Vector2 pos, float transitionDuration, Delegates.InterpolationDelegate interpolation, bool relative) =>
             Init(new TaleUtil.Props.Transformable(transform), pos, transitionDuration, interpolation, relative);
 
-        public override bool Run() {
+        protected override bool Run() {
             switch (state) {
                 case State.SETUP: {
                     if (transformable.transform is RectTransform) {
@@ -103,7 +103,7 @@ namespace TaleUtil {
             return false;
         }
 
-        public override void OnInterrupt() {
+        protected override void OnInterrupt() {
             if (state == State.SETUP) {
                 // Initialize member fields
                 Run();
@@ -115,7 +115,7 @@ namespace TaleUtil {
         }
 
         public override string ToString() {
-            return string.Format("TransformPositionAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
+            return string.Format("TransformPositionAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
         }
     }
 }

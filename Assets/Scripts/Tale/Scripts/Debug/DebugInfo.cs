@@ -78,7 +78,9 @@ public class DebugInfo : MonoBehaviour
             sb.Append("|   ");
         }
 
-        sb.AppendLine(action.ToString());
+        var color = action.IsRunning ? Tale.Master.config.Core.DEBUG_TEXT_COLOR_SECONDARY : Tale.Master.config.Core.DEBUG_TEXT_COLOR_PRIMARY;
+
+        sb.AppendFormat("<color=#{0}>{1}</color>\n", ColorUtility.ToHtmlStringRGBA(color), action.ToString());
 
         foreach (var subaction in action.GetSubactions()) {
             DisplayAction(sb, subaction, level + 1);

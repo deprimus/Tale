@@ -17,7 +17,7 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             switch (state) {
                 case State.SETUP: {
                     if (!master.Props.advanceCanvas.activeSelf)
@@ -41,6 +41,6 @@ namespace TaleUtil {
         }
 
         public override string ToString() =>
-            string.Format("AdvanceAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
+            string.Format("AdvanceAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
     }
 }

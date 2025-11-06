@@ -12,22 +12,17 @@ namespace TaleUtil {
             return this;
         }
 
-        public override void SetDeltaCallback(Delegates.DeltaDelegate callback) {
-            base.SetDeltaCallback(callback);
-            action.SetDeltaCallback(callback);
-        }
-
-        public override bool Run() {
+        protected override bool Run() {
             if (master.Triggers.Get(trigger)) {
-                action.OnInterrupt();
+                action.Interrupt();
                 return true;
             }
 
-            return action.Run();
+            return action.Execute();
         }
 
         public override string ToString() {
-            return string.Format("Interruptible action (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), action.ToString());
+            return string.Format("Interruptible action (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), action.ToString());
         }
     }
 }

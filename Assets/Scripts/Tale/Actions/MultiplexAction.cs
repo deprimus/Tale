@@ -15,9 +15,9 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             for (int i = 0; i < actions.Count;) {
-                if (actions[i].Run()) {
+                if (actions[i].Execute()) {
                     actions.Remove(i);
                 } else {
                     ++i;
@@ -31,6 +31,6 @@ namespace TaleUtil {
             actions;
 
         public override string ToString() =>
-            string.Format("MultiplexAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), actions.Count);
+            string.Format("MultiplexAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), actions.Count);
     }
 }

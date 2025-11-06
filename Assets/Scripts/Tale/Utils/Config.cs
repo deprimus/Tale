@@ -324,14 +324,26 @@ namespace TaleUtil
             public bool SHOW_DEBUG_INFO_BY_DEFAULT = false;
 
 #if UNITY_EDITOR
+            [Rename("Text Color 1")]
+            [Tooltip("Primary text color for debug info.")]
+#endif
+            public Color DEBUG_TEXT_COLOR_PRIMARY = new Color(1f, 1f, 1f);
+
+#if UNITY_EDITOR
+            [Rename("Text Color 2")]
+            [Tooltip("Secondary text color for debug info.\nUsed for displaying running actions.")]
+#endif
+            public Color DEBUG_TEXT_COLOR_SECONDARY = new Color(0.59f, 1f, 0.59f);
+
+#if UNITY_EDITOR
             [Rename("Accent Color 1")]
-            [Tooltip("Primary accent color for debug info.")]
+            [Tooltip("Primary accent color for debug info.\nUsed for displaying action states.")]
 #endif
             public Color DEBUG_ACCENT_COLOR_PRIMARY = new Color(1f, 1f, 0f);
 
 #if UNITY_EDITOR
             [Rename("Accent Color 2")]
-            [Tooltip("Secondary accent color for debug info.")]
+            [Tooltip("Secondary accent color for debug info.\nUsed for displaying action arguments.")]
 #endif
             public Color DEBUG_ACCENT_COLOR_SECONDARY = new Color(0f, 1f, 1f);
 

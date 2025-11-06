@@ -1,11 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
 
 // TODO: execution order is no longer required since the object is lazy init'ed
 [DefaultExecutionOrder(-1000)]
-public class TaleMaster : MonoBehaviour
-{
+public class TaleMaster : MonoBehaviour {
     #region Fields
     public TaleUtil.Queue Queue { get; private set; }
     public TaleUtil.Parallel Parallel { get; private set; }
@@ -16,27 +16,27 @@ public class TaleMaster : MonoBehaviour
     public TaleUtil.Hooks Hooks { get; private set; }
     public TaleUtil.Flags Flags { get; private set; }
 
+    Dictionary<System.Type, Stack<TaleUtil.Action>> actionPool;
+
     ulong actionCounter;
     #endregion
 
     #region Behavior
     // Hello Tale!
-    void Awake()
-    {
+    void Awake() {
         Config.SanityCheck();
 
-        if (Config.Core.APPLICATION_RUN_IN_BACKGROUND)
-        {
+        if (Config.Core.APPLICATION_RUN_IN_BACKGROUND) {
             Application.runInBackground = true;
         }
 
-        if (Config.Core.SHOW_DEBUG_INFO_BY_DEFAULT)
-        {
-            if (TaleUtil.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object"))
-            {
+        if (Config.Core.SHOW_DEBUG_INFO_BY_DEFAULT) {
+            if (TaleUtil.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object")) {
                 props.debugMaster.ShowDebugInfo();
             }
         }
+
+        actionPool = new Dictionary<System.Type, Stack<TaleUtil.Action>>();
 
         Queue = new TaleUtil.Queue(Config.Core.QUEUE_BASE_CAPACITY);
         Parallel = new TaleUtil.Parallel(Config.Core.PARALLEL_BASE_CAPACITY);
@@ -52,10 +52,8 @@ public class TaleMaster : MonoBehaviour
     }
 
     // The heart of Tale
-    void Update()
-    {
-        if (Config.SceneSelector.ENABLE && TaleUtil.Input.GetKeyDown(Config.SceneSelector.KEY))
-        {
+    void Update() {
+        if (Config.SceneSelector.ENABLE && TaleUtil.Input.GetKeyDown(Config.SceneSelector.KEY)) {
             TriggerSceneSelector();
             return;
         }
@@ -65,8 +63,7 @@ public class TaleMaster : MonoBehaviour
         Parallel.Run();
     }
 
-    void LateUpdate()
-    {
+    void LateUpdate() {
         Triggers.Update();
     }
 
@@ -88,12 +85,10 @@ public class TaleMaster : MonoBehaviour
         }
     }
 
-    void TriggerSceneSelector()
-    {
+    void TriggerSceneSelector() {
         string path = "SceneSelector";
 
-        if (SceneManager.GetSceneByPath(TaleUtil.Path.NormalizeResourcePath(TaleUtil.Config.Editor.ASSET_ROOT_SCENE, path)) == null)
-        {
+        if (SceneManager.GetSceneByPath(TaleUtil.Path.NormalizeResourcePath(TaleUtil.Config.Editor.ASSET_ROOT_SCENE, path)) == null) {
             return;
         }
 
@@ -108,17 +103,36 @@ public class TaleMaster : MonoBehaviour
     }
     #endregion
 
-    #region Publics
+    #region Public Stuff
     public T CreateAction<T>() where T : TaleUtil.Action, new() {
-        var act = new T();
+        var pool = GetActionPool(typeof(T));
+
+        if (!pool.TryPop(out var act)) {
+            act = new T();
+        } else {
+            Debug.Log("HEY I GOT A " + typeof(T).ToString());
+        }
+
         act.Inject(this, actionCounter++);
 
-        return act;
+        return act as T;
+    }
+    public void ReturnAction(System.Type type, TaleUtil.Action action) {
+        GetActionPool(type).Push(action);
     }
     public ulong GetTotalActionCount() {
         return actionCounter;
     }
     #endregion
+
+    Stack<TaleUtil.Action> GetActionPool(System.Type type) {
+        if (!actionPool.TryGetValue(type, out var stack)) {
+            stack = new Stack<TaleUtil.Action>();
+            actionPool[type] = stack;
+        }
+
+        return stack;
+    }
 
     #region Inspector
 #if UNITY_EDITOR
@@ -131,8 +145,7 @@ public class TaleMaster : MonoBehaviour
     internal InspectorProps props;
 
     [System.Serializable]
-    public class InspectorProps
-    {
+    public class InspectorProps {
 #if UNITY_EDITOR
         [Header("Dialog")]
         [Rename("Canvas")]

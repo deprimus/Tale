@@ -65,7 +65,7 @@ namespace TaleUtil {
             state = State.SETUP;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             switch (state) {
                 case State.SETUP: {
                     if (type == Type.OUT) {
@@ -125,10 +125,10 @@ namespace TaleUtil {
             string name = "";
 
             if (!string.IsNullOrEmpty(transition)) {
-                name = string.Format("<color=#{0}>{1}</color>, ", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_SECONDARY), transition);
+                name = string.Format("<color=#{0}>{1}</color>, ", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_SECONDARY), transition);
             }
 
-            return string.Format("TransitionAction ({0}<color=#{1}>{2}</color>, <color=#{1}>{3}</color>)", name, ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), type.ToString(), state.ToString());
+            return string.Format("TransitionAction ({0}<color=#{1}>{2}</color>, <color=#{1}>{3}</color>)", name, ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), type.ToString(), state.ToString());
         }
     }
 }

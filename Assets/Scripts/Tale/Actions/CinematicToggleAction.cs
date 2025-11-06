@@ -8,7 +8,7 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             if (master.Props.cinematic.canvas.activeSelf) {
                 // Make the background image black.
                 if (master.Props.cinematic.background.GetActiveImage() != null)

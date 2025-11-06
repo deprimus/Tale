@@ -12,14 +12,14 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             clock += delta();
 
             return (clock >= amount);
         }
 
         public override string ToString() {
-            return string.Format("WaitAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), Mathf.Max(0f, amount - clock).ToString("0.0"));
+            return string.Format("WaitAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), Mathf.Max(0f, amount - clock).ToString("0.0"));
         }
     }
 }

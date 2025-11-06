@@ -47,7 +47,7 @@ namespace TaleUtil {
                 clock = transitionDuration;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             Tick();
 
             float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
@@ -71,12 +71,12 @@ namespace TaleUtil {
             return clock == transitionDuration;
         }
 
-        public override void OnInterrupt() {
+        protected override void OnInterrupt() {
             clock = transitionDuration;
             Run();
         }
 
         public override string ToString() =>
-            string.Format("InterpolationAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
+            string.Format("InterpolationAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
     }
 }

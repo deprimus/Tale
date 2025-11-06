@@ -1,7 +1,5 @@
-namespace TaleUtil
-{
-    public class CinematicVideoPauseAction : Action
-    {
+namespace TaleUtil {
+    public class CinematicVideoPauseAction : Action {
 
         public CinematicVideoPauseAction Init() {
             Assert.Condition(master.Props.cinematic.video.player != null, "CinematicVideoPauseAction requires a video player object; did you forget to register it in TaleMaster?");
@@ -9,14 +7,12 @@ namespace TaleUtil
             return this;
         }
 
-        public override bool Run()
-        {
+        protected override bool Run() {
             master.Props.cinematic.video.player.Pause();
             return true;
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return "CinematicVideoPauseAction";
         }
     }

@@ -27,7 +27,7 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             switch (type) {
                 case Type.INDEX:
                     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + index);
@@ -54,7 +54,7 @@ namespace TaleUtil {
                 }
             }
 
-            return string.Format("SceneAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_SECONDARY), scene);
+            return string.Format("SceneAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_SECONDARY), scene);
         }
     }
 }

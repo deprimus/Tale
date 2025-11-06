@@ -26,7 +26,7 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             switch (state) {
                 case State.SETUP: {
                     var obj = master.Props.choice.styles[style];
@@ -75,6 +75,6 @@ namespace TaleUtil {
             return true;
         }
         public override string ToString() =>
-            string.Format("ChoiceAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.Config.Core.DEBUG_ACCENT_COLOR_SECONDARY), style);
+            string.Format("ChoiceAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.Config.Core.DEBUG_ACCENT_COLOR_SECONDARY), style);
     }
 }

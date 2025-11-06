@@ -24,7 +24,7 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             switch (state) {
                 case State.SETUP: {
                     returned = action(master.Flags.Get(flag));
@@ -38,10 +38,10 @@ namespace TaleUtil {
 
                     state = State.RUN;
 
-                    return returned.Run();
+                    return returned.Execute();
                 }
                 case State.RUN: {
-                    return returned.Run();
+                    return returned.Execute();
                 }
                 case State.END: {
                     return true;
@@ -59,6 +59,6 @@ namespace TaleUtil {
         }
 
         public override string ToString() =>
-            string.Format("BranchAction (<color=#{0}>{1}</color>, <color=#{2}>{3}</color>)", ColorUtility.ToHtmlStringRGB(master.Config.Core.DEBUG_ACCENT_COLOR_SECONDARY), flag, ColorUtility.ToHtmlStringRGB(master.Config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
+            string.Format("BranchAction (<color=#{0}>{1}</color>, <color=#{2}>{3}</color>)", ColorUtility.ToHtmlStringRGBA(master.Config.Core.DEBUG_ACCENT_COLOR_SECONDARY), flag, ColorUtility.ToHtmlStringRGBA(master.Config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
     }
 }

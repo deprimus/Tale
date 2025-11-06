@@ -8,12 +8,12 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             action();
             return true;
         }
 
-        public override void OnInterrupt() {
+        protected override void OnInterrupt() {
             action();
         }
 

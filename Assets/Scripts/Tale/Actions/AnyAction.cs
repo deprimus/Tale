@@ -10,10 +10,17 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
+            // Finish when any action is done
             for (int i = 0; i < actions.Length; i++) {
-                if (actions[i].Run()) {
-                    // Finish when any action is done
+                if (actions[i].Execute()) {
+                    for (int j = 0; j < actions.Length; ++j) {
+                        if (j != i) {
+                            // Since these actions returned false in Execute(), or were never even executed,
+                            // they need to be interrupted so they return to the action pool.
+                            actions[j].Interrupt();
+                        }
+                    }
                     return true;
                 }
             }

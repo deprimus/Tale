@@ -3,7 +3,7 @@ namespace TaleUtil {
         public Queue(int baseCapacity) : base(baseCapacity) { }
 
         public bool Run() {
-            if (Count > 0 && Fetch().Run()) {
+            if (Count > 0 && Fetch().Execute()) {
                 Dequeue();
             }
 

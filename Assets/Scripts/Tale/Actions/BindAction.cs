@@ -16,16 +16,16 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run() {
-            if (primary.Run()) {
+        protected override bool Run() {
+            if (primary.Execute()) {
                 if (!secondaryDone) {
-                    secondary.OnInterrupt();
+                    secondary.Interrupt();
                 }
                 return true;
             }
 
             if (!secondaryDone) {
-                secondaryDone = secondary.Run();
+                secondaryDone = secondary.Execute();
             }
 
             return false;

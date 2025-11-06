@@ -142,7 +142,7 @@ namespace TaleUtil {
             return currentIndex < current.Count - 1;
         }
 
-        public override bool Run() {
+        protected override bool Run() {
             switch (state) {
                 case State.PLAY: {
                     master.Props.audio.group.SetActive(true);
@@ -231,7 +231,7 @@ namespace TaleUtil {
         }
 
         public override string ToString() {
-            return string.Format("MusicAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
+            return string.Format("MusicAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
         }
     }
 }
