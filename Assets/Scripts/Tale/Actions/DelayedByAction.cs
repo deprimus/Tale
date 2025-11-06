@@ -1,15 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class DelayedByAction : Action
-    {
+namespace TaleUtil {
+    public class DelayedByAction : Action {
         string trigger;
         Action action;
 
-        enum State
-        {
+        enum State {
             WAIT_FOR_TRIGGER,
             RUN,
             END
@@ -17,8 +14,7 @@ namespace TaleUtil
 
         State state;
 
-        public DelayedByAction Init(string trigger, Action action)
-        {
+        public DelayedByAction Init(string trigger, Action action) {
             this.trigger = trigger;
             this.action = action;
 
@@ -27,31 +23,24 @@ namespace TaleUtil
             return this;
         }
 
-        public override bool Run()
-        {
-            switch (state)
-            {
-                case State.WAIT_FOR_TRIGGER:
-                {
-                    if (master.Triggers.Get(trigger))
-                    {
+        public override bool Run() {
+            switch (state) {
+                case State.WAIT_FOR_TRIGGER: {
+                    if (master.Triggers.Get(trigger)) {
                         state = State.RUN;
                     }
                     break;
                 }
-                case State.RUN:
-                {
+                case State.RUN: {
                     bool done = action.Run();
 
-                    if (done)
-                    {
+                    if (done) {
                         state = State.END;
                     }
 
                     return done;
                 }
-                case State.END:
-                {
+                case State.END: {
                     TaleUtil.Log.Warning("DelayedByAction.Run() called when action was already done");
                     return true;
                 }

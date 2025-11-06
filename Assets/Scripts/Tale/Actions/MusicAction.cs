@@ -1,20 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class MusicAction : Action
-    {
-        public enum Mode
-        {
+namespace TaleUtil {
+    public class MusicAction : Action {
+        public enum Mode {
             ONCE,
             LOOP,
             SHUFFLE,
             SHUFFLE_LOOP
         }
 
-        enum State
-        {
+        enum State {
             PLAY,
             WAIT,
             STOP,
@@ -39,8 +35,7 @@ namespace TaleUtil
 
         State state;
 
-        public MusicAction Init(List<string> paths, Mode mode, float volume, float pitch)
-        {
+        public MusicAction Init(List<string> paths, Mode mode, float volume, float pitch) {
             Assert.Condition(master.Props.audio.music != null, "MusicAction requires a music object with an AudioSource component; did you forget to register it in TaleMaster?");
             Assert.Condition(master.Props.audio.group != null, "MusicAction requires an audio group object; did you forget to register it in TaleMaster?");
 
@@ -48,7 +43,7 @@ namespace TaleUtil
             Assert.Condition(paths.Count > 0, "Expected a list with at least one music track (found an empty list)");
 
             state = State.PLAY;
-                
+
             this.paths = paths;
             this.mode = mode;
             this.volume = volume;
@@ -58,8 +53,7 @@ namespace TaleUtil
         }
 
         // Music stop with a fade out duration parameter.
-        public MusicAction Init(float stopDuration, Delegates.InterpolationDelegate interpolation)
-        {
+        public MusicAction Init(float stopDuration, Delegates.InterpolationDelegate interpolation) {
             state = State.STOP;
 
             this.stopDuration = stopDuration;
@@ -70,8 +64,7 @@ namespace TaleUtil
         }
 
         // Music sync
-        public MusicAction Init(float syncTimestamp)
-        {
+        public MusicAction Init(float syncTimestamp) {
             state = State.SYNC;
 
             this.syncTimestamp = syncTimestamp;
@@ -79,8 +72,7 @@ namespace TaleUtil
             return this;
         }
 
-        AudioClip LoadAudio(string path)
-        {
+        AudioClip LoadAudio(string path) {
             AudioClip clip = Resources.Load<AudioClip>(path);
             Assert.Condition(clip != null, "The music clip '" + path + "' is missing");
 
@@ -89,15 +81,13 @@ namespace TaleUtil
 
         // TODO: implement a global music modifier (1.0 = normal, 0.5 = half), and apply it every time.
 
-        void Finish()
-        {
+        void Finish() {
             master.Props.audio.music.clip = null;
 
             Action next = Tale.Master.Queue.FetchNext();
 
             // The next action isn't a MusicAction.
-            if (!(Tale.Master.Queue.FetchNext() is MusicAction))
-            {
+            if (!(Tale.Master.Queue.FetchNext() is MusicAction)) {
                 master.Props.audio.music.gameObject.SetActive(false);
 
                 // Deactivate the audio group.
@@ -106,39 +96,33 @@ namespace TaleUtil
             }
         }
 
-        void ReinitList()
-        {
+        void ReinitList() {
             currentIndex = -1;
 
-            if(sources == null)
-            {
+            if (sources == null) {
                 sources = new List<AudioClip>();
 
                 foreach (string path in paths)
                     sources.Add(LoadAudio(path));
             }
 
-            switch(mode)
-            {
+            switch (mode) {
                 case Mode.ONCE:
-                case Mode.LOOP:
-                {
+                case Mode.LOOP: {
                     current = sources;
                     break;
                 }
                 case Mode.SHUFFLE:
-                case Mode.SHUFFLE_LOOP:
-                {
-                    if(current == null)
+                case Mode.SHUFFLE_LOOP: {
+                    if (current == null)
                         current = new List<AudioClip>(sources.Count);
 
                     // Inside-Out Fisher-Yates shuffle.
-                    for(int i = 0; i < sources.Count; ++i)
-                    {
+                    for (int i = 0; i < sources.Count; ++i) {
                         int j = Random.Range(0, i + 1);
 
                         // Set() is an extension method.
-                        if(i != j)
+                        if (i != j)
                             current.Set(i, current[j]);
                         current.Set(j, sources[i]);
                     }
@@ -148,24 +132,19 @@ namespace TaleUtil
             }
         }
 
-        void LoadNext()
-        {
+        void LoadNext() {
             ++currentIndex;
             master.Props.audio.music.clip = current[currentIndex];
             master.Props.audio.music.Play();
         }
 
-        bool HasNext()
-        {
+        bool HasNext() {
             return currentIndex < current.Count - 1;
         }
 
-        public override bool Run()
-        {
-            switch (state)
-            {
-                case State.PLAY:
-                {
+        public override bool Run() {
+            switch (state) {
+                case State.PLAY: {
                     master.Props.audio.group.SetActive(true);
                     master.Props.audio.music.gameObject.SetActive(true);
 
@@ -179,28 +158,21 @@ namespace TaleUtil
 
                     break;
                 }
-                case State.WAIT:
-                {
-                    if(master.Triggers.Get("tale_music_stop"))
-                    {
+                case State.WAIT: {
+                    if (master.Triggers.Get("tale_music_stop")) {
                         return true;
                     }
 
-                    if(!master.Props.audio.music.isPlaying)
-                    {
+                    if (!master.Props.audio.music.isPlaying) {
                         // The trigger was activated on this frame. Prepare to handle it in the next frame.
                         // Since the music has finished and a trigger was set, there's no point in starting a new song.
-                        if(master.Triggers.GetImmediate("tale_music_stop"))
+                        if (master.Triggers.GetImmediate("tale_music_stop"))
                             return false;
 
-                        if(HasNext())
-                        {
+                        if (HasNext()) {
                             LoadNext();
-                        }
-                        else
-                        {
-                            switch(mode)
-                            {
+                        } else {
+                            switch (mode) {
                                 case Mode.ONCE:
                                 case Mode.SHUFFLE:
                                     Finish();
@@ -215,33 +187,29 @@ namespace TaleUtil
 
                     break;
                 }
-                case State.STOP:
-                {
+                case State.STOP: {
                     initialVolume = master.Props.audio.music.volume;
 
                     state = State.FADE_OUT;
 
                     return false;
                 }
-                case State.SYNC:
-                {
+                case State.SYNC: {
                     // Music is done, or the sync timestamp was reached
                     // If the timestamp is float.MinValue, then wait for the end of the music
                     return (!master.Props.audio.music.isPlaying || (syncTimestamp != float.MinValue && master.Props.audio.music.time >= syncTimestamp));
                 }
-                case State.FADE_OUT:
-                {
+                case State.FADE_OUT: {
                     clock += delta();
 
-                    if(clock > stopDuration)
+                    if (clock > stopDuration)
                         clock = stopDuration;
 
                     float interpolationFactor = interpolation(stopDuration == 0f ? 1f : clock / stopDuration);
 
                     master.Props.audio.music.volume = Math.Interpolate(initialVolume, 0f, interpolationFactor);
 
-                    if(clock == stopDuration)
-                    {
+                    if (clock == stopDuration) {
                         // Signal other music actions to stop. The trigger will be checked in the WAIT state.
                         // If the music stop action is immediately followed by a music play action, that action
                         // will enter the PLAY state, while this trigger is set. That action shouldn't stop, so
@@ -262,9 +230,8 @@ namespace TaleUtil
             return false;
         }
 
-        public override string ToString()
-        {
-            return string.Format("MusicAction ({0})", state.ToString());
+        public override string ToString() {
+            return string.Format("MusicAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
         }
     }
 }

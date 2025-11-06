@@ -1,12 +1,8 @@
 using UnityEngine;
-using static Unity.IO.LowLevel.Unsafe.AsyncReadManagerMetrics;
 
-namespace TaleUtil
-{
-    public class ChoiceAction<TArgs, TChoice> : Action
-    {
-        enum State
-        {
+namespace TaleUtil {
+    public class ChoiceAction<TArgs, TChoice> : Action {
+        enum State {
             SETUP,
             WAIT_FOR_CHOICE,
             END
@@ -17,8 +13,7 @@ namespace TaleUtil
         TChoice[] choices;
         State state;
 
-        public ChoiceAction<TArgs, TChoice> Init(string style, TArgs args, TChoice[] choices)
-        {
+        public ChoiceAction<TArgs, TChoice> Init(string style, TArgs args, TChoice[] choices) {
             SoftAssert.Condition(master.Props.choice.styles.ContainsKey(style.ToLowerInvariant()),
                     string.Format("Unknown choice style '{0}'; did you forget to register it in TaleMaster?", style));
 
@@ -31,12 +26,9 @@ namespace TaleUtil
             return this;
         }
 
-        public override bool Run()
-        {
-            switch (state)
-            {
-                case State.SETUP:
-                {
+        public override bool Run() {
+            switch (state) {
+                case State.SETUP: {
                     var obj = master.Props.choice.styles[style];
 
                     // TaleUtil.Props.Choice.Reset() disables all styles since it doesn't have access to the ChoiceMaster types,
@@ -48,8 +40,7 @@ namespace TaleUtil
                     var picker = obj.GetComponent<Scripts.Choice.ChoiceMaster<TArgs, TChoice>>();
                     var canvas = obj.GetComponent<Canvas>();
 
-                    if (picker == null)
-                    {
+                    if (picker == null) {
                         Log.Error("CHOICE", string.Format("No ChoiceMaster script attached to object for choice style '{0}'; make sure to add exactly one ChoiceMaster component to the root object", style));
                     }
 
@@ -73,12 +64,10 @@ namespace TaleUtil
 
                     return false;
                 }
-                case State.WAIT_FOR_CHOICE:
-                {
+                case State.WAIT_FOR_CHOICE: {
                     return false;
                 }
-                case State.END:
-                {
+                case State.END: {
                     return true;
                 }
             }

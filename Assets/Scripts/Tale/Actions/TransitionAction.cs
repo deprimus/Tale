@@ -1,17 +1,13 @@
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class TransitionAction : Action
-    {
-        public enum Type
-        {
+namespace TaleUtil {
+    public class TransitionAction : Action {
+        public enum Type {
             IN,
             OUT
         }
 
-        enum State
-        {
+        enum State {
             SETUP,
             SETUP_IN,
             TRANSITION
@@ -28,17 +24,15 @@ namespace TaleUtil
 
         State state;
 
-        public TransitionAction Init(string transition, Type type, float duration)
-        {
-            switch (type)
-            {
-                case Type.OUT:
-                {
+        public TransitionAction Init(string transition, Type type, float duration) {
+            this.type = type;
+
+            switch (type) {
+                case Type.OUT: {
                     PrepareTransition(transition, type, duration);
                     break;
                 }
-                case Type.IN:
-                {
+                case Type.IN: {
                     // Actual transition will be checked at runtime
                     this.duration = duration;
 
@@ -50,8 +44,7 @@ namespace TaleUtil
             return this;
         }
 
-        void PrepareTransition(string transition, Type type, float duration)
-        {
+        void PrepareTransition(string transition, Type type, float duration) {
             Assert.Condition(!string.IsNullOrEmpty(transition), "Transition name can't be null or empty");
 
             this.transition = transition.ToLowerInvariant();
@@ -72,14 +65,10 @@ namespace TaleUtil
             state = State.SETUP;
         }
 
-        public override bool Run()
-        {
-            switch (state)
-            {
-                case State.SETUP:
-                {
-                    if (type == Type.OUT)
-                    {
+        public override bool Run() {
+            switch (state) {
+                case State.SETUP: {
+                    if (type == Type.OUT) {
                         TaleUtil.Assert.Condition(!master.Props.transitions.HasLastTransition(), "Tale.TransitionOut called twice in a row; did you forget to call Tale.TransitionIn?");
 
                         master.Props.transitions.lastName = transition;
@@ -89,7 +78,7 @@ namespace TaleUtil
                     if (!data.canvas.activeSelf)
                         data.canvas.SetActive(true);
 
-                    if(duration == 0f)
+                    if (duration == 0f)
                         data.animator.speed = master.Config.Transitions.INSTANT_SPEED;
                     else data.animator.speed = 1f / duration;
 
@@ -99,10 +88,8 @@ namespace TaleUtil
 
                     break;
                 }
-                case State.SETUP_IN:
-                {
-                    if (!master.Props.transitions.HasLastTransition())
-                    {
+                case State.SETUP_IN: {
+                    if (!master.Props.transitions.HasLastTransition()) {
                         Log.Warning("There is no last transition; Tale.TransitionIn will do nothing");
                         return true;
                     }
@@ -115,17 +102,16 @@ namespace TaleUtil
 
                     break;
                 }
-                case State.TRANSITION:
-                {
+                case State.TRANSITION: {
                     AnimatorStateInfo info = data.animator.GetCurrentAnimatorStateInfo(0);
 
-                    if(!info.IsName(animatorState) || info.normalizedTime < 1f)
+                    if (!info.IsName(animatorState) || info.normalizedTime < 1f)
                         break;
 
                     data.animator.speed = 1f;
                     data.animator.SetTrigger(TaleUtil.Config.Editor.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL);
 
-                    if(type == Type.IN)
+                    if (type == Type.IN)
                         data.canvas.SetActive(false);
 
                     return true;
@@ -135,9 +121,14 @@ namespace TaleUtil
             return false;
         }
 
-        public override string ToString()
-        {
-            return string.Format("TransitionAction ({0})", state.ToString());
+        public override string ToString() {
+            string name = "";
+
+            if (!string.IsNullOrEmpty(transition)) {
+                name = string.Format("<color=#{0}>{1}</color>, ", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_SECONDARY), transition);
+            }
+
+            return string.Format("TransitionAction ({0}<color=#{1}>{2}</color>, <color=#{1}>{3}</color>)", name, ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), type.ToString(), state.ToString());
         }
     }
 }

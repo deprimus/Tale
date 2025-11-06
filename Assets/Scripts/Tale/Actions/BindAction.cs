@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 
-namespace TaleUtil
-{
-    public class BindAction : Action
-    {
+namespace TaleUtil {
+    public class BindAction : Action {
         public Action primary;
         public Action secondary;
 
         bool secondaryDone;
 
-        public BindAction Init(Action primary, Action secondary)
-        {
+        public BindAction Init(Action primary, Action secondary) {
             this.primary = primary;
             this.secondary = secondary;
 
@@ -19,10 +16,8 @@ namespace TaleUtil
             return this;
         }
 
-        public override bool Run()
-        {
-            if (primary.Run())
-            {
+        public override bool Run() {
+            if (primary.Run()) {
                 if (!secondaryDone) {
                     secondary.OnInterrupt();
                 }

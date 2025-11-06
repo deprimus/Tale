@@ -1,9 +1,7 @@
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class WaitAction : Action
-    {
+namespace TaleUtil {
+    public class WaitAction : Action {
         float amount;
         float clock;
 
@@ -14,15 +12,13 @@ namespace TaleUtil
             return this;
         }
 
-        public override bool Run()
-        {
+        public override bool Run() {
             clock += delta();
 
             return (clock >= amount);
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return string.Format("WaitAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), Mathf.Max(0f, amount - clock).ToString("0.0"));
         }
     }

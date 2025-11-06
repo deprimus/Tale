@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 
-namespace TaleUtil
-{
-    public class ParallelAction : Action
-    {
+namespace TaleUtil {
+    public class ParallelAction : Action {
         Action[] actions;
 
-        public ParallelAction Init(Action[] actions)
-        {
+        public ParallelAction Init(Action[] actions) {
             this.actions = actions;
 
             return this;

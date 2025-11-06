@@ -1,17 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class DelayedAction : Action
-    {
+namespace TaleUtil {
+    public class DelayedAction : Action {
         float amount;
         Action action;
 
         float clock;
 
-        public DelayedAction Init(float amount, Action action)
-        {
+        public DelayedAction Init(float amount, Action action) {
             this.amount = amount;
             this.action = action;
 

@@ -1,9 +1,7 @@
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class WaitForAction : Action
-    {
+namespace TaleUtil {
+    public class WaitForAction : Action {
         string trigger;
 
         public WaitForAction Init(string trigger) {

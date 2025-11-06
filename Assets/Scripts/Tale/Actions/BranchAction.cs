@@ -1,12 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class BranchAction : Action
-    {
-        enum State
-        {
+namespace TaleUtil {
+    public class BranchAction : Action {
+        enum State {
             SETUP,
             RUN,
             END
@@ -16,10 +13,9 @@ namespace TaleUtil
         Delegates.BranchDelegate<ulong> action;
 
         State state;
-        TaleUtil.Action returned;
+        Action returned;
 
-        public BranchAction Init(string flag, Delegates.BranchDelegate<ulong> action)
-        {
+        public BranchAction Init(string flag, Delegates.BranchDelegate<ulong> action) {
             this.flag = flag;
             this.action = action;
 
@@ -28,16 +24,12 @@ namespace TaleUtil
             return this;
         }
 
-        public override bool Run()
-        {
-            switch (state)
-            {
-                case State.SETUP:
-                {
+        public override bool Run() {
+            switch (state) {
+                case State.SETUP: {
                     returned = action(master.Flags.Get(flag));
 
-                    if (returned == null)
-                    {
+                    if (returned == null) {
                         state = State.END;
                         return true;
                     }
@@ -48,12 +40,10 @@ namespace TaleUtil
 
                     return returned.Run();
                 }
-                case State.RUN:
-                {
+                case State.RUN: {
                     return returned.Run();
                 }
-                case State.END:
-                {
+                case State.END: {
                     return true;
                 }
             }

@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class RepeatAction : Action
-    {
-        enum State { 
+namespace TaleUtil {
+    public class RepeatAction : Action {
+        enum State {
             SETUP,
             RUN
         }
@@ -25,8 +23,7 @@ namespace TaleUtil
             return this;
         }
 
-        public override bool Run()
-        {
+        public override bool Run() {
             switch (state) {
                 case State.SETUP: {
                     GetAction();

@@ -2,12 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil {
-    public class MultiplexAction : Action
-    {
+    public class MultiplexAction : Action {
         public Collections.FastUnorderedList<Action> actions;
 
-        public MultiplexAction Init(Action[] actions)
-        {
+        public MultiplexAction Init(Action[] actions) {
             if (this.actions == null) {
                 this.actions = new Collections.FastUnorderedList<Action>(actions.Length);
             }
@@ -17,8 +15,7 @@ namespace TaleUtil {
             return this;
         }
 
-        public override bool Run()
-        {
+        public override bool Run() {
             for (int i = 0; i < actions.Count;) {
                 if (actions[i].Run()) {
                     actions.Remove(i);

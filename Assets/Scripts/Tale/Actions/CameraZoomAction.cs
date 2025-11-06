@@ -1,11 +1,8 @@
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class CameraZoomAction : Action
-    {
-        enum State
-        {
+namespace TaleUtil {
+    public class CameraZoomAction : Action {
+        enum State {
             SETUP,
             TRANSITION
         }
@@ -20,8 +17,7 @@ namespace TaleUtil
 
         State state;
 
-        public CameraZoomAction Init(float factor, float transitionDuration, Delegates.InterpolationDelegate interpolation)
-        {
+        public CameraZoomAction Init(float factor, float transitionDuration, Delegates.InterpolationDelegate interpolation) {
             Assert.Condition(master.Props.camera != null, "CameraZoomAction requires a main camera object (which could not be found)");
 
             this.factor = factor;
@@ -35,12 +31,9 @@ namespace TaleUtil
             return this;
         }
 
-        public override bool Run()
-        {
-            switch (state)
-            {
-                case State.SETUP:
-                {
+        public override bool Run() {
+            switch (state) {
+                case State.SETUP: {
                     initialSize = master.Props.camera.obj.orthographicSize;
                     factor = (1f / factor) * master.Props.camera.baseOrthographicSize; // 0.5f zoom = (1f / 0.5f) * base size = 2 * base size
 
@@ -48,18 +41,17 @@ namespace TaleUtil
 
                     break;
                 }
-                case State.TRANSITION:
-                {
+                case State.TRANSITION: {
                     clock += delta();
 
-                    if(clock > transitionDuration)
+                    if (clock > transitionDuration)
                         clock = transitionDuration;
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
                     master.Props.camera.obj.orthographicSize = Math.Interpolate(initialSize, factor, interpolationFactor);
 
-                    if(clock == transitionDuration)
+                    if (clock == transitionDuration)
                         return true;
 
                     break;
@@ -69,9 +61,8 @@ namespace TaleUtil
             return false;
         }
 
-        public override string ToString()
-        {
-            return string.Format("CameraZoomAction ({0})", state.ToString());
+        public override string ToString() {
+            return string.Format("CameraZoomAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
         }
     }
 }

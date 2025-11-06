@@ -1,11 +1,8 @@
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class TransformPositionAction : Action
-    {
-        enum State
-        {
+namespace TaleUtil {
+    public class TransformPositionAction : Action {
+        enum State {
             SETUP,
             TRANSITION
         }
@@ -24,8 +21,7 @@ namespace TaleUtil
         State state;
 
         // For transforms which can have their references changed (e.g. the camera when switching scenes).
-        public TransformPositionAction Init(TaleUtil.Props.Transformable transformable, Vector2 pos, float transitionDuration, Delegates.InterpolationDelegate interpolation, bool relative)
-        {
+        public TransformPositionAction Init(TaleUtil.Props.Transformable transformable, Vector2 pos, float transitionDuration, Delegates.InterpolationDelegate interpolation, bool relative) {
             this.transformable = transformable;
             this.pos = pos;
             this.transitionDuration = transitionDuration;
@@ -42,35 +38,28 @@ namespace TaleUtil
         public TransformPositionAction Init(Transform transform, Vector2 pos, float transitionDuration, Delegates.InterpolationDelegate interpolation, bool relative) =>
             Init(new TaleUtil.Props.Transformable(transform), pos, transitionDuration, interpolation, relative);
 
-        public override bool Run()
-        {
-            switch (state)
-            {
-                case State.SETUP:
-                {
-                    if(transformable.transform is RectTransform)
-                    {
-                        initialPos = ((RectTransform) transformable.transform).anchoredPosition;
+        public override bool Run() {
+            switch (state) {
+                case State.SETUP: {
+                    if (transformable.transform is RectTransform) {
+                        initialPos = ((RectTransform)transformable.transform).anchoredPosition;
                         isRectTransform = true;
-                    }
-                    else
-                    {
+                    } else {
                         initialPos = transformable.transform.position;
                         isRectTransform = false;
                     }
 
-                    if(relative)
+                    if (relative)
                         pos = new Vector2(initialPos.x + pos.x, initialPos.y + pos.y);
 
                     state = State.TRANSITION;
 
                     break;
                 }
-                case State.TRANSITION:
-                {
+                case State.TRANSITION: {
                     clock += delta();
 
-                    if(clock > transitionDuration)
+                    if (clock > transitionDuration)
                         clock = transitionDuration;
 
                     float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
@@ -82,8 +71,7 @@ namespace TaleUtil
                     // Don't use the initial position coord, use the current position coord (it may be changed in another script while this action is running).
                     // By doing this, other scripts can modify the coordinates that this action considers 'default' in parallel.
 
-                    if(isRectTransform)
-                    {
+                    if (isRectTransform) {
                         if (pos.x != float.MinValue)
                             x = Math.Interpolate(initialPos.x, pos.x, interpolationFactor);
                         else x = ((RectTransform)transformable.transform).anchoredPosition.x;
@@ -93,9 +81,7 @@ namespace TaleUtil
                         else y = ((RectTransform)transformable.transform).anchoredPosition.y;
 
                         ((RectTransform)transformable.transform).anchoredPosition = new Vector3(x, y, transformable.transform.position.z);
-                    }
-                    else
-                    {
+                    } else {
                         if (pos.x != float.MinValue)
                             x = Math.Interpolate(initialPos.x, pos.x, interpolationFactor);
                         else x = transformable.transform.position.x;
@@ -107,7 +93,7 @@ namespace TaleUtil
                         transformable.transform.position = new Vector3(x, y, transformable.transform.position.z);
                     }
 
-                    if(clock == transitionDuration)
+                    if (clock == transitionDuration)
                         return true;
 
                     break;
@@ -117,10 +103,8 @@ namespace TaleUtil
             return false;
         }
 
-        public override void OnInterrupt()
-        {
-            if (state == State.SETUP)
-            {
+        public override void OnInterrupt() {
+            if (state == State.SETUP) {
                 // Initialize member fields
                 Run();
             }
@@ -130,9 +114,8 @@ namespace TaleUtil
             Run();
         }
 
-        public override string ToString()
-        {
-            return string.Format("TransformPositionAction ({0})", state.ToString());
+        public override string ToString() {
+            return string.Format("TransformPositionAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGB(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
         }
     }
 }

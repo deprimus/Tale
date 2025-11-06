@@ -1,11 +1,8 @@
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class InterpolationAction<T> : Action
-    {
-        enum State
-        {
+namespace TaleUtil {
+    public class InterpolationAction<T> : Action {
+        enum State {
             TRANSITION_FLOAT,
             TRANSITION_VECTOR,
             TRANSITION_COLOR
@@ -21,22 +18,14 @@ namespace TaleUtil
 
         State state;
 
-        public InterpolationAction<T> Init(T initial, T target, Delegates.CallbackDelegate<T> callback, float transitionDuration, Delegates.InterpolationDelegate interpolation)
-        {
-            if (typeof(T) == typeof(float))
-            {
+        public InterpolationAction<T> Init(T initial, T target, Delegates.CallbackDelegate<T> callback, float transitionDuration, Delegates.InterpolationDelegate interpolation) {
+            if (typeof(T) == typeof(float)) {
                 state = State.TRANSITION_FLOAT;
-            }
-            else if (typeof(T) == typeof(Vector3))
-            {
+            } else if (typeof(T) == typeof(Vector3)) {
                 state = State.TRANSITION_VECTOR;
-            }
-            else if (typeof(T) == typeof(Color))
-            {
+            } else if (typeof(T) == typeof(Color)) {
                 state = State.TRANSITION_COLOR;
-            }
-            else
-            {
+            } else {
                 Assert.Impossible("<T> must be either float, Vector3 or Color for InterpolationAction");
             }
 
@@ -51,36 +40,30 @@ namespace TaleUtil
             return this;
         }
 
-        void Tick()
-        {
+        void Tick() {
             clock += delta();
 
             if (clock > transitionDuration)
                 clock = transitionDuration;
         }
 
-        public override bool Run()
-        {
+        public override bool Run() {
             Tick();
 
             float interpolationFactor = interpolation(transitionDuration == 0f ? 1f : clock / transitionDuration);
 
-            switch (state)
-            {
-                case State.TRANSITION_FLOAT:
-                {
-                    callback((T) (object) Math.Interpolate((float) (object) initial, (float) (object) target, interpolationFactor));
+            switch (state) {
+                case State.TRANSITION_FLOAT: {
+                    callback((T)(object)Math.Interpolate((float)(object)initial, (float)(object)target, interpolationFactor));
                     break;
                 }
-                case State.TRANSITION_VECTOR:
-                {
-                    callback((T)(object)Math.Interpolate((Vector3) (object) initial, (Vector3) (object) target, interpolationFactor));
+                case State.TRANSITION_VECTOR: {
+                    callback((T)(object)Math.Interpolate((Vector3)(object)initial, (Vector3)(object)target, interpolationFactor));
                     break;
 
                 }
-                case State.TRANSITION_COLOR:
-                {
-                    callback((T) (object) Math.Interpolate((Color) (object) initial, (Color) (object) target, interpolationFactor));
+                case State.TRANSITION_COLOR: {
+                    callback((T)(object)Math.Interpolate((Color)(object)initial, (Color)(object)target, interpolationFactor));
                     break;
                 }
             }
@@ -88,8 +71,7 @@ namespace TaleUtil
             return clock == transitionDuration;
         }
 
-        public override void OnInterrupt()
-        {
+        public override void OnInterrupt() {
             clock = transitionDuration;
             Run();
         }

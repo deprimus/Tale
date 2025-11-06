@@ -1,11 +1,8 @@
 using UnityEngine;
 
-namespace TaleUtil
-{
-    public class SoundAction : Action
-    {
-        enum State
-        {
+namespace TaleUtil {
+    public class SoundAction : Action {
+        enum State {
             PLAY,
             STOP,
             SYNC,
@@ -21,8 +18,7 @@ namespace TaleUtil
         State state;
 
         // null path -> stop sound
-        public SoundAction Init(int channel, string path, float volume, float pitch)
-        {
+        public SoundAction Init(int channel, string path, float volume, float pitch) {
             Assert.Condition(master.Props.audio.soundGroup != null, "SoundAction requires a sound group object; did you forget to register it in TaleMaster?");
             Assert.Condition(master.Props.audio.group != null, "SoundAction requires an audio group object; did you forget to register it in TaleMaster?");
             Assert.Condition(channel >= 0 && channel < master.Props.audio.sound.Length, string.Format("Invalid sound channel '{0}'. Expected channel between '{1}' and '{2}' (inclusive)", channel, 0, master.Props.audio.sound.Length - 1));
@@ -33,12 +29,9 @@ namespace TaleUtil
             this.volume = volume;
             this.pitch = pitch;
 
-            if (path != null)
-            {
+            if (path != null) {
                 state = State.PLAY;
-            }
-            else
-            {
+            } else {
                 state = State.STOP;
             }
 
@@ -46,8 +39,7 @@ namespace TaleUtil
         }
 
         // Sound sync
-        public SoundAction Init(int channel, float syncTimestamp)
-        {
+        public SoundAction Init(int channel, float syncTimestamp) {
             state = State.SYNC;
 
             this.channel = channel;
@@ -56,39 +48,33 @@ namespace TaleUtil
             return this;
         }
 
-        AudioClip LoadAudio()
-        {
+        AudioClip LoadAudio() {
             AudioClip clip = Resources.Load<AudioClip>(path);
             Assert.Condition(clip != null, "The sound clip '" + path + "' is missing");
 
             return clip;
         }
 
-        void Finish()
-        {
+        void Finish() {
             master.Props.audio.sound[channel].clip = null;
 
             Action next = Tale.Master.Queue.FetchNext();
 
             // The next action isn't a SoundAction.
-            if(!(Tale.Master.Queue.FetchNext() is SoundAction))
-            {
+            if (!(Tale.Master.Queue.FetchNext() is SoundAction)) {
                 master.Props.audio.sound[channel].gameObject.SetActive(false);
 
                 // Check if all sound channels are inactive. If so, deactivate the sound group.
                 bool areSoundChannelsInactive = true;
 
-                for (int i = 0; i < master.Props.audio.sound.Length; ++i)
-                {
-                    if(master.Props.audio.sound[i] != null && master.Props.audio.sound[i].gameObject.activeSelf)
-                    {
+                for (int i = 0; i < master.Props.audio.sound.Length; ++i) {
+                    if (master.Props.audio.sound[i] != null && master.Props.audio.sound[i].gameObject.activeSelf) {
                         areSoundChannelsInactive = false;
                         break;
                     }
                 }
 
-                if (areSoundChannelsInactive)
-                {
+                if (areSoundChannelsInactive) {
                     // Deactivate the sound group.
                     master.Props.audio.soundGroup.SetActive(false);
 
@@ -96,20 +82,15 @@ namespace TaleUtil
                     if ((master.Props.audio.music == null || !master.Props.audio.music.gameObject.activeSelf) && (master.Props.audio.voice == null || !master.Props.audio.voice.gameObject.activeSelf))
                         master.Props.audio.group.SetActive(false);
                 }
-            }
-            else if(((SoundAction)Tale.Master.Queue.FetchNext()).channel != channel)
-            {
+            } else if (((SoundAction)Tale.Master.Queue.FetchNext()).channel != channel) {
                 // If this channel is not used in the next action, deactivate it.
                 master.Props.audio.sound[channel].gameObject.SetActive(false);
             }
         }
 
-        public override bool Run()
-        {
-            switch (state)
-            {
-                case State.PLAY:
-                {
+        public override bool Run() {
+            switch (state) {
+                case State.PLAY: {
                     master.Props.audio.group.SetActive(true);
                     master.Props.audio.soundGroup.SetActive(true);
                     master.Props.audio.sound[channel].gameObject.SetActive(true);
@@ -124,24 +105,20 @@ namespace TaleUtil
 
                     break;
                 }
-                case State.STOP:
-                {
+                case State.STOP: {
                     master.Props.audio.sound[channel].Stop();
 
                     Finish();
 
                     return true;
                 }
-                case State.SYNC:
-                {
+                case State.SYNC: {
                     // Sound is done, or the sync timestamp was reached
                     // If the timestamp is float.MinValue, then wait for the end of the sound
                     return (!master.Props.audio.sound[channel].isPlaying || (syncTimestamp != float.MinValue && master.Props.audio.sound[channel].time >= syncTimestamp));
                 }
-                case State.WAIT:
-                {
-                    if (!master.Props.audio.sound[channel].isPlaying)
-                    {
+                case State.WAIT: {
+                    if (!master.Props.audio.sound[channel].isPlaying) {
                         Finish();
 
                         return true;
