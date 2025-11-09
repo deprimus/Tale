@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 namespace TaleUtil {
     /// <summary>
@@ -49,6 +52,18 @@ namespace TaleUtil {
         /// A human-readable string containing debug information about the action.
         /// </returns>
         public override string ToString() => "Action";
+
+        /// <summary>
+        /// Checks a condition and throws an exception if it's false.
+        /// </summary>
+        /// <remarks>
+        /// Inside <see cref="Run">Run</see>, this should be used instead of Unity's <c>Debug.Assert</c>, so Tale can show you exactly where the action was created when it logs the exception.
+        /// </remarks>
+        protected void Check(bool condition, string msg) {
+            if (!condition) {
+                throw new Exception(msg);
+            }
+        }
         #endregion
 
         #region Fields
@@ -59,6 +74,10 @@ namespace TaleUtil {
         public System.Threading.Tasks.TaskCompletionSource<bool> task;
 
         protected Delegates.DeltaDelegate delta = () => UnityEngine.Time.deltaTime;
+
+#if UNITY_ASSERTIONS
+        StackTrace stack;
+#endif
 
         enum ExecutionState {
             READY,
@@ -86,12 +105,18 @@ namespace TaleUtil {
                     break;
                 }
                 case ExecutionState.FINISHED: {
-                    Assert.Impossible("Attempted to execute an action that was already finished; Action.Execute() must never be called after it returned true");
+                    Debug.Assert.Impossible("Attempted to execute an action that was already finished; Action.Execute() must never be called after it returned true");
                     return true;
                 }
             }
 
-            var finished = Run();
+            var finished = false;
+
+            try {
+                finished = Run();
+            } catch (System.Exception e) {
+                LogException(e);
+            }
 
             if (finished) {
                 ReturnToPool();
@@ -135,12 +160,39 @@ namespace TaleUtil {
             this.id = id;
             this.master = master;
 
+#if UNITY_ASSERTIONS
+            stack = new StackTrace(1, true);
+#endif
+
             execState = ExecutionState.READY;
         }
 
         void ReturnToPool() {
             execState = ExecutionState.FINISHED;
             master.ReturnAction(type, this);
+        }
+
+        void LogException(System.Exception e) {
+            var str = new StringBuilder();
+            var exStack = new StackTrace(e, true);
+
+            str.AppendFormat("{0}: {1}\n", e.GetType().Name, e.Message);
+
+            Debug.StackTraceToString(exStack, Debug.FilterInternalTaleFrame, str);
+
+#if UNITY_ASSERTIONS
+            str.AppendLine("<internal Tale magic>");
+
+            Debug.StackTraceToString(stack, Debug.FilterInternalTaleFrame, str);
+
+            str.AppendLine("-----\nReal runtime stack:");
+#endif
+
+            Log.Error(type.ToString(), str.ToString());
+        }
+
+        class Exception : System.Exception {
+            public Exception(string msg) : base(msg) { }
         }
     }
 }

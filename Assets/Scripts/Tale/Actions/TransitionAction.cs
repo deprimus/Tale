@@ -45,22 +45,22 @@ namespace TaleUtil {
         }
 
         void PrepareTransition(string transition, Type type, float duration) {
-            Assert.Condition(!string.IsNullOrEmpty(transition), "Transition name can't be null or empty");
+            Debug.Assert.Condition(!string.IsNullOrEmpty(transition), "Transition name can't be null or empty");
 
             this.transition = transition.ToLowerInvariant();
 
-            Assert.Condition(master.Props.transitions.entries.ContainsKey(this.transition), string.Format("Unknown transition '{0}'", this.transition));
+            Debug.Assert.Condition(master.Props.transitions.entries.ContainsKey(this.transition), string.Format("Unknown transition '{0}'", this.transition));
 
             data = master.Props.transitions.entries[this.transition];
 
-            Assert.Condition(data.canvas != null, string.Format("Transition '{0}' does not have a canvas associated with it; did you forget to register it in TaleMaster?", transition));
-            Assert.Condition(data.animator != null, string.Format("Transition '{0}' does not have an animator associated with it; did you forget to register it in TaleMaster?", transition));
+            Debug.Assert.Condition(data.canvas != null, string.Format("Transition '{0}' does not have a canvas associated with it; did you forget to register it in TaleMaster?", transition));
+            Debug.Assert.Condition(data.animator != null, string.Format("Transition '{0}' does not have an animator associated with it; did you forget to register it in TaleMaster?", transition));
 
             this.type = type;
             this.duration = duration;
 
-            animatorState = string.Format(TaleUtil.Config.Editor.TRANSITION_ANIMATOR_STATE_FORMAT, type == Type.IN ? "In" : "Out");
-            trigger = string.Format(TaleUtil.Config.Editor.TRANSITION_ANIMATOR_TRIGGER_FORMAT, type == Type.IN ? "In" : "Out");
+            animatorState = string.Format(Config.Editor.TRANSITION_ANIMATOR_STATE_FORMAT, type == Type.IN ? "In" : "Out");
+            trigger = string.Format(Config.Editor.TRANSITION_ANIMATOR_TRIGGER_FORMAT, type == Type.IN ? "In" : "Out");
 
             state = State.SETUP;
         }
@@ -69,7 +69,8 @@ namespace TaleUtil {
             switch (state) {
                 case State.SETUP: {
                     if (type == Type.OUT) {
-                        TaleUtil.Assert.Condition(!master.Props.transitions.HasLastTransition(), "Tale.TransitionOut called twice in a row; did you forget to call Tale.TransitionIn?");
+                        // TODO: it would be nice to also show the stack of the first call
+                        Check(!master.Props.transitions.HasLastTransition(), "Tale.TransitionOut called twice in a row; did you forget to call Tale.TransitionIn?");
 
                         master.Props.transitions.lastName = transition;
                         master.Props.transitions.lastDuration = duration;

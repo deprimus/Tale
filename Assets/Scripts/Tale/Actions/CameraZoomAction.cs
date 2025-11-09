@@ -18,7 +18,7 @@ namespace TaleUtil {
         State state;
 
         public CameraZoomAction Init(float factor, float transitionDuration, Delegates.InterpolationDelegate interpolation) {
-            Assert.Condition(master.Props.camera != null, "CameraZoomAction requires a main camera object (which could not be found)");
+            Debug.Assert.Condition(master.Props.camera != null, "CameraZoomAction requires a main camera object (which could not be found)");
 
             this.factor = factor;
             this.transitionDuration = transitionDuration;

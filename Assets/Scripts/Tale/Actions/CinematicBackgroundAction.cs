@@ -27,7 +27,7 @@ namespace TaleUtil {
         string customAnimatorState;
 
         public CinematicBackgroundAction Init(string path, Type type, float speed) {
-            Assert.Condition(master.Props.cinematic.background.image != null, "CinematicBackgroundAction requires a background Image object; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.cinematic.background.image != null, "CinematicBackgroundAction requires a background Image object; did you forget to register it in TaleMaster?");
 
             this.path = path;
             this.speed = speed;
@@ -39,11 +39,11 @@ namespace TaleUtil {
                     state = State.INSTANT;
                     break;
                 case Type.CUSTOM:
-                    Assert.Condition(master.Props.cinematic.background.groupAnimator != null, "CinematicBackgroundAction with type 'Custom' requires a group animator object; did you forget to register it in TaleMaster?");
+                    Debug.Assert.Condition(master.Props.cinematic.background.groupAnimator != null, "CinematicBackgroundAction with type 'Custom' requires a group animator object; did you forget to register it in TaleMaster?");
                     state = State.CUSTOM_SETUP;
                     break;
                 case Type.CROSSFADE:
-                    Assert.Condition(master.Props.cinematic.background.imageAlt != null, "CinematicBackgroundAction with type 'Crossfade' requires a background (alt) Image object; did you forget to register it in TaleMaster?");
+                    Debug.Assert.Condition(master.Props.cinematic.background.imageAlt != null, "CinematicBackgroundAction with type 'Crossfade' requires a background (alt) Image object; did you forget to register it in TaleMaster?");
                     state = State.CROSSFADE_SETUP;
                     break;
             }
@@ -53,7 +53,7 @@ namespace TaleUtil {
 
         Sprite LoadSprite() {
             Sprite sprite = Resources.Load<Sprite>(path);
-            Assert.Condition(sprite != null, "The cinematic background '" + path + "' is missing");
+            Check(sprite != null, string.Format("The cinematic background '{0}' is missing", path));
 
             return sprite;
         }

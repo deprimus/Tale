@@ -26,7 +26,7 @@ namespace TaleUtil {
             } else if (typeof(T) == typeof(Color)) {
                 state = State.TRANSITION_COLOR;
             } else {
-                Assert.Impossible("<T> must be either float, Vector3 or Color for InterpolationAction");
+                Debug.Assert.Impossible("<T> must be either float, Vector3 or Color for InterpolationAction");
             }
 
             this.initial = initial;

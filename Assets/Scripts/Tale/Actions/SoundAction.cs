@@ -19,10 +19,10 @@ namespace TaleUtil {
 
         // null path -> stop sound
         public SoundAction Init(int channel, string path, float volume, float pitch) {
-            Assert.Condition(master.Props.audio.soundGroup != null, "SoundAction requires a sound group object; did you forget to register it in TaleMaster?");
-            Assert.Condition(master.Props.audio.group != null, "SoundAction requires an audio group object; did you forget to register it in TaleMaster?");
-            Assert.Condition(channel >= 0 && channel < master.Props.audio.sound.Length, string.Format("Invalid sound channel '{0}'. Expected channel between '{1}' and '{2}' (inclusive)", channel, 0, master.Props.audio.sound.Length - 1));
-            Assert.Condition(master.Props.audio.sound[channel] != null, string.Format("Channel '{0}' does not have an audio source associated with it; did you forget to register it in TaleMaster?", channel));
+            Debug.Assert.Condition(master.Props.audio.soundGroup != null, "SoundAction requires a sound group object; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.audio.group != null, "SoundAction requires an audio group object; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(channel >= 0 && channel < master.Props.audio.sound.Length, string.Format("Invalid sound channel '{0}'. Expected channel between '{1}' and '{2}' (inclusive)", channel, 0, master.Props.audio.sound.Length - 1));
+            Debug.Assert.Condition(master.Props.audio.sound[channel] != null, string.Format("Channel '{0}' does not have an audio source associated with it; did you forget to register it in TaleMaster?", channel));
 
             this.channel = channel;
             this.path = path;
@@ -50,7 +50,7 @@ namespace TaleUtil {
 
         AudioClip LoadAudio() {
             AudioClip clip = Resources.Load<AudioClip>(path);
-            Assert.Condition(clip != null, "The sound clip '" + path + "' is missing");
+            Check(clip != null, string.Format("The sound clip '{0}' is missing", path));
 
             return clip;
         }

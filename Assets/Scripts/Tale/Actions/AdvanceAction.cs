@@ -10,7 +10,7 @@ namespace TaleUtil {
         State state;
 
         public AdvanceAction Init() {
-            Assert.Condition(master.Props.advanceCanvas != null, string.Format("Advance Canvas is null; did you forget to register it in TaleMaster?"));
+            Debug.Assert.Condition(master.Props.advanceCanvas != null, string.Format("Advance Canvas is null; did you forget to register it in TaleMaster?"));
 
             state = State.SETUP;
 

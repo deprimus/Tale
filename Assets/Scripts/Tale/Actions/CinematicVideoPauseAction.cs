@@ -2,7 +2,7 @@ namespace TaleUtil {
     public class CinematicVideoPauseAction : Action {
 
         public CinematicVideoPauseAction Init() {
-            Assert.Condition(master.Props.cinematic.video.player != null, "CinematicVideoPauseAction requires a video player object; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.cinematic.video.player != null, "CinematicVideoPauseAction requires a video player object; did you forget to register it in TaleMaster?");
 
             return this;
         }

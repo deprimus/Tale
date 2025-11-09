@@ -31,7 +31,7 @@ public class TaleMaster : MonoBehaviour {
         }
 
         if (Config.Debug.SHOW_INFO_BY_DEFAULT) {
-            if (TaleUtil.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object")) {
+            if (TaleUtil.Debug.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object")) {
                 props.debugMaster.ShowDebugInfo();
             }
         }

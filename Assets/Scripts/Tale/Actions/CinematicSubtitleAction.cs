@@ -31,15 +31,15 @@ namespace TaleUtil {
         float clock;
 
         public CinematicSubtitleAction Init(string content, float ttl, bool showBackground) {
-            Assert.Condition(master.Props.cinematic.subtitlesGroup != null, "CinematicSubtitleAction requires a subtitles group object; did you forget to register it in TaleMaster?");
-            Assert.Condition(master.Props.cinematic.subtitles != null, "CinematicSubtitleAction requires a subtitles object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.cinematic.subtitlesGroup != null, "CinematicSubtitleAction requires a subtitles group object; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.cinematic.subtitles != null, "CinematicSubtitleAction requires a subtitles object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
 
             this.content = content;
             this.ttl = ttl;
             this.showBackground = showBackground;
 
             if (this.showBackground) {
-                Assert.Condition(master.Props.cinematic.subtitlesBackground != null, "CinematicSubtitleAction with 'show background' requires a subtitle background object with a RectTransform component; did you forget to register it in TaleMaster?");
+                Debug.Assert.Condition(master.Props.cinematic.subtitlesBackground != null, "CinematicSubtitleAction with 'show background' requires a subtitle background object with a RectTransform component; did you forget to register it in TaleMaster?");
             }
 
             state = State.SETUP;

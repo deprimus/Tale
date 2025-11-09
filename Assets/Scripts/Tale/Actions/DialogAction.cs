@@ -61,34 +61,34 @@ namespace TaleUtil {
 
         public DialogAction Init(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb, bool keepOpen, TaleUtil.Action action) {
             if (content != null) {
-                SoftAssert.Condition(master.Props.dialog.content != null,
+                Debug.SoftAssert.Condition(master.Props.dialog.content != null,
                     "DialogAction requires a content object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
             } else {
                 Log.Warning("DIALOG", "DialogAction has null content; did you mean to do this?");
             }
 
             if (actor != null) {
-                SoftAssert.Condition(master.Props.dialog.actor != null,
+                Debug.SoftAssert.Condition(master.Props.dialog.actor != null,
                     "DialogAction requires an actor object with a TextMeshProUGUI component; did you forget to register it in TaleMaster?");
             }
 
             if (voice != null) {
-                if (!SoftAssert.Condition(master.Props.audio.group != null,
+                if (!Debug.SoftAssert.Condition(master.Props.audio.group != null,
                         "A voice clip was passed to the dialog action, but no audio group prop is available; voice will be disabled")
                 ||
-                    !SoftAssert.Condition(master.Props.audio.voice != null,
+                    !Debug.SoftAssert.Condition(master.Props.audio.voice != null,
                         "A voice clip was passed to the dialog action, but no audio voice prop is available; voice will be disabled")) {
                     voice = null;
                 }
             } else {
-                if (!SoftAssert.Condition(!reverb,
+                if (!Debug.SoftAssert.Condition(!reverb,
                     "DialogAction has no voice, but Reverb is set to true; ignoring")) {
                     reverb = false;
                 }
             }
 
             if (reverb) {
-                if (!SoftAssert.Condition(master.Props.audio.voiceReverb != null,
+                if (!Debug.SoftAssert.Condition(master.Props.audio.voiceReverb != null,
                     "Dialog action has Reverb set to true, but there is no AudioReverbFilter component on the Audio Voice object; reverb will be disabled")) {
                     reverb = false;
                 }
@@ -342,7 +342,7 @@ namespace TaleUtil {
 
                         master.Props.audio.voice.clip = Resources.Load<AudioClip>(voice);
 
-                        SoftAssert.Condition(master.Props.audio.voice != null, "The voice audio clip '" + voice + "' is missing");
+                        Check(master.Props.audio.voice != null, string.Format("The voice audio clip '{0}' is missing", voice));
 
                         master.Props.audio.voice.loop = loopVoice;
                     }
@@ -356,8 +356,7 @@ namespace TaleUtil {
 
                         ChangeState(State.BEGIN_WRITE);
                     } else {
-                        // TODO: this may break things such as Clone(), so watch out if that happens (because type is modified in Run())
-                        if (!SoftAssert.Condition(type == Type.OVERRIDE, "Additive dialog must be preceded by a dialog action; setting type to Override")) {
+                        if (!Debug.SoftAssert.Condition(type == Type.OVERRIDE, "Additive dialog must be preceded by a dialog action; setting type to Override")) {
                             type = Type.OVERRIDE;
                         }
 
@@ -439,12 +438,12 @@ namespace TaleUtil {
                     screenToWorldUnitY = ((float)Screen.height) / TaleUtil.Config.Editor.REFERENCE_HEIGHT;
 
                     if (avatar != null) {
-                        SoftAssert.Condition(master.Props.dialog.avatar != null,
+                        Debug.SoftAssert.Condition(master.Props.dialog.avatar != null,
                             "An avatar was passed to the dialog action, but no avatar prop is available");
 
                         master.Props.dialog.avatar.sprite = (Sprite)Resources.Load<Sprite>(avatar);
 
-                        SoftAssert.Condition(master.Props.dialog.avatar.sprite != null, "The avatar '" + avatar + "' is missing");
+                        Check(master.Props.dialog.avatar.sprite != null, string.Format("The avatar '{0}' is missing", avatar));
                     }
 
                     if (master.Config.Dialog.FADE_FACTOR > 0) {
@@ -867,7 +866,7 @@ namespace TaleUtil {
                     break;
                 }
                 case State.END: {
-                    TaleUtil.Log.Warning("DialogAction.Run() called when action was already done");
+                    Debug.Assert.Impossible("DialogAction.Run() called when action was already done");
                     return true;
                 }
             }

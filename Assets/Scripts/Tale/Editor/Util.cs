@@ -522,11 +522,9 @@ namespace TaleUtil
 
             if (currentIndex != index && index != -1)
             {
-                // TODO: this is incorrect since any scene could be at 'index'.
-                // Therefore, it could mess up the user's scene order, which is not very cash money.
-                EditorBuildSettingsScene tmp = buildScenes[index];
-                buildScenes[index] = buildScenes[currentIndex];
-                buildScenes[currentIndex] = tmp;
+                EditorBuildSettingsScene tmp = buildScenes[currentIndex];
+                ArrayUtility.RemoveAt(ref buildScenes, currentIndex);
+                ArrayUtility.Insert(ref buildScenes, index, tmp);
             }
 
             EditorSceneManager.SaveOpenScenes();

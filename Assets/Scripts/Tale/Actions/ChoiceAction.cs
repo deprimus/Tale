@@ -14,7 +14,7 @@ namespace TaleUtil {
         State state;
 
         public ChoiceAction<TArgs, TChoice> Init(string style, TArgs args, TChoice[] choices) {
-            SoftAssert.Condition(master.Props.choice.styles.ContainsKey(style.ToLowerInvariant()),
+            Debug.SoftAssert.Condition(master.Props.choice.styles.ContainsKey(style.ToLowerInvariant()),
                     string.Format("Unknown choice style '{0}'; did you forget to register it in TaleMaster?", style));
 
             this.style = style;
@@ -40,9 +40,7 @@ namespace TaleUtil {
                     var picker = obj.GetComponent<Scripts.Choice.ChoiceMaster<TArgs, TChoice>>();
                     var canvas = obj.GetComponent<Canvas>();
 
-                    if (picker == null) {
-                        Log.Error("CHOICE", string.Format("No ChoiceMaster script attached to object for choice style '{0}'; make sure to add exactly one ChoiceMaster component to the root object", style));
-                    }
+                    Check(picker != null, string.Format("No ChoiceMaster script attached to object for choice style '{0}'; make sure to add exactly one ChoiceMaster component to the root object", style));
 
                     state = State.WAIT_FOR_CHOICE;
 

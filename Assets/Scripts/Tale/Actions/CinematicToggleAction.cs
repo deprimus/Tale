@@ -3,7 +3,7 @@ using UnityEngine;
 namespace TaleUtil {
     public class CinematicToggleAction : Action {
         public CinematicToggleAction Init() {
-            Assert.Condition(master.Props.cinematic.canvas != null, "CinematicToggleAction requires a canvas object; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.cinematic.canvas != null, "CinematicToggleAction requires a canvas object; did you forget to register it in TaleMaster?");
 
             return this;
         }

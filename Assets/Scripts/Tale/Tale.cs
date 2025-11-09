@@ -36,7 +36,7 @@ public static partial class Tale
             master = GameObject.Instantiate(Resources.Load<GameObject>(TaleUtil.Path.NormalizeResourcePath(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB))).GetComponent<TaleMaster>();
         }
 
-        Debug.Assert(master != null, "[TALE] Master object Instantiate() returned false; something is seriously wrong");
+        TaleUtil.Debug.Assert.Condition(master != null, "Master object Instantiate() returned false; something is seriously wrong");
 
         SceneManager.sceneLoaded += master.OnSceneLoaded;
     }

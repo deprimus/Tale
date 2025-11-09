@@ -34,8 +34,8 @@ namespace TaleUtil {
         double startTime; // VideoPlayer.time is of type double.
 
         public CinematicVideoAction Init(string path, float detatchTime, DetatchType detatchType, float speed) {
-            Assert.Condition(master.Props.cinematic.video.group != null, "CinematicVideoAction requires a group object; did you forget to register it in TaleMaster?");
-            Assert.Condition(master.Props.cinematic.video.player != null, "CinematicVideoAction requires a video player object; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.cinematic.video.group != null, "CinematicVideoAction requires a group object; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.cinematic.video.player != null, "CinematicVideoAction requires a video player object; did you forget to register it in TaleMaster?");
 
             this.path = path;
             this.detatchTime = detatchTime;
@@ -53,7 +53,7 @@ namespace TaleUtil {
 
         VideoClip LoadVideo() {
             VideoClip clip = Resources.Load<VideoClip>(path);
-            Assert.Condition(clip != null, "The cinematic video '" + path + "' is missing");
+            Check(clip != null, string.Format("The cinematic video '{0}' is missing", path));
 
             return clip;
         }

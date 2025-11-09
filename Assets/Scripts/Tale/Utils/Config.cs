@@ -131,7 +131,7 @@ namespace TaleUtil
 
         [Conditional("UNITY_ASSERTIONS")]
         void AssertCond(bool cond, string what) {
-            Assert.Condition(cond, string.Format("[CONFIG] {0}", what));
+            TaleUtil.Debug.Assert.Condition(cond, string.Format("[CONFIG] {0}", what));
         }
 
         [Conditional("UNITY_ASSERTIONS")]

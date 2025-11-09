@@ -36,11 +36,11 @@ namespace TaleUtil {
         State state;
 
         public MusicAction Init(List<string> paths, Mode mode, float volume, float pitch) {
-            Assert.Condition(master.Props.audio.music != null, "MusicAction requires a music object with an AudioSource component; did you forget to register it in TaleMaster?");
-            Assert.Condition(master.Props.audio.group != null, "MusicAction requires an audio group object; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.audio.music != null, "MusicAction requires a music object with an AudioSource component; did you forget to register it in TaleMaster?");
+            Debug.Assert.Condition(master.Props.audio.group != null, "MusicAction requires an audio group object; did you forget to register it in TaleMaster?");
 
-            Assert.Condition(paths != null, "Expected a path list (found null)");
-            Assert.Condition(paths.Count > 0, "Expected a list with at least one music track (found an empty list)");
+            Debug.Assert.Condition(paths != null, "Expected a path list (found null)");
+            Debug.Assert.Condition(paths.Count > 0, "Expected a list with at least one music track (found an empty list)");
 
             state = State.PLAY;
 
@@ -74,7 +74,7 @@ namespace TaleUtil {
 
         AudioClip LoadAudio(string path) {
             AudioClip clip = Resources.Load<AudioClip>(path);
-            Assert.Condition(clip != null, "The music clip '" + path + "' is missing");
+            Check(clip != null, string.Format("The music clip '{0}' is missing", path));
 
             return clip;
         }
