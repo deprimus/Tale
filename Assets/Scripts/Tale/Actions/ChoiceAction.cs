@@ -75,6 +75,6 @@ namespace TaleUtil {
             return true;
         }
         public override string ToString() =>
-            string.Format("ChoiceAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.Config.Core.DEBUG_ACCENT_COLOR_SECONDARY), style);
+            string.Format("ChoiceAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_SECONDARY), style);
     }
 }

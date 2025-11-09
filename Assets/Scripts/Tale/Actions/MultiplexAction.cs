@@ -31,6 +31,6 @@ namespace TaleUtil {
             actions;
 
         public override string ToString() =>
-            string.Format("MultiplexAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), actions.Count);
+            string.Format("MultiplexAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), actions.Count);
     }
 }

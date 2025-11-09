@@ -76,7 +76,7 @@ namespace TaleUtil {
         }
 
         public override string ToString() {
-            string left = (count == 0 ? "loop" : string.Format("<color=#{0}>{1}</color> time{2}", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), count.ToString(), (count > 1 ? "s" : "")));
+            string left = (count == 0 ? "loop" : string.Format("<color=#{0}>{1}</color> time{2}", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), count.ToString(), (count > 1 ? "s" : "")));
 
             return string.Format("RepeatAction ({0})", left);
         }

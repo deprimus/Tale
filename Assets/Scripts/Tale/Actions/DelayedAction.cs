@@ -32,6 +32,6 @@ namespace TaleUtil {
         }
 
         public override string ToString() =>
-            string.Format("DelayedAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), Mathf.Max(0f, amount - clock).ToString("0.0"));
+            string.Format("DelayedAction (<color=#{0}>{1}</color> left)", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), Mathf.Max(0f, amount - clock).ToString("0.0"));
     }
 }

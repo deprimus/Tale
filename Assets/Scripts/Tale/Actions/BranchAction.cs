@@ -59,6 +59,6 @@ namespace TaleUtil {
         }
 
         public override string ToString() =>
-            string.Format("BranchAction (<color=#{0}>{1}</color>, <color=#{2}>{3}</color>)", ColorUtility.ToHtmlStringRGBA(master.Config.Core.DEBUG_ACCENT_COLOR_SECONDARY), flag, ColorUtility.ToHtmlStringRGBA(master.Config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
+            string.Format("BranchAction (<color=#{0}>{1}</color>, <color=#{2}>{3}</color>)", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_SECONDARY), flag, ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), state.ToString());
     }
 }

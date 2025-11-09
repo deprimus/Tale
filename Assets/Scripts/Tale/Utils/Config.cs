@@ -9,6 +9,11 @@ namespace TaleUtil
 #if UNITY_EDITOR
         [BoldFoldout]
 #endif
+        public CoreData Core;
+
+#if UNITY_EDITOR
+        [BoldFoldout]
+#endif
         public DialogData Dialog;
 
 #if UNITY_EDITOR
@@ -34,7 +39,7 @@ namespace TaleUtil
 #if UNITY_EDITOR
         [BoldFoldout]
 #endif
-        public CoreData Core;
+        public DebugData Debug;
 
         // Meta-config used for Editor stuff.
         // These are kept here since they must be accessible during the initial Tale setup,
@@ -132,6 +137,72 @@ namespace TaleUtil
         [Conditional("UNITY_ASSERTIONS")]
         void AssertPowOfTwo(int value, string what) {
             AssertCond(Math.IsPowerOfTwo(value), string.Format("{0} must be a power of 2", what));
+        }
+
+        [System.Serializable]
+        public class CoreData {
+#if UNITY_EDITOR
+            [Rename("Run in Background")]
+            [Tooltip("If true, will set Application.runInBackground to true.\n\nOtherwise, the value is left untouched.")]
+#endif
+            public bool APPLICATION_RUN_IN_BACKGROUND = true;
+
+#if UNITY_EDITOR
+            [Header("Action Pool")]
+            [Rename("Max Capacity")]
+            [Tooltip("Maximum capacity for Tale's action pool, per action type.\n\n-1 -> unlimited\n\n0 -> disable pooling")]
+#endif
+            public int ACTION_POOL_MAX_CAPACITY = 4096;
+
+#if UNITY_EDITOR
+            [Header("Queue")]
+            [Rename("Base Capacity")]
+            [Tooltip("Base capacity for Tale's action queue.\n\nMust be a power of 2.")]
+#endif
+            public int QUEUE_BASE_CAPACITY = 64;
+
+#if UNITY_EDITOR
+            [Rename("Vacuum")]
+            [Tooltip("If enabled, Tale will attempt to shrink the action queue between scenes, so that it doesn't use too much memory.\n\nShould have a negligible impact on scene loading, but can be disabled.")]
+#endif
+            public bool QUEUE_VACUUM = true;
+
+#if UNITY_EDITOR
+            [Rename("Vacuum Capacity")]
+            [Tooltip("If the action queue has grown to at least this capacity, Tale will attempt to shrink it between scenes.\n\nMust be a power of 2.")]
+#endif
+            public int QUEUE_VACUUM_CAPACITY = 8192;
+
+#if UNITY_EDITOR
+            [Rename("Vacuum Factor")]
+            [Tooltip("If the above capacity is reached, and there are less than 1/factor actions in the queue, Tale will shrink the queue between scenes.\n\nMust be at least 2.")]
+#endif
+            public int QUEUE_VACUUM_FACTOR = 4;
+
+#if UNITY_EDITOR
+            [Header("Parallel List")]
+            [Rename("Base Capacity")]
+            [Tooltip("Base capacity for Tale's main parallel list.\n\nMust be a power of 2.")]
+#endif
+            public int PARALLEL_BASE_CAPACITY = 64;
+
+#if UNITY_EDITOR
+            [Rename("Vacuum")]
+            [Tooltip("If enabled, Tale will attempt to shrink the main parallel list between scenes, so that it doesn't use too much memory.\n\nShould have a negligible impact on scene loading, but can be disabled.")]
+#endif
+            public bool PARALLEL_VACUUM = true;
+
+#if UNITY_EDITOR
+            [Rename("Vacuum Capacity")]
+            [Tooltip("If the main parallel list has grown to at least this capacity, Tale will attempt to shrink it between scenes.\n\nMust be a power of 2.")]
+#endif
+            public int PARALLEL_VACUUM_CAPACITY = 8192;
+
+#if UNITY_EDITOR
+            [Rename("Vacuum Factor")]
+            [Tooltip("If the above capacity is reached, and there are less than 1/factor actions in the queue, Tale will shrink the queue between scenes.\n\nMust be at least 2.")]
+#endif
+            public int PARALLEL_VACUUM_FACTOR = 4;
         }
 
         [System.Serializable]
@@ -297,105 +368,48 @@ namespace TaleUtil
         }
 
         [System.Serializable]
-        public class CoreData {
+        public class DebugData {
 #if UNITY_EDITOR
-            [Rename("Run in Background")]
-            [Tooltip("If true, will set Application.runInBackground to true.\n\nOtherwise, the value is left untouched.")]
-#endif
-            public bool APPLICATION_RUN_IN_BACKGROUND = true;
-
-#if UNITY_EDITOR
-            [Header("Debug")]
             [Rename("Enable Debug Info")]
             [Tooltip("Enable showing and hiding in-game Tale debug info via the toggle key.")]
 #endif
-            public bool DEBUG_INFO_ENABLE = true;
+            public bool INFO_ENABLE = true;
 
 #if UNITY_EDITOR
             [Rename("Toggle Key")]
             [Tooltip("Key used to toggle between showing and hiding in-game Tale debug info.")]
 #endif
-            public KeyCode DEBUG_INFO_KEY = KeyCode.F3;
+            public KeyCode INFO_KEY = KeyCode.F3;
 
 #if UNITY_EDITOR
             [Rename("Show by Default")]
             [Tooltip("Show in-game Tale debug info by default.")]
 #endif
-            public bool SHOW_DEBUG_INFO_BY_DEFAULT = false;
+            public bool SHOW_INFO_BY_DEFAULT = false;
 
 #if UNITY_EDITOR
             [Rename("Text Color 1")]
             [Tooltip("Primary text color for debug info.")]
 #endif
-            public Color DEBUG_TEXT_COLOR_PRIMARY = new Color(1f, 1f, 1f);
+            public Color INFO_TEXT_COLOR_PRIMARY = new Color(1f, 1f, 1f);
 
 #if UNITY_EDITOR
             [Rename("Text Color 2")]
             [Tooltip("Secondary text color for debug info.\nUsed for displaying running actions.")]
 #endif
-            public Color DEBUG_TEXT_COLOR_SECONDARY = new Color(0.59f, 1f, 0.59f);
+            public Color INFO_TEXT_COLOR_SECONDARY = new Color(0.59f, 1f, 0.59f);
 
 #if UNITY_EDITOR
             [Rename("Accent Color 1")]
             [Tooltip("Primary accent color for debug info.\nUsed for displaying action states.")]
 #endif
-            public Color DEBUG_ACCENT_COLOR_PRIMARY = new Color(1f, 1f, 0f);
+            public Color INFO_ACCENT_COLOR_PRIMARY = new Color(1f, 1f, 0f);
 
 #if UNITY_EDITOR
             [Rename("Accent Color 2")]
             [Tooltip("Secondary accent color for debug info.\nUsed for displaying action arguments.")]
 #endif
-            public Color DEBUG_ACCENT_COLOR_SECONDARY = new Color(0f, 1f, 1f);
-
-#if UNITY_EDITOR
-            [Header("Queue")]
-            [Rename("Base Capacity")]
-            [Tooltip("Base capacity for Tale's action queue.\n\nMust be a power of 2.")]
-#endif
-            public int QUEUE_BASE_CAPACITY = 64;
-
-#if UNITY_EDITOR
-            [Rename("Vacuum")]
-            [Tooltip("If enabled, Tale will attempt to shrink the action queue between scenes, so that it doesn't use too much memory.\n\nShould have a negligible impact on scene loading, but can be disabled.")]
-#endif
-            public bool QUEUE_VACUUM = true;
-
-#if UNITY_EDITOR
-            [Rename("Vacuum Capacity")]
-            [Tooltip("If the action queue has grown to at least this capacity, Tale will attempt to shrink it between scenes.\n\nMust be a power of 2.")]
-#endif
-            public int QUEUE_VACUUM_CAPACITY = 8192;
-
-#if UNITY_EDITOR
-            [Rename("Vacuum Factor")]
-            [Tooltip("If the above capacity is reached, and there are less than 1/factor actions in the queue, Tale will shrink the queue between scenes.\n\nMust be at least 2.")]
-#endif
-            public int QUEUE_VACUUM_FACTOR = 4;
-
-#if UNITY_EDITOR
-            [Header("Parallel List")]
-            [Rename("Base Capacity")]
-            [Tooltip("Base capacity for Tale's main parallel list.\n\nMust be a power of 2.")]
-#endif
-            public int PARALLEL_BASE_CAPACITY = 64;
-
-#if UNITY_EDITOR
-            [Rename("Vacuum")]
-            [Tooltip("If enabled, Tale will attempt to shrink the main parallel list between scenes, so that it doesn't use too much memory.\n\nShould have a negligible impact on scene loading, but can be disabled.")]
-#endif
-            public bool PARALLEL_VACUUM = true;
-
-#if UNITY_EDITOR
-            [Rename("Vacuum Capacity")]
-            [Tooltip("If the main parallel list has grown to at least this capacity, Tale will attempt to shrink it between scenes.\n\nMust be a power of 2.")]
-#endif
-            public int PARALLEL_VACUUM_CAPACITY = 8192;
-
-#if UNITY_EDITOR
-            [Rename("Vacuum Factor")]
-            [Tooltip("If the above capacity is reached, and there are less than 1/factor actions in the queue, Tale will shrink the queue between scenes.\n\nMust be at least 2.")]
-#endif
-            public int PARALLEL_VACUUM_FACTOR = 4;
+            public Color INFO_ACCENT_COLOR_SECONDARY = new Color(0f, 1f, 1f);
         }
 
         // In which order to animate the avatar and dialog canvas before the dialog text is shown

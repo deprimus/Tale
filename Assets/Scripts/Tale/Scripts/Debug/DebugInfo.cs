@@ -78,7 +78,7 @@ public class DebugInfo : MonoBehaviour
             sb.Append("|   ");
         }
 
-        var color = action.IsRunning ? Tale.Master.config.Core.DEBUG_TEXT_COLOR_SECONDARY : Tale.Master.config.Core.DEBUG_TEXT_COLOR_PRIMARY;
+        var color = action.IsRunning ? Tale.Master.Config.Debug.INFO_TEXT_COLOR_SECONDARY : Tale.Master.Config.Debug.INFO_TEXT_COLOR_PRIMARY;
 
         sb.AppendFormat("<color=#{0}>{1}</color>\n", ColorUtility.ToHtmlStringRGBA(color), action.ToString());
 

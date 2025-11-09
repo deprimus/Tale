@@ -125,10 +125,10 @@ namespace TaleUtil {
             string name = "";
 
             if (!string.IsNullOrEmpty(transition)) {
-                name = string.Format("<color=#{0}>{1}</color>, ", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_SECONDARY), transition);
+                name = string.Format("<color=#{0}>{1}</color>, ", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_SECONDARY), transition);
             }
 
-            return string.Format("TransitionAction ({0}<color=#{1}>{2}</color>, <color=#{1}>{3}</color>)", name, ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), type.ToString(), state.ToString());
+            return string.Format("TransitionAction ({0}<color=#{1}>{2}</color>, <color=#{1}>{3}</color>)", name, ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), type.ToString(), state.ToString());
         }
     }
 }

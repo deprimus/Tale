@@ -30,7 +30,7 @@ public class TaleMaster : MonoBehaviour {
             Application.runInBackground = true;
         }
 
-        if (Config.Core.SHOW_DEBUG_INFO_BY_DEFAULT) {
+        if (Config.Debug.SHOW_INFO_BY_DEFAULT) {
             if (TaleUtil.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object")) {
                 props.debugMaster.ShowDebugInfo();
             }
@@ -116,6 +116,13 @@ public class TaleMaster : MonoBehaviour {
         return act as T;
     }
     public void ReturnAction(System.Type type, TaleUtil.Action action) {
+        var pool = GetActionPool(type);
+        var max = config.Core.ACTION_POOL_MAX_CAPACITY;
+
+        if (max >= 0 && pool.Count >= max) {
+            return;
+        }
+
         GetActionPool(type).Push(action);
     }
     public ulong GetTotalActionCount() {

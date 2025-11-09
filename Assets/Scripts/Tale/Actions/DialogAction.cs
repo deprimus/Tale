@@ -884,7 +884,7 @@ namespace TaleUtil {
         }
 
         public override string ToString() =>
-            string.Format("DialogAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.config.Core.DEBUG_ACCENT_COLOR_PRIMARY), state.ToString());
+            string.Format("DialogAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), state.ToString());
 
         void ChangeState(State state) {
             this.state = state;
