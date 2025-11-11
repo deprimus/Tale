@@ -152,7 +152,7 @@ The framework provides a queue-driven action system, support for parallel action
 
 # Implementation
 
-Tale was originally designed for Unity 2020. Over the years, it has been updated to work with Unity 6. However, if you need support for a version older tha 6 (but >= 2020),  open an issue and we'll do our best :)
+Tale was originally designed for Unity 2020. Over the years, it has been updated to work with Unity 6. However, if you need support for a version older than 6 (but >= 2020),  open an issue and we'll do our best :)
 
 # Releases
 

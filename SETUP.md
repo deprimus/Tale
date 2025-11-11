@@ -4,11 +4,9 @@
 
 # :warning: Note :warning:
 
-This setup guide is a bit outdated; you no longer have to do this whole setup manually because Tale now does it automatically :)
+This setup guide is outdated; you no longer have to do this whole setup manually because Tale now does it automatically :)
 
-If, however, you want to tweak Tale and change a few things, continue reading.
-
-If you are here to set up the **post processing** stuff, [read here](#post-processing).
+If, however, you want to see how the old version worked behind the scenes, continue reading.
 
 # Setup
 
