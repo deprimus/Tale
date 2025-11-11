@@ -156,7 +156,11 @@ Tale was originally designed for Unity 2020. Over the years, it has been updated
 
 # Releases
 
-None.
+Tale isn't properly versioned yet. For now, the commit hash represents the version.
+
+However, there are codenames for large milestones:
+
+- classic - June 26th, 2021 ([e90a6c0](https://github.com/deprimus/Tale/commit/e90a6c0c968b2f2ee7ac500ae8e16e2b1a4a4d2a))
 
 # License <a href="https://github.com/deprimus/Tale/blob/master/LICENSE"><img align="right" src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
 
