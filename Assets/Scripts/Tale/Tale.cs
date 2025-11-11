@@ -425,28 +425,22 @@ public static partial class Tale
             CROSSFADE
         }
 
-        // Preserve the same order as in CinematicVideoAction (the cast will silently fail otherwise).
-        public enum VideoDetatchType
-        {
-            BEFORE,
-            AFTER,
-            FIXED
-        }
-
         public static TaleUtil.Action Subtitles(string content, float ttl = 3f, bool showBackground = true) =>
             Master.Queue.Enqueue(Master.CreateAction<CinematicSubtitleAction>().Init(content, ttl, showBackground));
 
         public static TaleUtil.Action Background(string path, BackgroundTransitionType type = BackgroundTransitionType.INSTANT, float speed = 1f) =>
             Master.Queue.Enqueue(Master.CreateAction<CinematicBackgroundAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.CINEMATIC_BACKGROUND, path), (TaleUtil.CinematicBackgroundAction.Type) (int) type, speed));
 
-        public static TaleUtil.Action Video(string path, float detatchValue = 0f, VideoDetatchType detatchType = VideoDetatchType.BEFORE, float speed = 1f) =>
-            Master.Queue.Enqueue(Master.CreateAction<CinematicVideoAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.CINEMATIC_VIDEO, path), detatchValue, (TaleUtil.CinematicVideoAction.DetatchType)(int) detatchType, speed));
+        public static class Video {
+            public static TaleUtil.Action Play(string path = null, float speed = 1f) =>
+                Master.Queue.Enqueue(Master.CreateAction<CinematicVideoAction>().Init(path != null ? TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.CINEMATIC_VIDEO, path) : null, speed));
 
-        public static TaleUtil.Action VideoPause() =>
-            Master.Queue.Enqueue(Master.CreateAction<CinematicVideoPauseAction>().Init());
+            public static TaleUtil.Action Sync(float syncTimestamp = Tale.Default.FLOAT) =>
+                Master.Queue.Enqueue(Master.CreateAction<CinematicVideoAction>().Init(syncTimestamp));
 
-        public static TaleUtil.Action VideoResume(float detatchValue = 0f, VideoDetatchType detatchType = VideoDetatchType.BEFORE, float speed = 1f) =>
-            Master.Queue.Enqueue(Master.CreateAction<CinematicVideoAction>().Init(null, detatchValue, (TaleUtil.CinematicVideoAction.DetatchType) (int) detatchType, speed));
+            public static TaleUtil.Action Pause() =>
+                Master.Queue.Enqueue(Master.CreateAction<CinematicVideoPauseAction>().Init());
+        }
     }
 
     public static class Image

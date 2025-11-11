@@ -40,10 +40,10 @@ namespace TaleUtil {
 
         // Sound sync
         public SoundAction Init(int channel, float syncTimestamp) {
-            state = State.SYNC;
-
             this.channel = channel;
             this.syncTimestamp = syncTimestamp;
+
+            state = State.SYNC;
 
             return this;
         }
@@ -115,7 +115,7 @@ namespace TaleUtil {
                 case State.SYNC: {
                     // Sound is done, or the sync timestamp was reached
                     // If the timestamp is float.MinValue, then wait for the end of the sound
-                    return (!master.Props.audio.sound[channel].isPlaying || (syncTimestamp != float.MinValue && master.Props.audio.sound[channel].time >= syncTimestamp));
+                    return (!master.Props.audio.sound[channel].isPlaying) || (syncTimestamp != float.MinValue && master.Props.audio.sound[channel].time >= syncTimestamp);
                 }
                 case State.WAIT: {
                     if (!master.Props.audio.sound[channel].isPlaying) {
@@ -131,7 +131,15 @@ namespace TaleUtil {
             return false;
         }
 
-        public override string ToString() =>
-            string.Format("SoundAction (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), state.ToString());
+        public override string ToString() {
+            var channel = master.Props.audio.sound[this.channel];
+            var left = "";
+
+            if (state == State.SYNC && channel.isPlaying && syncTimestamp != float.MinValue) {
+                left = string.Format(", <color=#{0}>{1}</color> left", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), Mathf.Max(0f, (float)(syncTimestamp - channel.time)).ToString("0.0"));
+            }
+
+            return string.Format("SoundAction (<color=#{0}>{1}</color>{2})", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), state.ToString(), left);
+        }
     }
 }
