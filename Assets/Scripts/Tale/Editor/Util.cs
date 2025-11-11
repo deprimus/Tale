@@ -656,7 +656,7 @@ namespace TaleUtil
 
             AnimatorStateMachine states = ctrl.layers[0].stateMachine;
 
-            AnimatorState idle = states.AddStateNoWriteDefaults("Idle");
+            AnimatorState idle = states.AddStateNoWriteDefaults(Config.Editor.ANIMATOR_STATE_NEUTRAL);
             states.defaultState = idle;
 
             AnimatorState animStateIn = states.AddStateNoWriteDefaults(stateIn);

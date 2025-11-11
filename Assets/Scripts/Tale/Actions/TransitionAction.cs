@@ -10,6 +10,7 @@ namespace TaleUtil {
         enum State {
             SETUP,
             SETUP_IN,
+            WAIT_OUT,
             TRANSITION
         }
 
@@ -83,6 +84,13 @@ namespace TaleUtil {
                         data.animator.speed = master.Config.Transitions.INSTANT_SPEED;
                     else data.animator.speed = 1f / duration;
 
+                    var info = data.animator.GetCurrentAnimatorStateInfo(0);
+
+                    if (!info.IsName(TaleUtil.Config.Editor.ANIMATOR_STATE_NEUTRAL)) {
+                        // Last transition didn't finish; force trigger its end
+                        data.animator.SetTrigger(TaleUtil.Config.Editor.TRANSITION_ANIMATOR_TRIGGER_NEUTRAL);
+                    }
+
                     data.animator.SetTrigger(trigger);
 
                     state = State.TRANSITION;
@@ -104,7 +112,7 @@ namespace TaleUtil {
                     break;
                 }
                 case State.TRANSITION: {
-                    AnimatorStateInfo info = data.animator.GetCurrentAnimatorStateInfo(0);
+                    var info = data.animator.GetCurrentAnimatorStateInfo(0);
 
                     if (!info.IsName(animatorState) || info.normalizedTime < 1f)
                         break;

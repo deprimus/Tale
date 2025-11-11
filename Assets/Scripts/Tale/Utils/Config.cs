@@ -49,6 +49,8 @@ namespace TaleUtil
             public const int REFERENCE_WIDTH = 1920;
             public const int REFERENCE_HEIGHT = 1080;
 
+            public const string ANIMATOR_STATE_NEUTRAL = "Idle";
+
             public const string DIALOG_CANVAS_ANIMATOR_STATE_IN = "DialogIn";
             public const string DIALOG_CANVAS_ANIMATOR_STATE_OUT = "DialogOut";
             public const string DIALOG_CANVAS_ANIMATOR_TRIGGER_IN = "TransitionIn";
