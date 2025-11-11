@@ -2,9 +2,10 @@
   <img src="public/logo.png" alt="Tale">
 </p>
 
-# About <a href="https://unity.com"><img align="right" src="https://img.shields.io/badge/Unity-2020.3.2f1-000000?logo=Unity" alt="Unity 20" /></a>
+# About <a href="https://unity.com"><img align="right" src="https://img.shields.io/badge/Unity-6000.0.49f1-000000?logo=Unity" alt="Unity 6.0" /></a><a href="https://unity.com"><img align="right" src="https://img.shields.io/badge/Unity-2020.3.2f1-000000?logo=Unity" alt="Unity 20" /></a>
 
-**Tale** is a powerful prop manipulation utility designed for storytelling. You can use it in your games to show dialog, play sounds and videos, manipulate the camera, create transitions, and much more.
+**Tale** is a powerful prop manipulation utility designed for storytelling. You can use it in your games to show dialog, play sounds and videos, manipulate the camera, create transitions, and much more. Think of it as a more powerful timeline driven by code.
+
 Everything is very customizable; you give Tale a bunch of objects and animations, and it does the heavy lifting.
 
 Here's what Tale currently provides:
@@ -18,12 +19,13 @@ Here's what Tale currently provides:
   - voices:
     - normal and also looping (for Undertale-like voices)
     - reverb effect (for monologue or "inner" voices)
+  - custom actions instead of click-to-continue (like `Tale.Choice`)
 - **Cinematics**, with support for:
   - Videos
   - Subtitles
   - Images, with multiple animations like crossfade
 - **Audio**, with support for:
-  - Multi-Channel sound
+  - Multi-Channel sound (multiple `AudioSources`)
   - Music, with loop/shuffle support
 - **Transitions**, based on custom animations
 - **Camera Manipulation**, with support for:
@@ -31,17 +33,30 @@ Here's what Tale currently provides:
   - zoom, position and rotation
 - **Transform Manipulation**, with support for:
   - position and rotation
+- **Scene Selector** with support for:
+  - auto-generated thumbnails
+  - custom thumbnails taken any time via `F11` inside the editor
+  - blacklisted scenes, which won't show up in the selector
 - **Other Actions**, such as:
   - Exec, for custom code that runs on the Tale queue
   - Repeat and Delay, for managing other actions
   - Multiplex and Parallel, for orchestrating many actions at the same time
-- **Scene Selector**, with auto-generated or custom scene thumbnails
-- **Editor Macros**, for setting up Tale and adding new props as easily as possible
-- **Script Compiler**, for easily generating Tale code from story scripts
+- **Await**, for async actions that bypass the Tale queue
+- **Trigger System**, for sending events between completely decoupled scripts
+- **Input Abstraction**, which emulates the old Input Manager but also seamlessly works with the new Input System behind the scenes
+- **Editor Tools**, including:
+  - one-click first setup
+  - support for adding or removing Tale components after the setup
+  - transition and splash scene creation
+  - scene selector thumbnail auto-generator
+- **Debug Tools**, including:
+  - magic stack traces for exceptions, which show where the faulty action was actually created
+  - debug info which displays the current action queue
+- **Script Compiler**, for easily generating Tale boilerplate code from story scripts
 
 You can easily extend Tale by creating your own actions.
 
-> Check out `Assets/Scripts/Tale/Action/WaitAction.cs` to see how to implement a simple action.
+Check out [WaitAction](https://github.com/deprimus/Tale/blob/master/Assets/Scripts/Tale/Actions/WaitAction.cs) to see how to implement a simple action!
 
 # Getting started
 
@@ -50,6 +65,8 @@ You can easily extend Tale by creating your own actions.
 3. **Click** `Run Setup`
 4. **Click** `Import TMP Essentials` **if** a window pops up (Tale needs the TextMeshPro Essentials package)
 5. All done. Tale is now fully operational.
+
+You don't have to worry about the advanced options. You can always tinker with them later by using the same menu.
 
 <p align="center">
   <img src="public/setup/new_menu.png" alt="Setup">
@@ -69,30 +86,18 @@ The Tale source code is located in `Assets/Scripts/Tale`. The `Assets/Resources`
 
 There is currently no documentation; there will be one someday.
 
-Here's the old setup in case you want to manually set up Tale, or want to see how it works: [old setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md).
+Here's the outdated manual setup in case you want to see how the old version worked behind the scenes: [old setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md). Currently, Tale does this setup, and more, completely automatically via editor scripts.
 
-Tale has support for the old Post Processing V2 stack for effects like Bloom.
+Tale had support for the old Post Processing V2 stack for effects like Bloom. However, as of now, they haven't been updated and therefore no longer work.
 
-If you want those:
-
-1. In your project, open `Window -> Package Manager`
-2. Choose `Packages: In Unity Registry`
-3. Search `Post Processing` and install it
-
-You will have to *manually* set up post processing. For this, check out the post processing section in the [old setup guide](https://github.com/deprimus/Tale/blob/master/SETUP.md#post-processing).
+If you need support for those, please create an issue and we'll do our best :)
 
 # Story scripts
 
-## Compiling
-If you have a story script, you can compile it to Tale code. Simply open the menu `Tale -> Compile Story` and select the file.
-
-The Tale scripts will be generated under `Assets/Scripts/Scenes`, and you will also see `Dialog.cs` which contains helper methods.
-
-## What are they?
 Story scripts are basically markdown files in a specific format. When you develop a game, you usually write a script for the game story.
 
 The script describes the scenes and dialog. If you write this script in the format shown below, Tale will be able to compile it to C# code
-which is compatible with Tale.
+which is compatible with Tale. This gives you a head start, as it handles the boilerplate for you.
 
 ```md
 ...
@@ -128,24 +133,26 @@ Any spaces or special characters in the name will be removed or replaced with an
 This scene will be renamed and compiled into 'End_The_last_encounter.cs'
 ```
 
+## Compiling
+If you have a story script, you can compile it to Tale code. Simply open the menu `Tale -> Compile Story` and select the file.
+
+The Tale scripts will be generated under `Assets/Scripts/Scenes`, and you will also see `Dialog.cs` which contains helper methods.
+
 The compiler will simply ignore what isn't under `# Script`, so you don't have to cut your original script to make it compile.
 
 # Design
 
 At its core, Tale is a modular framework that can run various actions (either sequentially or in parallel).
+In this context, parallel means executing multiple actions at the same time every frame. All actions are executed on the main thread, so they can interact with the Unity API.
+
 These actions manipulate objects and components in an useful way. For example, the dialog action uses a canvas, some animators and some text components
 to provide a very customizable dialog system. All you have to do is to create these objects and to give them to Tale.
 
-The framework provides a queue-driven action system, support for parallel actions, and multiple built-in actions.                                                                                 
-
-Tale also includes a Trigger system which allows scripts to send events to each other. This is mostly used by actions, but works perfectly fine for other use cases.
+The framework provides a queue-driven action system, support for parallel actions, and multiple built-in actions.
 
 # Implementation
 
-Tale was designed for Unity 2020. The Post-Processing actions are not guaranteed to work with newer versions because they rely on the old Post Processing Stack v2.
-
-We haven't encountered any problems for Unity 2020. If you find one, open an issue. We haven't tested newer versions yet; when we eventually do it, you'll see a compatibility matrix here.
-
+Tale was originally designed for Unity 2020. Over the years, it has been updated to work with Unity 6. However, if you need support for a version older tha 6 (but >= 2020),  open an issue and we'll do our best :)
 
 # Releases
 
