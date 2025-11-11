@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using UnityEngine.SceneManagement;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using TMPro;
 using TaleUtil.Scripts;
 
@@ -16,25 +14,22 @@ namespace TaleUtil
     {
         static void SetupCreateMasterObject(SetupFlag dialog, SetupFlag audio, SetupFlag transitions, SetupFlag choice, SetupFlag cinematic, SetupFlag debug)
         {
-            GameObject master = GameObject.Find("Tale Master");
+            GameObject master;
 
-            if (!master && File.Exists(TALE_MASTER_PREFAB_PATH)) {
-                master = PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH)) as GameObject;
-            }
-
-            if (!master)
-            {
+            if (File.Exists(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB)) {
+                master = PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB)) as GameObject;
+            } else {
                 master = new GameObject("Tale Master", typeof(TaleMaster));
 
-                if (File.Exists(TALE_CONFIG_PATH)) {
-                    Log.Warning("Tale Config already exists; if you want to regenerate it, delete the config at " + TALE_CONFIG_PATH);
+                if (File.Exists(TaleUtil.Config.Editor.RESOURCE_CONFIG)) {
+                    Log.Warning("Tale Config already exists; if you want to regenerate it, delete the config at " + TaleUtil.Config.Editor.RESOURCE_CONFIG);
                 } else {
-                    AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<TaleUtil.Config>(), TALE_CONFIG_PATH);
+                    AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<TaleUtil.Config>(), TaleUtil.Config.Editor.RESOURCE_CONFIG);
                 }
 
                 var script = master.GetComponent<TaleMaster>();
                 script.props = new TaleMaster.InspectorProps();
-                script.config = AssetDatabase.LoadAssetAtPath<TaleUtil.Config>(TALE_CONFIG_PATH);
+                script.config = AssetDatabase.LoadAssetAtPath<TaleUtil.Config>(TaleUtil.Config.Editor.RESOURCE_CONFIG);
 
                 SetupAdvance(master);
 
@@ -98,11 +93,13 @@ namespace TaleUtil
             Undo.RegisterCreatedObjectUndo(master, "Set up " + master.name);
             Selection.activeGameObject = master;
 
-            if (File.Exists(TALE_MASTER_PREFAB_PATH)) {
+            if (File.Exists(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB)) {
                 PrefabUtility.ApplyPrefabInstance(master, InteractionMode.UserAction);
             } else {
-                CreatePrefab(master, TALE_MASTER_PREFAB_PATH);
+                CreatePrefab(master, TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB);
             }
+
+            GameObject.DestroyImmediate(master);
 
             SaveCurrentScene();
         }
@@ -567,10 +564,12 @@ namespace TaleUtil
             GameObjectUtility.SetParentAndAlign(canvas, obj);
 
             DebugInfo debugInfo = canvas.AddComponent<DebugInfo>();
-            debugInfo.fps = CreateDebugInfoText("FPS", canvas, TextAlignmentOptions.TopLeft, new Vector2(0f, 1f), new Vector2(638f, 50f), new Vector2(339f, -30f));
-            debugInfo.sceneInfo = CreateDebugInfoText("SceneInfo", canvas, TextAlignmentOptions.Top, new Vector2(0.5f, 1f), new Vector2(603f, 50f), new Vector2(0f, -30f));
-            debugInfo.actionInfo = CreateDebugInfoText("ActionInfo", canvas, TextAlignmentOptions.TopLeft, new Vector2(1f, 1f), new Vector2(551f, 50f), new Vector2(-382f, -30f));
-            debugInfo.actionCountInfo = CreateDebugInfoText("ActionCountInfo", canvas, TextAlignmentOptions.TopRight, new Vector2(1f, 1f), new Vector2(87f, 50f), new Vector2(-63f, -30f));
+            debugInfo.fps = CreateDebugInfoText("FPS", canvas, TextAlignmentOptions.TopLeft, new Vector2(0f, 1f), new Vector2(638f, 17f), new Vector2(339f, -14.5f));
+            debugInfo.sceneInfo = CreateDebugInfoText("SceneInfo", canvas, TextAlignmentOptions.Top, new Vector2(0.5f, 1f), new Vector2(603f, 17f), new Vector2(0f, -14.5f));
+            debugInfo.actionInfo = CreateDebugInfoText("ActionInfo", canvas, TextAlignmentOptions.TopLeft, new Vector2(1f, 1f), new Vector2(551f, 17f), new Vector2(-382f, -14.5f));
+            debugInfo.actionCountInfo = CreateDebugInfoText("ActionCountInfo", canvas, TextAlignmentOptions.TopRight, new Vector2(1f, 1f), new Vector2(87f, 17f), new Vector2(-63f, -14.5f));
+            debugInfo.queueInfo = CreateDebugInfoText("QueueInfo", canvas, TextAlignmentOptions.TopLeft, new Vector2(0f, 1f), new Vector2(638f, 1019.1f), new Vector2(339f, -531.4f));
+
             canvas.SetActive(false);
 
             debugMaster.debugInfo = canvas;
@@ -582,6 +581,7 @@ namespace TaleUtil
             TaleMaster tale = master.GetComponent<TaleMaster>();
 
             GameObject.DestroyImmediate(tale.props.debugMaster.gameObject);
+            DeleteAsset(Config.Editor.RESOURCE_DEBUG_INFO_MATERIAL);
 
             tale.props.debugMaster = null;
         }
@@ -677,7 +677,7 @@ namespace TaleUtil
 
             script.name = text;
 
-            CreatePrefab(obj, TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH);
+            CreatePrefab(obj, TaleUtil.Config.Editor.RESOURCE_SCENE_SELECTOR_ITEM_PREFAB);
         }
 
         static void SetupSceneSelector(SetupFlag setup, int buildIndex = -1)
@@ -704,8 +704,8 @@ namespace TaleUtil
                 GameObject.DestroyImmediate(master);
             }
 
-            if (System.IO.File.Exists(TALE_MASTER_PREFAB_PATH)) {
-                DeleteAsset(TALE_MASTER_PREFAB_PATH, true);
+            if (System.IO.File.Exists(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB)) {
+                DeleteAsset(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB, true);
             }
 
             SaveCurrentScene();

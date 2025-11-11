@@ -14,7 +14,9 @@ namespace TaleUtil.Scripts
 
         void Awake()
         {
-            if (!Tale.config.SCENE_SELECTOR_ENABLE)
+            var config = Tale.Master.Config;
+
+            if (!config.SceneSelector.ENABLE)
             {
                 Log.Warning("Scene Selector", "Scene selector is disabled, but somehow we got here; loading the next scene");
                 Tale.Scene();
@@ -23,7 +25,7 @@ namespace TaleUtil.Scripts
 
             var count = SceneManager.sceneCountInBuildSettings;
 
-            var blacklist = Tale.config.SCENE_SELECTOR_BLACKLIST;
+            var blacklist = config.SceneSelector.BLACKLIST;
 
             for (int i = 0; i < count; ++i)
             {

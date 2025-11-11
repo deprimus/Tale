@@ -1,117 +1,156 @@
-#pragma warning disable 0162 // Disable the 'unreachable code' warning caused by config constants.
-
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
+// TODO: execution order is no longer required since the object is lazy init'ed
 [DefaultExecutionOrder(-1000)]
-public class TaleMaster : MonoBehaviour
-{
-    // Hello Tale!
-    void Awake()
-    {
-        if(Tale.alive)
-        {
-            Destroy(gameObject); // Prevent multiple master objects from existing at the same time.
-            return;
-        }
-        Tale.alive = true;
-        Tale.config = config;
+public class TaleMaster : MonoBehaviour {
+    #region Fields
+    public TaleUtil.Queue Queue { get; private set; }
+    public TaleUtil.Parallel Parallel { get; private set; }
+    public TaleUtil.Props Props { get; private set; }
+    public TaleUtil.Config Config { get { return config; } } // TODO: CopyOnWrite
+    public TaleUtil.Input Input { get; private set; }
+    public TaleUtil.Triggers Triggers { get; private set; }
+    public TaleUtil.Hooks Hooks { get; private set; }
+    public TaleUtil.Flags Flags { get; private set; }
 
-        if (Tale.config.APPLICATION_RUN_IN_BACKGROUND)
-        {
+    Dictionary<System.Type, Stack<TaleUtil.Action>> actionPool;
+
+    ulong actionCounter;
+    #endregion
+
+    #region Behavior
+    // Hello Tale!
+    void Awake() {
+        Config.SanityCheck();
+
+        if (Config.Core.APPLICATION_RUN_IN_BACKGROUND) {
             Application.runInBackground = true;
         }
 
-        if (Tale.config.SHOW_DEBUG_INFO_BY_DEFAULT)
-        {
-            if (TaleUtil.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object"))
-            {
+        if (Config.Debug.SHOW_INFO_BY_DEFAULT) {
+            if (TaleUtil.Debug.SoftAssert.Condition(props.debugMaster != null, "Debug info is enabled by default, but there is no DebugMaster object")) {
                 props.debugMaster.ShowDebugInfo();
             }
         }
 
-        TaleUtil.Queue.Init();
-        TaleUtil.Parallel.Init();
-        TaleUtil.Triggers.Init();
-        TaleUtil.Hooks.Init();
-        TaleUtil.Flags.Init();
-        TaleUtil.Props.Init(props);
+        actionPool = new Dictionary<System.Type, Stack<TaleUtil.Action>>();
 
-        // Events
-        SceneManager.sceneLoaded += TaleUtil.Events.OnSceneLoaded; // This is used to re-assign the camera when the scene changes
+        Queue = new TaleUtil.Queue(Config.Core.QUEUE_BASE_CAPACITY);
+        Parallel = new TaleUtil.Parallel(Config.Core.PARALLEL_BASE_CAPACITY);
+        Props = new TaleUtil.Props(props);
+        Input = new TaleUtil.Input(this);
+        Triggers = new TaleUtil.Triggers(this);
+        Hooks = new TaleUtil.Hooks();
+        Flags = new TaleUtil.Flags();
+
+        actionCounter = 0;
 
         DontDestroyOnLoad(gameObject);
-
-#if UNITY_EDITOR
-        EditorApplication.playModeStateChanged += OnExitPlayMode;
-#endif
     }
 
     // The heart of Tale
-    void Update()
-    {
-        if (Tale.config.SCENE_SELECTOR_ENABLE && Input.GetKeyDown(Tale.config.SCENE_SELECTOR_KEY))
-        {
+    void Update() {
+        if (Config.SceneSelector.ENABLE && TaleUtil.Input.GetKeyDown(Config.SceneSelector.KEY)) {
             TriggerSceneSelector();
             return;
         }
 
         // That's it.
-        TaleUtil.Queue.Run();
-        TaleUtil.Parallel.Run();
+        Queue.Run();
+        Parallel.Run();
     }
 
-    void LateUpdate()
-    {
-        TaleUtil.Triggers.Update();
+    void LateUpdate() {
+        Triggers.Update();
     }
 
-    void TriggerSceneSelector()
-    {
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        Props.ReinitCamera();
+
+        var config = Config.Core;
+
+        if (config.QUEUE_VACUUM) {
+            if (Queue.Count < (Queue.Capacity / config.QUEUE_VACUUM_FACTOR) && Queue.Capacity >= config.QUEUE_VACUUM_CAPACITY) {
+                Queue.Vacuum();
+            }
+        }
+
+        if (config.PARALLEL_VACUUM) {
+            if (Parallel.Count < (Parallel.Capacity / config.PARALLEL_VACUUM_FACTOR) && Parallel.Capacity >= config.PARALLEL_VACUUM_CAPACITY) {
+                Parallel.Vacuum();
+            }
+        }
+    }
+
+    void TriggerSceneSelector() {
         string path = "SceneSelector";
 
-        if (SceneManager.GetSceneByPath(TaleUtil.Path.NormalizeResourcePath(TaleUtil.Config.Editor.ASSET_ROOT_SCENE, path)) == null)
-        {
+        if (SceneManager.GetSceneByPath(TaleUtil.Path.NormalizeResourcePath(TaleUtil.Config.Editor.ASSET_ROOT_SCENE, path)) == null) {
             return;
         }
 
-        TaleUtil.Queue.ForceClear();
-        TaleUtil.Parallel.ForceClear();
+        Queue.ForceClear();
+        Parallel.ForceClear();
 
         Tale.Scene(path);
-        TaleUtil.Props.Reset();
+        Props.Reset();
 
         // Reset() places some transition cleaning actions on the parallel queue; execute all of them
-        TaleUtil.Parallel.Run();
+        Parallel.Run();
     }
+    #endregion
 
-#if UNITY_EDITOR
-    // This ensures that Tale works even without domain reloads
-    static void OnExitPlayMode(PlayModeStateChange state)
-    {
-        if (state == PlayModeStateChange.ExitingPlayMode)
-        {
-            EditorApplication.playModeStateChanged -= OnExitPlayMode;
-            SceneManager.sceneLoaded -= TaleUtil.Events.OnSceneLoaded;
-            Tale.alive = false;
+    #region Public Stuff
+    public T CreateAction<T>() where T : TaleUtil.Action, new() {
+        var pool = GetActionPool(typeof(T));
+
+        if (!pool.TryPop(out var act)) {
+            act = new T();
         }
-    }
-#endif
 
+        act.Inject(this, actionCounter++);
+
+        return act as T;
+    }
+    public void ReturnAction(System.Type type, TaleUtil.Action action) {
+        var pool = GetActionPool(type);
+        var max = config.Core.ACTION_POOL_MAX_CAPACITY;
+
+        if (max >= 0 && pool.Count >= max) {
+            return;
+        }
+
+        GetActionPool(type).Push(action);
+    }
+    public ulong GetTotalActionCount() {
+        return actionCounter;
+    }
+    #endregion
+
+    Stack<TaleUtil.Action> GetActionPool(System.Type type) {
+        if (!actionPool.TryGetValue(type, out var stack)) {
+            stack = new Stack<TaleUtil.Action>();
+            actionPool[type] = stack;
+        }
+
+        return stack;
+    }
+
+    #region Inspector
 #if UNITY_EDITOR
     [Space(10)]
 #endif
-    public TaleUtil.Config config;
+    [SerializeField]
+    internal TaleUtil.Config config;
 
-    public InspectorProps props;
+    [SerializeField]
+    internal InspectorProps props;
 
     [System.Serializable]
-    public class InspectorProps
-    {
+    public class InspectorProps {
 #if UNITY_EDITOR
         [Header("Dialog")]
         [Rename("Canvas")]
@@ -263,4 +302,5 @@ public class TaleMaster : MonoBehaviour
 #endif
         public DebugMaster debugMaster;
     }
+    #endregion
 }

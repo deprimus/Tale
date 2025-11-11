@@ -17,14 +17,9 @@ namespace TaleUtil
 {
     public partial class Editor
     {
-        const string TALE_MASTER_PREFAB_PATH = "Assets/Prefabs/Tale Master.prefab";
-        const string TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH = "Assets/Prefabs/TaleSceneSelectorItem.prefab";
-        const string TALE_CONFIG_PATH = "Assets/TaleConfig.asset";
-        const string TALE_SPLASH_SCENE_DIR = "Splash";
-
         static bool TaleWasSetUp()
         {
-            return File.Exists(TALE_MASTER_PREFAB_PATH);
+            return File.Exists(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB);
         }
 
         static GameObject FindTaleMaster()
@@ -35,16 +30,6 @@ namespace TaleUtil
             }
 
             return GameObject.FindGameObjectWithTag("TaleMaster");
-        }
-
-        static GameObject GetTaleMasterPrefab()
-        {
-            if (!TaleWasSetUp())
-            {
-                return null;
-            }
-
-            return AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH);
         }
 
         static void CreatePrefab(GameObject obj, string path)
@@ -77,7 +62,7 @@ namespace TaleUtil
 
         static void InstantiateTaleMasterPrefab()
         {
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH));
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB));
         }
 
         static async void CaptureSceneThumbnails()
@@ -127,7 +112,8 @@ namespace TaleUtil
 
             TextMeshProUGUI text = obj.AddComponent<TextMeshProUGUI>();
             text.fontSize = 12f;
-            text.color = new Color32(200, 200, 200, 255);
+            text.fontStyle = FontStyles.Bold;
+            text.color = Color.white;
             text.alignment = alignment;
             text.overflowMode = TextOverflowModes.Ellipsis;
 
@@ -138,11 +124,25 @@ namespace TaleUtil
             tform.sizeDelta = size;
             tform.anchoredPosition = pos;
 
+            Material material;
+
+            if (File.Exists(Config.Editor.RESOURCE_DEBUG_INFO_MATERIAL)) {
+                material = AssetDatabase.LoadAssetAtPath<Material>(Config.Editor.RESOURCE_DEBUG_INFO_MATERIAL);
+            } else {
+                material = new Material(text.fontMaterial);
+                material.SetColor("_OutlineColor", Color.black);
+                material.SetFloat("_OutlineWidth", 0.3f);
+                material.EnableKeyword("OUTLINE_ON");
+                AssetDatabase.CreateAsset(material, TaleUtil.Config.Editor.RESOURCE_DEBUG_INFO_MATERIAL);
+            }
+
+            text.fontMaterial = material;
+
             return text;
         }
 
         static string GetSplashScenePath(string name) {
-            return System.IO.Path.Combine("Assets", Config.Editor.ASSET_ROOT_SCENE, TALE_SPLASH_SCENE_DIR, string.Format("{0}.unity", name)).Replace('\\', '/');
+            return System.IO.Path.Combine("Assets", Config.Editor.ASSET_ROOT_SCENE, Config.Editor.SPLASH_SCENE_DIR, string.Format("{0}.unity", name)).Replace('\\', '/');
         }
 
         static void CreateSplashScene(string name, Sprite logo, List<AudioClip> soundVariants, int buildIndex = -1)
@@ -194,7 +194,7 @@ namespace TaleUtil
             tform.anchoredPosition = new Vector2(0f, 0f);
 
             obj = new GameObject("Splash Master");
-            var splash = obj.AddComponent<Splash>();
+            var splash = obj.AddComponent<TaleUtil.Scripts.Splash>();
 
             if (soundVariants != null) {
                 List<string> variants = new List<string>();
@@ -208,8 +208,6 @@ namespace TaleUtil
             }
 
             splash.curtain = curtain;
-
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH));
 
             AddSceneToBuild(scenePath, buildIndex);
 
@@ -239,7 +237,7 @@ namespace TaleUtil
             GameObject story = new GameObject("Story Master");
             story.AddComponent(AssetDatabase.LoadAssetAtPath<MonoScript>(script).GetClass());
 
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH));
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB));
 
             AddSceneToBuild(scenePath, buildIndex);
 
@@ -259,9 +257,9 @@ namespace TaleUtil
                 return;
             }
 
-            if (File.Exists(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH))
+            if (File.Exists(TaleUtil.Config.Editor.RESOURCE_SCENE_SELECTOR_ITEM_PREFAB))
             {
-                EditorUtility.DisplayDialog("Scene Selector already created", "Scene Selector item prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH, "Ok");
+                EditorUtility.DisplayDialog("Scene Selector already created", "Scene Selector item prefab already exists.\n\nIf you want to regenerate it, delete the prefab at:\n\n" + TaleUtil.Config.Editor.RESOURCE_SCENE_SELECTOR_ITEM_PREFAB, "Ok");
                 return;
             }
 
@@ -276,12 +274,12 @@ namespace TaleUtil
 
             SetupSceneSelectorItemPrefab();
 
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TALE_MASTER_PREFAB_PATH));
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB));
 
             var canvas = CreateCanvas("Canvas", 0, true);
 
             var selector = canvas.AddComponent<SceneSelectorMaster>();
-            selector.sceneItemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH);
+            selector.sceneItemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TaleUtil.Config.Editor.RESOURCE_SCENE_SELECTOR_ITEM_PREFAB);
 
             var bg = CreateDarkness("Background");
             GameObjectUtility.SetParentAndAlign(bg, canvas);
@@ -463,7 +461,7 @@ namespace TaleUtil
 
         static void DeleteSceneSelector(string path) {
             DeleteScene(path);
-            DeleteAsset(TALE_SCENE_SELECTOR_ITEM_PREFAB_PATH, true);
+            DeleteAsset(TaleUtil.Config.Editor.RESOURCE_SCENE_SELECTOR_ITEM_PREFAB, true);
         }
 
         // EditorSceneManager.SaveOpenScenes does not work
@@ -524,11 +522,9 @@ namespace TaleUtil
 
             if (currentIndex != index && index != -1)
             {
-                // TODO: this is incorrect since any scene could be at 'index'.
-                // Therefore, it could mess up the user's scene order, which is not very cash money.
-                EditorBuildSettingsScene tmp = buildScenes[index];
-                buildScenes[index] = buildScenes[currentIndex];
-                buildScenes[currentIndex] = tmp;
+                EditorBuildSettingsScene tmp = buildScenes[currentIndex];
+                ArrayUtility.RemoveAt(ref buildScenes, currentIndex);
+                ArrayUtility.Insert(ref buildScenes, index, tmp);
             }
 
             EditorSceneManager.SaveOpenScenes();
