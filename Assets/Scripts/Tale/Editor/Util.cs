@@ -274,8 +274,6 @@ namespace TaleUtil
 
             SetupSceneSelectorItemPrefab();
 
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(TaleUtil.Config.Editor.RESOURCE_MASTER_PREFAB));
-
             var canvas = CreateCanvas("Canvas", 0, true);
 
             var selector = canvas.AddComponent<SceneSelectorMaster>();
