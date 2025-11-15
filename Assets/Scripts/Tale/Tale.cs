@@ -21,6 +21,9 @@ public static partial class Tale
         }
     }
 
+    internal static bool HasMaster() =>
+        master != null;
+
     static void InitTaleMaster() {
 #if UNITY_EDITOR
         EditorApplication.playModeStateChanged += OnExitPlayMode;

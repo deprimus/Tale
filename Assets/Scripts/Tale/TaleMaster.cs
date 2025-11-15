@@ -24,6 +24,11 @@ public class TaleMaster : MonoBehaviour {
     #region Behavior
     // Hello Tale!
     void Awake() {
+        if (Tale.HasMaster()) {
+            Destroy(gameObject);
+            return;
+        }
+
         Config.SanityCheck();
 
         if (Config.Core.APPLICATION_RUN_IN_BACKGROUND) {
