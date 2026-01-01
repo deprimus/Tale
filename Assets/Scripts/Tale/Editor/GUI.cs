@@ -75,7 +75,7 @@ namespace TaleUtil
             SetupFlag setupTransitions = true;
             SetupFlag setupChoice = true;
             SetupFlag setupCinematic = true;
-            SetupFlag setupDebug = true;
+            SetupFlag setupDebug = false;
 
             SetupFlag setupSplashScene = true;
             SetupFlag setupSceneSelector = true;
