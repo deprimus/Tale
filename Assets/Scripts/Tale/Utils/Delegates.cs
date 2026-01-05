@@ -12,7 +12,7 @@ namespace TaleUtil
         public delegate bool             FilterDelegate<T>(T data);
         public delegate TaleUtil.Action  ActionDelegate();
         public delegate TaleUtil.Action  BranchDelegate<T>(T data);
-        public delegate R                MapDelegate<T, R>(T data);
+        public delegate R                MapDelegate<T, R>(T data, int index);
         public delegate float            DeltaDelegate();
     }
 }

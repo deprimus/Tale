@@ -25,7 +25,7 @@ namespace TaleUtil
             public bool was;
             public bool should;
 
-            static SetupFlag setUp = new SetupFlag() { was = false, should = true };
+            public static readonly SetupFlag Remove = new SetupFlag() { was = true, should = false };
 
             public void Set(bool value) {
                 was = value;
@@ -37,7 +37,7 @@ namespace TaleUtil
             }
 
             public static implicit operator SetupFlag(bool value) =>
-                new SetupFlag() { was = !value, should = value };
+                new SetupFlag() { was = false, should = value };
         }
 
         public static void DrawTaleLogo(Rect window)

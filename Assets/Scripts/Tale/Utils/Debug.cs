@@ -56,7 +56,8 @@ namespace TaleUtil {
 
         public static void FrameToString(StackFrame frame, StringBuilder outStr) {
             var method = frame.GetMethod();
-            var file = Path.AbsoluteToAssetPath(frame.GetFileName());
+            var filename = frame.GetFileName();
+            var file = string.IsNullOrEmpty(filename) ? "" : Path.AbsoluteToAssetPath(frame.GetFileName());
 
             outStr.Append(method.DeclaringType.ToString());
             outStr.Append(':');
@@ -76,7 +77,11 @@ namespace TaleUtil {
             }
             outStr.Append(')');
 
-            outStr.AppendFormat(" (at <a href=\"{0}\" line=\"{1}\">{0}:{1}</a>)\n", file, frame.GetFileLineNumber());
+            if (!string.IsNullOrEmpty(file)) {
+                outStr.AppendFormat(" (at <a href=\"{0}\" line=\"{1}\">{0}:{1}</a>)", file, frame.GetFileLineNumber());
+            }
+
+            outStr.AppendLine();
         }
 
         internal static bool FilterInternalTaleFrame(StackFrame frame) {

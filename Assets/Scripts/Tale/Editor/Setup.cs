@@ -696,8 +696,8 @@ namespace TaleUtil
         }
 
         public static void CleanTale() {
-            SetupTaleSplashScene(false);
-            SetupSceneSelector(false);
+            SetupTaleSplashScene(SetupFlag.Remove);
+            SetupSceneSelector(SetupFlag.Remove);
 
             var master = GameObject.Find("Tale Master");
             if (master != null) {

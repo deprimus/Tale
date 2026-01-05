@@ -170,6 +170,11 @@ namespace TaleUtil {
         void ReturnToPool() {
             execState = ExecutionState.FINISHED;
             master.ReturnAction(type, this);
+
+            if (task != null) {
+                task.SetResult(true);
+                task = null;
+            }
         }
 
         void LogException(System.Exception e) {

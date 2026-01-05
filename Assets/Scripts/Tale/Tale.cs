@@ -147,11 +147,12 @@ public static partial class Tale
     public static TaleUtil.Action[] Map<T>(IReadOnlyList<T> arr, TaleUtil.Delegates.MapDelegate<T, TaleUtil.Action> callback)
     {
         var actions = new TaleUtil.Action[arr.Count];
-        uint i = 0;
+        int i = 0;
 
         foreach (var obj in arr)
         {
-            actions[i++] = callback(obj);
+            actions[i] = callback(obj, i);
+            ++i;
         }
 
         return actions;

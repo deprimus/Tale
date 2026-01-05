@@ -13,6 +13,10 @@ using UnityEditor.SceneManagement;
 using TMPro;
 using TaleUtil.Scripts;
 
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem.UI;
+#endif
+
 namespace TaleUtil
 {
     public partial class Editor
@@ -771,14 +775,21 @@ namespace TaleUtil
             transition.AddCondition(AnimatorConditionMode.If, 0, triggerNeutral);
         }
 
+        // Currently not used anywhere, but might be in the future
+        static void CreateEventSystem() {
+            if (!UnityEngine.Object.FindFirstObjectByType<EventSystem>()) {
+                GameObject system = new GameObject("EventSystem", typeof(EventSystem));
+
+#if ENABLE_INPUT_SYSTEM
+                system.AddComponent<InputSystemUIInputModule>();
+#else
+                system.AddComponent<StandaloneInputModule>();
+#endif
+            }
+        }
+
         static GameObject CreateCanvas(string name, int sortOrder, bool raycast = false)
         {
-            if (!UnityEngine.Object.FindFirstObjectByType<EventSystem>())
-            {
-                GameObject system = new GameObject("EventSystem", typeof(EventSystem));
-                system.AddComponent<StandaloneInputModule>();
-            }
-
             GameObject obj = new GameObject(name);
 
             Canvas canvas = obj.AddComponent<Canvas>();
