@@ -57,7 +57,7 @@ namespace TaleUtil {
         public static void FrameToString(StackFrame frame, StringBuilder outStr) {
             var method = frame.GetMethod();
             var filename = frame.GetFileName();
-            var file = string.IsNullOrEmpty(filename) ? "" : Path.AbsoluteToAssetPath(frame.GetFileName());
+            var file = string.IsNullOrEmpty(filename) ? "" : Path.AbsoluteToAssetPath(filename);
 
             outStr.Append(method.DeclaringType.ToString());
             outStr.Append(':');
