@@ -32,7 +32,7 @@ namespace TaleUtil {
 
             transitions = new Transitions(props.transitions);
             dialog = new Dialog(props.dialogCanvas, props.dialogActor, props.dialogContent, props.dialogAvatar, props.dialogAnimator, props.dialogCtc, props.dialogActc);
-            audio = new Audio(props.audioGroup, props.audioSoundGroup, props.audioSound, props.audioMusic, props.audioVoice);
+            audio = new Audio(props.audioGroup, props.audioSoundGroup, props.audioSound, props.audioMusicGroup, props.audioMusic, props.audioMusicAlt, props.audioVoice);
             choice = new Choice(props.choiceStyles);
             cinematic = new Cinematic(props.cinematicCanvas, props.cinematicSubtitles, props.cinematicSubtitlesBackground, props.cinematicSubtitlesGroup);
             cinematic.background = new CinematicBackground(props.cinematicBackgroundGroupAnimator, props.cinematicBackground, props.cinematicBackgroundAlt);
@@ -231,19 +231,27 @@ namespace TaleUtil {
             public GameObject group;
             public GameObject soundGroup;
             public AudioSource[] sound;
+            public GameObject musicGroup;
             public AudioSource music;
+            public AudioSource musicAlt;
             public AudioSource voice;
             public AudioReverbFilter voiceReverb;
 
-            public Audio(GameObject group, GameObject soundGroup, AudioSource[] sound, AudioSource music, AudioSource voice) {
+            public Audio(GameObject group, GameObject soundGroup, AudioSource[] sound, GameObject musicGroup, AudioSource music, AudioSource musicAlt, AudioSource voice) {
                 this.group = group;
                 this.soundGroup = soundGroup;
                 this.sound = sound;
+                this.musicGroup = musicGroup;
                 this.music = music;
+                this.musicAlt = musicAlt;
                 this.voice = voice;
 
                 if (soundGroup == null && sound != null && sound.Length > 0) {
                     Warning("The audio sound channel list is not empty, but the audio sound group is null");
+                }
+
+                if (musicGroup == null && (music != null || musicAlt != null)) {
+                    Warning("The audio music objects exist, but the audio music group is null");
                 }
 
                 if (voice != null) {
@@ -254,6 +262,14 @@ namespace TaleUtil {
             public void Reset() {
                 if (music != null) {
                     music.Stop();
+                }
+
+                if (musicAlt != null) {
+                    musicAlt.Stop();
+                }
+
+                if (musicGroup != null) {
+                    musicGroup.SetActive(false);
                 }
 
                 if (sound != null) {

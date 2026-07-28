@@ -279,11 +279,23 @@ namespace TaleUtil
             tale.props.audioGroup = group;
 
             // Music
-            GameObject music = CreateAudioSource("Music");
+            GameObject music = new GameObject("Music");
             GameObjectUtility.SetParentAndAlign(music, group);
             music.SetActive(false);
 
-            tale.props.audioMusic = music.GetComponent<AudioSource>();
+            tale.props.audioMusicGroup = music;
+
+            GameObject musicSrc = CreateAudioSource("Music");
+            GameObjectUtility.SetParentAndAlign(musicSrc, music);
+            musicSrc.SetActive(false);
+
+            tale.props.audioMusic = musicSrc.GetComponent<AudioSource>();
+
+            GameObject musicAltSrc = CreateAudioSource("Music Alt");
+            GameObjectUtility.SetParentAndAlign(musicAltSrc, music);
+            musicAltSrc.SetActive(false);
+
+            tale.props.audioMusicAlt = musicAltSrc.GetComponent<AudioSource>();
 
             // 4 Sound Channels
             GameObject sound = new GameObject("Sound");

@@ -81,6 +81,10 @@ public static partial class Tale
         public static readonly TaleUtil.Delegates.InterpolationDelegate EASE_IN_OUT = TaleUtil.Math.ParametricBlend;
     }
 
+    // Does nothing
+    public static TaleUtil.Action NoOp() =>
+        Master.Queue.Enqueue(Master.CreateAction<ExecAction>().Init(() => {}));
+
     // Starts executing an action and returns a task that can be awaited, bypassing the Tale action queue.
     public static Task Async(TaleUtil.Action action)
     {
@@ -130,8 +134,14 @@ public static partial class Tale
             return act;
         }));
 
+    public static TaleUtil.Action Flag(string name, ulong value = 1) =>
+        Master.Queue.Enqueue(Master.CreateAction<ExecAction>().Init(() => Master.Flags.Set(name, value)));
+
     public static TaleUtil.Action Trigger(string name) =>
         Master.Queue.Enqueue(Master.CreateAction<ExecAction>().Init(() => Master.Triggers.Set(name)));
+
+    public static TaleUtil.Action Cue(string channel, string cue) =>
+        Master.Queue.Enqueue(Master.CreateAction<ExecAction>().Init(() => Master.Cues.Set(channel, cue)));
 
     public static TaleUtil.Action Interruptible(string trigger, TaleUtil.Action action) {
         Master.Queue.TakeLast(action);
@@ -256,13 +266,18 @@ public static partial class Tale
         {
             ONCE,
             LOOP,
+            LOOP_SINGLE,
             SHUFFLE,
-            SHUFFLE_LOOP
+            SHUFFLE_LOOP,
+            INTRO_LOOP
         }
 
         // TODO: Change the asset root to MUSIC.
         public static TaleUtil.Action Play(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Parallel(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+            Parallel(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, path) }, (mode == PlayMode.LOOP || mode == PlayMode.SHUFFLE_LOOP) ? TaleUtil.MusicAction.Mode.LOOP_SINGLE : (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+
+        public static TaleUtil.Action Play(string intro, string loop, float volume = 1f, float pitch = 1f) =>
+            Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, intro), TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, loop), volume, pitch));
 
         public static TaleUtil.Action Play(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
             Parallel(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.AssetRoots.AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
@@ -279,7 +294,10 @@ public static partial class Tale
         // Async actions
 
         public static Task PlayAsync(string path, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
-            Async(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, path) }, (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));
+            Async(Master.CreateAction<MusicAction>().Init(new List<string>(1) { TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, path) }, (mode == PlayMode.LOOP || mode == PlayMode.SHUFFLE_LOOP) ? TaleUtil.MusicAction.Mode.LOOP_SINGLE : (TaleUtil.MusicAction.Mode) (int) mode, volume, pitch));
+
+        public static Task PlayAsync(string intro, string loop, float volume = 1f, float pitch = 1f) =>
+            Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, intro), TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_MUSIC, loop), volume, pitch));
 
         public static Task PlayAsync(string[] paths, PlayMode mode = PlayMode.ONCE, float volume = 1f, float pitch = 1f) =>
             Async(Master.CreateAction<MusicAction>().Init(TaleUtil.Path.NormalizeAssetPath(Master.Config.AssetRoots.AUDIO_MUSIC, new List<string>(paths)), (TaleUtil.MusicAction.Mode)(int)mode, volume, pitch));

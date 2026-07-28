@@ -19,6 +19,11 @@ namespace TaleUtil
 #if UNITY_EDITOR
         [BoldFoldout]
 #endif
+        public AudioData Audio;
+
+#if UNITY_EDITOR
+        [BoldFoldout]
+#endif
         public TransitionsData Transitions;
 
 #if UNITY_EDITOR
@@ -286,6 +291,16 @@ namespace TaleUtil
             [Tooltip("The order in which to animate dialog elements when the dialog canvas disappears.")]
 #endif
             public DialogAnimationOutMode ANIMATION_OUT_MODE = DialogAnimationOutMode.CANVAS_AVATAR;
+        }
+
+        [System.Serializable]
+        public class AudioData {
+#if UNITY_EDITOR
+            [Header("Music")]
+            [Rename("Intro-Loop Delay")]
+            [Tooltip("Delay when starting to play Intro-Loop music, in seconds.\n\nIf the transition between Intro and Loop isn't seamless, increase this value.\n\nLarge values can noticeably delay the start of the music, so choose the smallest value that works seamlessly on all your target platforms.")]
+#endif
+            public float MUSIC_INTRO_LOOP_DELAY = 0.01f;
         }
 
         [System.Serializable]

@@ -13,6 +13,7 @@ public class TaleMaster : MonoBehaviour {
     public TaleUtil.Config Config { get { return config; } } // TODO: CopyOnWrite
     public TaleUtil.Input Input { get; private set; }
     public TaleUtil.Triggers Triggers { get; private set; }
+    public TaleUtil.Cues Cues { get; private set; }
     public TaleUtil.Hooks Hooks { get; private set; }
     public TaleUtil.Flags Flags { get; private set; }
 
@@ -48,6 +49,7 @@ public class TaleMaster : MonoBehaviour {
         Props = new TaleUtil.Props(props);
         Input = new TaleUtil.Input(this);
         Triggers = new TaleUtil.Triggers(this);
+        Cues = new TaleUtil.Cues(this);
         Hooks = new TaleUtil.Hooks();
         Flags = new TaleUtil.Flags();
 
@@ -201,9 +203,19 @@ public class TaleMaster : MonoBehaviour {
         public GameObject audioGroup;
 
 #if UNITY_EDITOR
+        [Rename("Music Group")]
+#endif
+        public GameObject audioMusicGroup;
+
+#if UNITY_EDITOR
         [Rename("Music")]
 #endif
         public AudioSource audioMusic;
+
+#if UNITY_EDITOR
+        [Rename("Music Alt")]
+#endif
+        public AudioSource audioMusicAlt;
 
 #if UNITY_EDITOR
         [Rename("Voice")]
