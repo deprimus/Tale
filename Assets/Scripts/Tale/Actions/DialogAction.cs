@@ -13,6 +13,7 @@ namespace TaleUtil {
 
         public enum State {
             SETUP,
+            CLOSE_SETUP,
             TRANSITION_IN,
             AVATAR_TRANSITION_IN,
 
@@ -58,6 +59,17 @@ namespace TaleUtil {
 
         bool hasAnimation;
         bool hasAvatarAnimation;
+
+        // Dialog close
+        public DialogAction Init() {
+            actor = null;
+            content = null;
+            action = null;
+            hasAnimation = HasAnimation();
+            hasAvatarAnimation = HasAnimateableAvatar();
+            ChangeState(State.CLOSE_SETUP);
+            return this;
+        }
 
         public DialogAction Init(string actor, string content, string avatar, string voice, bool loopVoice, bool additive, bool reverb, bool keepOpen, TaleUtil.Action action) {
             if (content != null) {
@@ -119,6 +131,9 @@ namespace TaleUtil {
 
             return this;
         }
+
+        Action FetchNextAction() =>
+            parent != null ? parent.FetchNext() : Tale.Master.Queue.FetchNext();
 
         // After the dialog ends, we want to see if another dialog action
         // will be executed immediately afterwards. If so, keep the dialog canvas active.
@@ -326,6 +341,54 @@ namespace TaleUtil {
             }
 
             switch (state) {
+                case State.CLOSE_SETUP: {
+                    if (actor != null) {
+                        master.Props.dialog.actor.text = "";
+                    }
+                    master.Props.dialog.content.text = "";
+
+                    switch (master.Config.Dialog.ANIMATION_OUT_MODE) {
+                        case TaleUtil.Config.DialogAnimationOutMode.CANVAS_THEN_AVATAR:
+                            if (ActivateCanvasAnimationOut()) {
+                                ChangeState(State.TRANSITION_OUT);
+                            } else if (ActivateAvatarAnimationOut()) {
+                                ChangeState(State.AVATAR_TRANSITION_OUT);
+                            } else {
+                                goto default;
+                            }
+                            break;
+                        case TaleUtil.Config.DialogAnimationOutMode.AVATAR_THEN_CANVAS:
+                            if (ActivateAvatarAnimationOut()) {
+                                ChangeState(State.AVATAR_TRANSITION_OUT);
+                            } else if (ActivateCanvasAnimationOut()) {
+                                ChangeState(State.TRANSITION_OUT);
+                            } else {
+                                goto default;
+                            }
+                            break;
+                        case TaleUtil.Config.DialogAnimationOutMode.CANVAS_AVATAR: {
+                            if (hasAnimation) {
+                                ActivateCanvasAnimationOut();
+                                ActivateAvatarAnimationOut();
+                                ChangeState(State.TRANSITION_OUT);
+                            } else if (hasAvatarAnimation) {
+                                ActivateAvatarAnimationOut();
+                                ChangeState(State.AVATAR_TRANSITION_OUT);
+                            } else {
+                                master.Props.dialog.canvas.enabled = false;
+                                ChangeState(State.END);
+                                return true;
+                            }
+                            break;
+                        }
+                        default:
+                            master.Props.dialog.canvas.enabled = false;
+                            ChangeState(State.END);
+                            return true;
+                    }
+
+                    break;
+                }
                 case State.SETUP: {
                     if (voice != null) {
                         if (master.Props.audio.group != null && !master.Props.audio.group.activeSelf) {
@@ -603,7 +666,7 @@ namespace TaleUtil {
 
                         // If an additive dialog action follows this one,
                         // use the additive CTC
-                        var nextDialog = GetNextDialogAction(Tale.Master.Queue.FetchNext());
+                        var nextDialog = GetNextDialogAction(FetchNextAction());
 
                         if (nextDialog != null && nextDialog.type == Type.ADDITIVE) {
                             if (master.Props.dialog.actc != null) {
@@ -723,7 +786,7 @@ namespace TaleUtil {
                     }
 
                     // If the next action is a dialog, also keep open
-                    var nextDialog = GetNextDialogAction(Tale.Master.Queue.FetchNext());
+                    var nextDialog = GetNextDialogAction(FetchNextAction());
 
                     if (nextDialog != null) {
                         if (nextDialog.type == Type.OVERRIDE) {

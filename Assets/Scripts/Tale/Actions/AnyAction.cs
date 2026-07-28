@@ -7,6 +7,10 @@ namespace TaleUtil {
         public AnyAction Init(Action[] actions) {
             this.actions = actions;
 
+            for (var i = 0; i < actions.Length; ++i) {
+                actions[i].parent = this;
+            }
+
             return this;
         }
 
@@ -26,6 +30,8 @@ namespace TaleUtil {
 
             return false;
         }
+
+        public override Action FetchNext() => parent?.FetchNext();
 
         public override IEnumerable<Action> GetSubactions() =>
             actions;

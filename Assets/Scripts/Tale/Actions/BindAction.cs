@@ -11,6 +11,9 @@ namespace TaleUtil {
             this.primary = primary;
             this.secondary = secondary;
 
+            this.primary.parent = this;
+            this.secondary.parent = this;
+
             secondaryDone = false;
 
             return this;
@@ -30,6 +33,8 @@ namespace TaleUtil {
 
             return false;
         }
+
+        public override Action FetchNext() => parent?.FetchNext();
 
         public override IEnumerable<Action> GetSubactions() {
             yield return primary;

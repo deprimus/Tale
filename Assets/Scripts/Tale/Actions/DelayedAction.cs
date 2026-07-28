@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TaleUtil {
@@ -11,6 +11,7 @@ namespace TaleUtil {
         public DelayedAction Init(float amount, Action action) {
             this.amount = amount;
             this.action = action;
+            this.action.parent = this;
 
             clock = 0f;
 
@@ -26,6 +27,8 @@ namespace TaleUtil {
                 return false;
             }
         }
+
+        public override Action FetchNext() => parent?.FetchNext();
 
         public override IEnumerable<Action> GetSubactions() {
             yield return action;

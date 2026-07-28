@@ -34,6 +34,7 @@ namespace TaleUtil {
                         return true;
                     }
 
+                    returned.parent = this;
                     returned.SetDeltaCallback(delta);
 
                     state = State.RUN;
@@ -49,6 +50,8 @@ namespace TaleUtil {
             }
             return false;
         }
+
+        public override Action FetchNext() => parent?.FetchNext();
 
         public override IEnumerable<Action> GetSubactions() {
             if (returned == null) {

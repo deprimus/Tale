@@ -17,6 +17,7 @@ namespace TaleUtil {
         public DelayedByAction Init(string trigger, Action action) {
             this.trigger = trigger;
             this.action = action;
+            this.action.parent = this;
 
             state = State.WAIT_FOR_TRIGGER;
 
@@ -48,6 +49,8 @@ namespace TaleUtil {
 
             return false;
         }
+
+        public override Action FetchNext() => parent?.FetchNext();
 
         public override IEnumerable<Action> GetSubactions() {
             yield return action;

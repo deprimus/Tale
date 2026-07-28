@@ -181,6 +181,9 @@ public static partial class Tale
         return Master.Queue.Enqueue(Master.CreateAction<DialogAction>().Init(actor, content, avatar, voice != null ? TaleUtil.Path.NormalizeResourcePath(Master.Config.AssetRoots.AUDIO_VOICE, voice) : null, loopVoice, additive, reverb, keepOpen, action));
     }
 
+    public static TaleUtil.Action DialogClose() =>
+        Master.Queue.Enqueue(Master.CreateAction<DialogAction>().Init());
+
     public static TaleUtil.Action TransitionIn(float duration = Tale.Default.FLOAT) =>
         Master.Queue.Enqueue(Master.CreateAction<TransitionAction>().Init(null, TransitionAction.Type.IN, duration));
 

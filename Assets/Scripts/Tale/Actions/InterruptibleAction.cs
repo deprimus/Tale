@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace TaleUtil {
     public class InterruptibleAction : Action {
@@ -8,6 +8,7 @@ namespace TaleUtil {
         public InterruptibleAction Init(string trigger, Action action) {
             this.trigger = trigger;
             this.action = action;
+            this.action.parent = this;
 
             return this;
         }
@@ -20,6 +21,8 @@ namespace TaleUtil {
 
             return action.Execute();
         }
+
+        public override Action FetchNext() => parent?.FetchNext();
 
         public override string ToString() {
             return string.Format("Interruptible action (<color=#{0}>{1}</color>)", ColorUtility.ToHtmlStringRGBA(master.Config.Debug.INFO_ACCENT_COLOR_PRIMARY), action.ToString());

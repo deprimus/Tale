@@ -12,6 +12,10 @@ namespace TaleUtil {
 
             this.actions.InsertMany(actions);
 
+            for (var i = 0; i < actions.Length; ++i) {
+                actions[i].parent = this;
+            }
+
             return this;
         }
 

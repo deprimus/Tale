@@ -41,6 +41,7 @@ namespace TaleUtil {
 
         void GetAction() {
             currentAction = action();
+            currentAction.parent = this;
             currentAction.SetDeltaCallback(delta);
         }
 
@@ -66,6 +67,8 @@ namespace TaleUtil {
 
             return false;
         }
+
+        public override Action FetchNext() => count == 1 ? parent?.FetchNext() : null;
 
         public override IEnumerable<Action> GetSubactions() {
             if (currentAction == null) {

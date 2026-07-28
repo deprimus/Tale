@@ -45,6 +45,25 @@ namespace TaleUtil {
         /// </returns>
         public virtual IEnumerable<Action> GetSubactions() { return Enumerable.Empty<Action>(); }
 
+        /// <returns>
+        /// The action that will execute after the currently-running child finishes.
+        /// </returns>
+        /// <remarks>
+        /// Override this function and return either:
+        /// <list type="bullet">
+        ///   <item>
+        ///     <description>your next child, if you execute your children sequentially</description>
+        ///   </item>
+        ///   <item>
+        ///     <description>your parent's FetchNext result, if you're guaranteed to finish after the current child finishes</description>
+        ///   </item>
+        ///   <item>
+        ///     <description>null, if none of the above apply</description>
+        ///   </item>
+        /// </list>
+        /// </remarks>
+        public virtual Action FetchNext() => null;
+
         /// <remarks>
         /// Supports TextMeshPro formatting.
         /// </remarks>
@@ -68,6 +87,7 @@ namespace TaleUtil {
 
         #region Fields
         internal ulong id;
+        internal Action parent;
         protected TaleMaster master;
         System.Type type;
 
@@ -169,6 +189,7 @@ namespace TaleUtil {
 
         void ReturnToPool() {
             execState = ExecutionState.FINISHED;
+            parent = null;
             master.ReturnAction(type, this);
 
             if (task != null) {
