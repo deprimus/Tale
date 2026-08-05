@@ -581,6 +581,7 @@ namespace TaleUtil
             debugInfo.actionInfo = CreateDebugInfoText("ActionInfo", canvas, TextAlignmentOptions.TopLeft, new Vector2(1f, 1f), new Vector2(551f, 17f), new Vector2(-382f, -14.5f));
             debugInfo.actionCountInfo = CreateDebugInfoText("ActionCountInfo", canvas, TextAlignmentOptions.TopRight, new Vector2(1f, 1f), new Vector2(87f, 17f), new Vector2(-63f, -14.5f));
             debugInfo.queueInfo = CreateDebugInfoText("QueueInfo", canvas, TextAlignmentOptions.TopLeft, new Vector2(0f, 1f), new Vector2(638f, 1019.1f), new Vector2(339f, -531.4f));
+            debugInfo.parallelInfo = CreateDebugInfoText("ParallelInfo", canvas, TextAlignmentOptions.TopRight, new Vector2(0f, 1f), new Vector2(638f, 1019.1f), new Vector2(-339f, -531.4f));
 
             canvas.SetActive(false);
 

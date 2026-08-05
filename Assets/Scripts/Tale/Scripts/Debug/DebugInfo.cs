@@ -11,6 +11,7 @@ public class DebugInfo : MonoBehaviour
     public TextMeshProUGUI actionInfo;
     public TextMeshProUGUI actionCountInfo;
     public TextMeshProUGUI queueInfo;
+    public TextMeshProUGUI parallelInfo;
 
     float freq = 0.5f;
     float clock = 0f;
@@ -22,7 +23,8 @@ public class DebugInfo : MonoBehaviour
         UpdateScene();
         UpdateAction();
         UpdateActionCount();
-        UpdateQueue();
+        UpdateActionList(queueInfo, Tale.Master.Queue);
+        UpdateActionList(parallelInfo, Tale.Master.Parallel);
     }
 
     void UpdateFPS()
@@ -63,14 +65,14 @@ public class DebugInfo : MonoBehaviour
         actionCountInfo.text = Tale.Master.GetTotalActionCount().ToString();
     }
 
-    void UpdateQueue() {
+    void UpdateActionList(TextMeshProUGUI text, System.Collections.Generic.IEnumerable<TaleUtil.Action> list) {
         var sb = new System.Text.StringBuilder();
 
-        foreach (var action in Tale.Master.Queue) {
+        foreach (var action in list) {
             DisplayAction(sb, action, 0);
         }
 
-        queueInfo.text = sb.ToString();
+        text.text = sb.ToString();
     }
 
     void DisplayAction(System.Text.StringBuilder sb, TaleUtil.Action action, uint level) {
