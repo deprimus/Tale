@@ -839,7 +839,7 @@ namespace TaleUtil {
                                 ActivateAvatarAnimationOut();
                                 ChangeState(State.AVATAR_TRANSITION_OUT);
                             } else {
-                                ChangeState(State.BEGIN_WRITE);
+                                goto default; // No animations
                             }
                             break;
                         }
