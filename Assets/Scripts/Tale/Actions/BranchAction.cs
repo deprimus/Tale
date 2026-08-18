@@ -18,6 +18,7 @@ namespace TaleUtil {
         public BranchAction Init(string flag, Delegates.BranchDelegate<ulong> action) {
             this.flag = flag;
             this.action = action;
+            returned = null;
 
             state = State.SETUP;
 

@@ -171,7 +171,9 @@ namespace TaleUtil {
             delta = callback;
 
             foreach (var action in GetSubactions()) {
-                action.SetDeltaCallback(callback);
+                if (action != null) {
+                    action.SetDeltaCallback(callback);
+                }
             }
         }
         #endregion

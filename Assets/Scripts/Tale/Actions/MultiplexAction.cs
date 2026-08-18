@@ -8,6 +8,8 @@ namespace TaleUtil {
         public MultiplexAction Init(Action[] actions) {
             if (this.actions == null) {
                 this.actions = new Collections.FastUnorderedList<Action>(actions.Length);
+            } else {
+                this.actions.ForceClear();
             }
 
             this.actions.InsertMany(actions);

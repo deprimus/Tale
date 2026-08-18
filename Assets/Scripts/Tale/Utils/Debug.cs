@@ -55,27 +55,36 @@ namespace TaleUtil {
         }
 
         public static void FrameToString(StackFrame frame, StringBuilder outStr) {
+            if (frame == null) {
+                outStr.AppendLine("???");
+                return;
+            }
+
             var method = frame.GetMethod();
             var filename = frame.GetFileName();
             var file = string.IsNullOrEmpty(filename) ? "" : Path.AbsoluteToAssetPath(filename);
 
-            outStr.Append(method.DeclaringType.ToString());
-            outStr.Append(':');
-            outStr.Append(method.Name);
+            if (method == null) {
+                outStr.Append("<unknown method>");
+            } else {
+                outStr.Append(method.DeclaringType.ToString());
+                outStr.Append(':');
+                outStr.Append(method.Name);
 
-            var p = method.GetParameters();
-            outStr.Append('(');
-            {
-                if (p.Length > 0) {
-                    outStr.Append(p[0]);
+                var p = method.GetParameters();
+                outStr.Append('(');
+                {
+                    if (p.Length > 0) {
+                        outStr.Append(p[0]);
 
-                    for (int i = 1; i < p.Length; ++i) {
-                        outStr.Append(',');
-                        outStr.Append(p[i]);
+                        for (int i = 1; i < p.Length; ++i) {
+                            outStr.Append(',');
+                            outStr.Append(p[i]);
+                        }
                     }
                 }
+                outStr.Append(')');
             }
-            outStr.Append(')');
 
             if (!string.IsNullOrEmpty(file)) {
                 outStr.AppendFormat(" (at <a href=\"{0}\" line=\"{1}\">{0}:{1}</a>)", file, frame.GetFileLineNumber());
@@ -85,6 +94,10 @@ namespace TaleUtil {
         }
 
         internal static bool FilterInternalTaleFrame(StackFrame frame) {
+            if (frame == null || frame.GetMethod() == null) {
+                return true;
+            }
+
             var type = frame.GetMethod().DeclaringType;
 
             return type != typeof(TaleMaster) && type != typeof(Action);

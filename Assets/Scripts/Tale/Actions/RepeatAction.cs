@@ -17,6 +17,7 @@ namespace TaleUtil {
         public RepeatAction Init(ulong count, Delegates.ActionDelegate action) {
             this.count = count;
             this.action = action;
+            currentAction = null;
 
             state = State.SETUP;
 
