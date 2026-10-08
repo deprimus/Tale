@@ -91,7 +91,8 @@ public static partial class Tale
         // Async actions are immediately placed on the parallel list
         Master.Queue.TakeLast(action);
 
-        var task = new TaskCompletionSource<bool>();
+        // Don't run on Tale's update loop
+        var task = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         action.task = task;
 

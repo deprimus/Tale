@@ -192,11 +192,14 @@ namespace TaleUtil {
         void ReturnToPool() {
             execState = ExecutionState.FINISHED;
             parent = null;
+
+            var finishedTask = task;
+            task = null;
+
             master.ReturnAction(type, this);
 
-            if (task != null) {
-                task.SetResult(true);
-                task = null;
+            if (finishedTask != null) {
+                finishedTask.SetResult(true);
             }
         }
 
